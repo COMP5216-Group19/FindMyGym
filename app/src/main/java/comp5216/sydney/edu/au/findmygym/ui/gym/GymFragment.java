@@ -1,0 +1,83 @@
+package comp5216.sydney.edu.au.findmygym.ui.gym;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+
+import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.viewbinding.ViewBinding;
+
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import comp5216.sydney.edu.au.findmygym.R;
+import comp5216.sydney.edu.au.findmygym.databinding.GymActivityBinding;
+import comp5216.sydney.edu.au.findmygym.databinding.GymFragmentBinding;
+import comp5216.sydney.edu.au.findmygym.ui.main.MainViewModel;
+
+public class GymFragment extends Fragment
+{
+	private final String TAG = "[GymFragment]";
+	
+	private GymViewModel mViewModel;
+	private String gym_name;
+	private GymFragmentBinding binding;
+	public static GymFragment newInstance()
+	{
+		return new GymFragment();
+	}
+	
+	@Nullable
+	@Override
+	public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+	                         @Nullable Bundle savedInstanceState)
+	{
+		binding = GymFragmentBinding.inflate(inflater, container, false);
+		return inflater.inflate(R.layout.gym_fragment, container, false);
+	}
+	
+	@Override
+	public void onActivityCreated(@Nullable Bundle savedInstanceState)
+	{
+		super.onActivityCreated(savedInstanceState);
+		mViewModel = new ViewModelProvider(this).get(GymViewModel.class);
+		// TODO: Use the ViewModel
+	}
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setHasOptionsMenu(true);
+	}
+	
+	@Override
+	public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater)
+	{
+		inflater.inflate(R.menu.gym,menu);
+		//
+		// super.onCreateOptionsMenu(menu, inflater);
+	}
+	
+	@Override
+	public void onViewCreated(View view, @Nullable Bundle savedInstanceState)
+	{
+		gym_name = "TESTING GYM";
+		ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+		Log.e("TEST", String.valueOf(actionBar==null));
+		actionBar.setTitle(gym_name);
+		actionBar.setHomeButtonEnabled(true);
+		actionBar.setDisplayHomeAsUpEnabled(true);//home button on
+	}
+
+}

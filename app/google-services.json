@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1074471638844",
+    "project_id": "findmygym-e9f2e",
+    "storage_bucket": "findmygym-e9f2e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1074471638844:android:116eb98094eab8645df039",
+        "android_client_info": {
+          "package_name": "comp5216.sydney.edu.au.findmygym"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1074471638844-dmmm20eknqqja2k4mq2bevpvps3onfno.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "comp5216.sydney.edu.au.findmygym",
+            "certificate_hash": "f64c01bcef6901d317107638b1f33d17b2580cb1"
+          }
+        },
+        {
+          "client_id": "1074471638844-ir79an2gb9fo1vajp76s3qjgqkvcvnq8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3bH-vtw97o1sm7qfsE73bAbZAg1kAaQA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1074471638844-ir79an2gb9fo1vajp76s3qjgqkvcvnq8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

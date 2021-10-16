@@ -1,0 +1,17 @@
+<!-- sample_menu.xml -->
+<menu
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+            android:id="@+id/action_settings"
+            android:icon="@drawable/com_facebook_favicon_blue"
+            android:title="@string/action_settings"
+            app:showAsAction="ifRoom"/>
+    <item
+            android:id="@+id/action_done"
+            android:icon="@drawable/com_facebook_close"
+            android:title="close"
+            app:showAsAction="ifRoom|withText"/>
+
+</menu>
