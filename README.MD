@@ -1,6 +1,7 @@
 # FindMyGym
 ## _Comp5216 Group Project_
 
+[![Build Status](https://app.travis-ci.com/519045752/awesome.svg?branch=master)](https://app.travis-ci.com/519045752/awesome)
 
 ## New Features
 - blahblah
