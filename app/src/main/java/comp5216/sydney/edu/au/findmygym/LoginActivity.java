@@ -5,11 +5,17 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -29,10 +35,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
+import comp5216.sydney.edu.au.findmygym.model.UserData;
 import comp5216.sydney.edu.au.findmygym.ui.login.LoginFragment;
 
 public class LoginActivity extends BaseActivity
@@ -230,6 +240,7 @@ public class LoginActivity extends BaseActivity
 							// Sign in success, update UI with the signed-in user's information
 							Log.d(TAG, "signInWithCredential:success");
 							firebaseUser = mAuth.getCurrentUser();
+							updateUserdata();
 							Toast.makeText(mContext, "Login Successfully!" + "\n" + "Hi," + firebaseUser.getDisplayName(), Toast.LENGTH_LONG).show();
 							// updateUI(user);
 							intentToMain();
@@ -245,6 +256,25 @@ public class LoginActivity extends BaseActivity
 	private void intentToMain(){
 		Intent intent = new Intent(mContext, MainActivity.class);
 		startActivity(intent);
+	}
+	
+	private void updateUserdata(){
+		UserData userData = UserData.getInstance();
+		userData.setContext(mContext);
+		userData.setUserMail(this.firebaseUser.getEmail());
+		userData.setUserName(this.firebaseUser.getDisplayName());
+		
+		try
+		{
+			URL photoUrl = new URL(this.firebaseUser.getDisplayName());
+			Bitmap avatar = BitmapFactory.decodeStream(photoUrl.openConnection().getInputStream());
+			userData.setUserAvatar(avatar);
+		} catch (IOException e)
+		{
+			Log.e(TAG, "updateUserdata: "+e.toString());
+		}
+		
+	
 	}
 	
 

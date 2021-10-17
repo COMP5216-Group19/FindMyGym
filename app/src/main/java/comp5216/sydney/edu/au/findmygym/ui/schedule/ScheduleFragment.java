@@ -38,8 +38,7 @@ public class ScheduleFragment extends Fragment
 		// TODO: Use the ViewModel
 	}
 	
-	public View onCreateView(@NonNull LayoutInflater inflater,
-	                         ViewGroup container, Bundle savedInstanceState)
+	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		scheduleViewModel = new ViewModelProvider(this).get(ScheduleViewModel.class);
 		

@@ -1,13 +1,18 @@
 package comp5216.sydney.edu.au.findmygym.model;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.se.omapi.Session;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.storage.StorageReference;
+
+import comp5216.sydney.edu.au.findmygym.MainActivity;
+import comp5216.sydney.edu.au.findmygym.R;
 
 public class UserData extends LiveData<UserData>
 {
@@ -18,20 +23,22 @@ public class UserData extends LiveData<UserData>
 	private Bitmap userAvatar;
 	private Session userSession;
 	private StorageReference userStorageRef;
+	private Context mContext;
 	
 	private volatile static UserData UserData;
 	
 	/**
 	 * Default Constructor
 	 */
-	private UserData(){
-		//TODO
+	public UserData()
+	{
+	
 	}
 	
 	/**
 	 * DCL
 	 */
-	public static UserData newInstance() {
+	public static UserData getInstance() {
 		if (UserData == null) {
 			synchronized (UserData.class) {
 				if (UserData == null) {
@@ -42,17 +49,11 @@ public class UserData extends LiveData<UserData>
 		return UserData;
 	}
 	
-
-	
-	public static UserData getInstance() {
-		return UserData.getInstance();
-	}
-	
-	
 	public String getUserName()
 	{
 		if(userName == null){
 			userName = "Jane Doe";
+			postValue(this);
 		}
 		return userName;
 	}
@@ -67,6 +68,7 @@ public class UserData extends LiveData<UserData>
 	{
 		if(userMail == null){
 			userMail = "xxxx@xxxx.com";
+			postValue(this);
 		}
 		return userMail;
 	}
@@ -81,6 +83,8 @@ public class UserData extends LiveData<UserData>
 	{
 		if(userAvatar == null){
 			userAvatar = BitmapFactory.decodeStream(getClass().getResourceAsStream("/res/drawable/test.png"));
+			Bitmap  bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.ic_launcher);
+			postValue(this);
 		}
 		return userAvatar;
 	}
@@ -90,4 +94,22 @@ public class UserData extends LiveData<UserData>
 		this.userAvatar = userAvatar;
 		postValue(this);
 	}
+	
+	public void setContext(Context mContext)
+	{
+		this.mContext = mContext;
+	}
+	
+	@Override
+	protected void onActive() {
+		// 具有活跃的观察者时调用
+		Log.d(TAG, "Get an observer!");
+	}
+	
+	@Override
+	protected void onInactive() {
+		// 没有任何活跃的观察者时调用
+		Log.d(TAG, "Get no observer!");
+	}
+	
 }

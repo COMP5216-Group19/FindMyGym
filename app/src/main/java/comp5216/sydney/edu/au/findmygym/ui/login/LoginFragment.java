@@ -12,9 +12,12 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import comp5216.sydney.edu.au.findmygym.LoginActivity;
 import comp5216.sydney.edu.au.findmygym.R;
+import comp5216.sydney.edu.au.findmygym.databinding.FragmentScheduleBinding;
+import comp5216.sydney.edu.au.findmygym.ui.schedule.ScheduleViewModel;
 
 public class LoginFragment extends Fragment
 {
@@ -25,12 +28,13 @@ public class LoginFragment extends Fragment
 	{
 		return new LoginFragment();
 	}
-	
+
+	TextView textView_Message;
 	@Nullable
 	@Override
-	public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-	                         @Nullable Bundle savedInstanceState)
+	public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
 	{
+		
 		return inflater.inflate(R.layout.login_fragment, container, false);
 	}
 	

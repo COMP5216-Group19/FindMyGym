@@ -2,11 +2,15 @@ package comp5216.sydney.edu.au.findmygym;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.StateListDrawable;
 import android.media.audiofx.Equalizer;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -24,6 +28,7 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import comp5216.sydney.edu.au.findmygym.databinding.ActivityMainBinding;
+import comp5216.sydney.edu.au.findmygym.model.UserData;
 
 public class MainActivity extends BaseActivity implements OnMapReadyCallback
 {
@@ -70,6 +75,19 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback
 		NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
 		NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
 		NavigationUI.setupWithNavController(navigationView, navController);
+		
+		UserData userData = UserData.getInstance();
+		String mail = userData.getUserMail();
+		Log.e(TAG, "onViewCreated"+mail);
+		
+		View headerView = navigationView.getHeaderView(0);
+		TextView navUsername = (TextView) headerView.findViewById(R.id.header_userName);
+		navUsername.setText(UserData.getInstance().getUserName());
+		TextView navEmail = (TextView) headerView.findViewById(R.id.header_email);
+		navEmail.setText(UserData.getInstance().getUserMail());
+		ImageView navAvatar = (ImageView)  headerView.findViewById(R.id.header_avatar);
+		navAvatar.setImageBitmap(UserData.getInstance().getUserAvatar());
+		
 	}
 	
 	@Override
