@@ -56,7 +56,7 @@ public class LoginActivity extends BaseActivity
 	FirebaseUser firebaseUser;
 	boolean isSignedIn = false;
 	private GoogleSignInClient mGoogleSignInClient;
-	
+	private UserData userData;
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -64,6 +64,7 @@ public class LoginActivity extends BaseActivity
 		setContentView(R.layout.login_activity);
 		mAuth = FirebaseAuth.getInstance();
 		mContext = getApplicationContext();
+		userData = UserData.getInstance();
 		//Full screen
 		// if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 		// 	getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -259,22 +260,8 @@ public class LoginActivity extends BaseActivity
 	}
 	
 	private void updateUserdata(){
-		UserData userData = UserData.getInstance();
 		userData.setContext(mContext);
-		userData.setUserMail(this.firebaseUser.getEmail());
-		userData.setUserName(this.firebaseUser.getDisplayName());
-		
-		try
-		{
-			URL photoUrl = new URL(this.firebaseUser.getDisplayName());
-			Bitmap avatar = BitmapFactory.decodeStream(photoUrl.openConnection().getInputStream());
-			userData.setUserAvatar(avatar);
-		} catch (IOException e)
-		{
-			Log.e(TAG, "updateUserdata: "+e.toString());
-		}
-		
-	
+		userData.setFirebaseUser(firebaseUser);
 	}
 	
 

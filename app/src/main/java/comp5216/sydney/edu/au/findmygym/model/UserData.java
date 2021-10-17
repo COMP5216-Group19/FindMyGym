@@ -3,13 +3,18 @@ package comp5216.sydney.edu.au.findmygym.model;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.se.omapi.Session;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.StorageReference;
+
+import java.io.IOException;
+import java.net.URL;
 
 import comp5216.sydney.edu.au.findmygym.MainActivity;
 import comp5216.sydney.edu.au.findmygym.R;
@@ -18,6 +23,7 @@ public class UserData extends LiveData<UserData>
 {
 	private final String TAG = "[UserData]";
 	
+	private FirebaseUser firebaseUser;
 	private String userName;
 	private String userMail;
 	private Bitmap userAvatar;
@@ -49,13 +55,24 @@ public class UserData extends LiveData<UserData>
 		return UserData;
 	}
 	
+	public FirebaseUser getFirebaseUser()
+	{
+		return firebaseUser;
+	}
+	
+	public void setFirebaseUser(FirebaseUser firebaseUser)
+	{
+		this.firebaseUser = firebaseUser;
+		postValue(this);
+	}
+	
 	public String getUserName()
 	{
-		if(userName == null){
-			userName = "Jane Doe";
-			postValue(this);
+		if(userName!=null){
+			return userName;
+		}else {
+			return firebaseUser.getDisplayName();
 		}
-		return userName;
 	}
 	
 	public void setUserName(String userName)
@@ -66,11 +83,11 @@ public class UserData extends LiveData<UserData>
 	
 	public String getUserMail()
 	{
-		if(userMail == null){
-			userMail = "xxxx@xxxx.com";
-			postValue(this);
+		if(userMail!=null){
+			return userMail;
+		}else {
+			return firebaseUser.getEmail();
 		}
-		return userMail;
 	}
 	
 	public void setUserMail(String userMail)
@@ -81,13 +98,35 @@ public class UserData extends LiveData<UserData>
 	
 	public Bitmap getUserAvatar()
 	{
-		if(userAvatar == null){
-			userAvatar = BitmapFactory.decodeStream(getClass().getResourceAsStream("/res/drawable/test.png"));
-			Bitmap  bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.ic_launcher);
-			postValue(this);
+		if(userAvatar!=null){
+			return this.userAvatar;
+		}else{
+			userAvatar = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.diana);
+			return userAvatar;
 		}
-		return userAvatar;
 	}
+	//
+	// private Bitmap loadAvatar(){
+	// 	Bitmap avatar = null;
+	// 	try
+	// 	{
+	// 		URL photoUrl =  new URL(firebaseUser.getPhotoUrl().toString());
+	// 		Log.e(TAG, "loadAvatar"+photoUrl.toString() );
+	// 		 avatar = BitmapFactory.decodeStream(photoUrl.openConnection().getInputStream());
+	// 		Picasso.with(context).load(imageUri).into(ivBasicImage);
+	// 	} catch (Exception e)
+	// 	{
+	// 		Log.e(TAG, "updateUserdata: "+e.toString());
+	// 		userAvatar = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.diana);
+	// 	}
+	// 	return avatar;
+	// }
+	
+	public Uri getUserAvatarUri()
+	{
+		return this.firebaseUser.getPhotoUrl();
+	}
+	
 	
 	public void setUserAvatar(Bitmap userAvatar)
 	{

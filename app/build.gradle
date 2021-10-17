@@ -85,4 +85,5 @@ dependencies {
 
     //image
     implementation 'com.squareup.picasso:picasso:2.5.2'
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.19'
 }

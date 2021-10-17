@@ -2,6 +2,8 @@ package comp5216.sydney.edu.au.findmygym;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.StateListDrawable;
 import android.media.audiofx.Equalizer;
 import android.os.Bundle;
@@ -13,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -20,15 +23,20 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
+import com.squareup.picasso.Picasso;
 
+import androidx.lifecycle.Observer;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import java.net.URL;
+
 import comp5216.sydney.edu.au.findmygym.databinding.ActivityMainBinding;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
+import pl.droidsonroids.gif.GifImageView;
 
 public class MainActivity extends BaseActivity implements OnMapReadyCallback
 {
@@ -38,6 +46,9 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback
 	private AppBarConfiguration mAppBarConfiguration;
 	private ActivityMainBinding binding;
 	private GoogleMap mMap;
+	private UserData userData;
+	public NavigationView navigationView;
+	public View headerView;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -65,7 +76,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback
 		});
 		
 		DrawerLayout drawer = binding.drawerLayout;
-		NavigationView navigationView = binding.navView;
+		navigationView = binding.navView;
 		// Passing each menu ID as a set of Ids because each
 		// menu should be considered as top level destinations.
 		mAppBarConfiguration = new AppBarConfiguration.Builder(
@@ -76,26 +87,61 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback
 		NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
 		NavigationUI.setupWithNavController(navigationView, navController);
 		
-		UserData userData = UserData.getInstance();
-		String mail = userData.getUserMail();
-		Log.e(TAG, "onViewCreated"+mail);
+		//update nav_header
+		userData = UserData.getInstance();
+		headerView = navigationView.getHeaderView(0);
+		userData.observe(this, new Observer<UserData>()
+		{
+			@Override
+			public void onChanged(UserData userData)
+			{
+				Log.e(TAG,"===========> userData changed");
+				TextView navUsername = (TextView) headerView.findViewById(R.id.header_userName);
+				navUsername.setText(userData.getUserName());
+				
+				TextView navEmail = (TextView) headerView.findViewById(R.id.header_email);
+				navEmail.setText(userData.getUserMail());
+				
+				GifImageView navAvatar = (GifImageView)  headerView.findViewById(R.id.header_avatar);
+				navAvatar.setImageBitmap(userData.getUserAvatar());
+				
+				try
+				{
+					Glide.with(mContext)
+							.load(userData.getUserAvatarUri())
+							.placeholder(R.drawable.ic_launcher_background)
+							.into(navAvatar);
+				} catch (Exception e)
+				{
+					Log.e(TAG, "updateUserdata: "+e.toString());
+					e.printStackTrace();
+					Bitmap tempAvatar = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.diana);
+					userData.setUserAvatar(tempAvatar);
+					navAvatar.setImageBitmap(userData.getUserAvatar());
+				}
+			}
+		});
 		
-		View headerView = navigationView.getHeaderView(0);
-		TextView navUsername = (TextView) headerView.findViewById(R.id.header_userName);
-		navUsername.setText(UserData.getInstance().getUserName());
-		TextView navEmail = (TextView) headerView.findViewById(R.id.header_email);
-		navEmail.setText(UserData.getInstance().getUserMail());
-		ImageView navAvatar = (ImageView)  headerView.findViewById(R.id.header_avatar);
-		navAvatar.setImageBitmap(UserData.getInstance().getUserAvatar());
 		
+	}
+	
+	//TEST
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+		Bitmap ybb = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ybb);
+		GifImageView navAvatar = (GifImageView)  headerView.findViewById(R.id.header_avatar);
+		navAvatar.setImageBitmap(ybb);
 	}
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item){
 		Toast.makeText(this, item.getItemId(), Toast.LENGTH_SHORT).show();
-
+		Log.e(TAG,String.valueOf(item.getItemId()));
+		
 		switch (item.getItemId()) {
-			case Menu.FIRST:
+			case Menu.FIRST://16908332
 				Toast.makeText(this, "Setting Activity", Toast.LENGTH_SHORT).show();
 				break;
 		}
@@ -110,7 +156,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback
 	// event before the menu is displayed
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		Toast.makeText(this, "选项菜单显示之前onPrepareOptionsMenu方法会被调用，你可以用此方法来根据打当时的情况调整菜单", Toast.LENGTH_LONG).show();
+		Toast.makeText(this, "选项菜单显示之前onPrepareOptionsMenu方法会被调用，你可以用此方法来根据打当时的情况调整菜单", Toast.LENGTH_SHORT).show();
 		return true;
 	}
 	
@@ -163,6 +209,12 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback
 	{
 		Intent intent = new Intent(mContext, GymActivity.class);
 		startActivity(intent);
+	}
+	
+	public void onAvatarClicked(View view)
+	{
+		userData.setUserName("YBB!");
+
 	}
 	
 	
