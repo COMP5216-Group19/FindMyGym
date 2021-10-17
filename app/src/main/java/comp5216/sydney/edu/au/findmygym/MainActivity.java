@@ -71,6 +71,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback
 		NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
 		NavigationUI.setupWithNavController(navigationView, navController);
 	}
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item){
 		Toast.makeText(this, item.getItemId(), Toast.LENGTH_SHORT).show();
