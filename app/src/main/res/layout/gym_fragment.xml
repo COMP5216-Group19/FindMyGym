@@ -31,19 +31,43 @@
             android:layout_height="wrap_content"
             android:text="Gym A"
             android:textSize="32sp"
+            android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                android:id="@+id/gym_info_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="10dp"
+                android:text="@string/gym_info"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toTopOf="@id/gym_info_label"
+                app:layout_constraintRight_toRightOf="parent" />
+
+            <View
+                android:id="@+id/gym_info_divider"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
             android:columnCount="3"
             android:orientation="horizontal"
             android:useDefaultMargins="true">
@@ -87,9 +111,10 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/round_fill_color"
                     android:minWidth="72dp"
+                    android:padding="5sp"
                     android:text="Gym A"
                     android:textAlignment="center"
-                    android:textColor="#000000"
+                    android:textColor="@color/black"
                     android:textSize="18sp" />
 
             </LinearLayout>
@@ -105,9 +130,10 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/round_fill_color"
                     android:minWidth="72dp"
+                    android:padding="5sp"
                     android:text="9AM-6PM"
                     android:textAlignment="center"
-                    android:textColor="#000000"
+                    android:textColor="@color/black"
                     android:textSize="18sp" />
 
             </LinearLayout>
@@ -123,67 +149,143 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/round_fill_color"
                     android:minWidth="80dp"
+                    android:padding="5sp"
                     android:text="5.0"
                     android:textAlignment="center"
-                    android:textColor="#000000"
+                    android:textColor="@color/black"
                     android:textSize="18sp" />
 
             </LinearLayout>
 
             <TextView
-                android:layout_marginTop="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
                 android:text="@string/gym_address"
                 android:textAlignment="center"
                 android:textSize="18sp" />
 
             <TextView
-                android:layout_marginTop="20dp"
                 android:id="@+id/gym_address"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="fill_horizontal"
-                android:textAlignment="center"
                 android:layout_columnSpan="2"
+                android:layout_gravity="fill_horizontal"
+                android:layout_marginTop="20dp"
+                android:padding="5sp"
                 android:background="@drawable/round_fill_color"
                 android:minWidth="80dp"
-                android:text="blah Ave. blah Unit"
-                android:textColor="#000000"
+                android:text="blah Ave. blah Units"
+                android:textAlignment="center"
+                android:textColor="@color/black"
                 android:textSize="18sp" />
 
             <TextView
-                android:layout_marginTop="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:padding="5sp"
                 android:text="@string/gym_contact"
                 android:textAlignment="center"
                 android:textSize="18sp" />
 
             <TextView
-                android:layout_marginTop="10dp"
                 android:id="@+id/gym_contact"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="fill_horizontal"
-                android:textAlignment="center"
                 android:layout_columnSpan="2"
+                android:layout_gravity="fill_horizontal"
+                android:layout_marginTop="10dp"
+                android:padding="5sp"
                 android:background="@drawable/round_fill_color"
                 android:minWidth="72dp"
                 android:text="123456789"
-                android:textColor="#000000"
+                android:textAlignment="center"
+                android:textColor="@color/black"
                 android:textSize="18sp" />
         </GridLayout>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                android:id="@+id/gym_equipments_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="10dp"
+                android:text="@string/gym_equipments"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toTopOf="@id/gym_equipments_label"
+                app:layout_constraintRight_toRightOf="parent" />
+
+            <View
+                android:id="@+id/gym_equip_divider"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/gym_equip_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:layout_margin="15dp"
+            android:background="@drawable/round_fill_color">
+
+            <androidx.constraintlayout.helper.widget.Flow
+                android:id="@+id/gym_equip_container_flow"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:flow_wrapMode="chain"
+                app:flow_maxElementsWrap="3"
+                app:constraint_referenced_ids="chip1"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip1"
+                android:text="@string/gym_equip_climbing"
+                android:textSize="18sp"
+                app:chipBackgroundColor="#FF0000"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                android:id="@+id/gym_personal_tr_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="10dp"
+                android:text="@string/gym_personal_trainers"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toTopOf="@id/gym_personal_tr_divider"
+                app:layout_constraintRight_toRightOf="parent" />
+
+            <View
+                android:id="@+id/gym_personal_tr_divider"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </LinearLayout>
-
-    <View
-        android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="?android:attr/listDivider" />
-
 
 </LinearLayout>

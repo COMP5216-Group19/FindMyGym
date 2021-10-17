@@ -31,17 +31,19 @@
     <string name="action_gym">Gym</string>
     
     <!--    Gym activity-->
-    <string name="gym_info">Gym Info</string>
+    <string name="gym_info"><b>Gym Info</b></string>
     <string name="gym_name">Name</string>
     <string name="gym_open_hrs">Open Hrs.</string>
     <string name="gym_avg_rate">Avg Rate</string>
     <string name="gym_address">Address</string>
     <string name="gym_contact">Contact</string>
 
-    <string name="gym_equipments">Equipments</string>
+    <string name="gym_equipments"><b>Equipments</b></string>
     <string name="gym_equip_climbing">Climbing</string>
     <string name="gym_equip_dumbbell">Dumbbell</string>
     <string name="gym_equip_rowing">Rowing</string>
     <string name="gym_equip_swimming">Swimming</string>
     <string name="gym_equip_treadmill">Treadmill</string>
+
+    <string name="gym_personal_trainers"><b>Personal Trainers</b></string>
 </resources>
