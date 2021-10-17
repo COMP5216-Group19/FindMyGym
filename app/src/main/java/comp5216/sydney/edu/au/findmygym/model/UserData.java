@@ -44,10 +44,14 @@ public class UserData extends LiveData<UserData>
 	/**
 	 * DCL
 	 */
-	public static UserData getInstance() {
-		if (UserData == null) {
-			synchronized (UserData.class) {
-				if (UserData == null) {
+	public static UserData getInstance()
+	{
+		if (UserData == null)
+		{
+			synchronized (UserData.class)
+			{
+				if (UserData == null)
+				{
 					UserData = new UserData();
 				}
 			}
@@ -68,9 +72,12 @@ public class UserData extends LiveData<UserData>
 	
 	public String getUserName()
 	{
-		if(userName!=null){
+		if (userName != null)
+		{
 			return userName;
-		}else {
+		}
+		else
+		{
 			return firebaseUser.getDisplayName();
 		}
 	}
@@ -83,9 +90,12 @@ public class UserData extends LiveData<UserData>
 	
 	public String getUserMail()
 	{
-		if(userMail!=null){
+		if (userMail != null)
+		{
 			return userMail;
-		}else {
+		}
+		else
+		{
 			return firebaseUser.getEmail();
 		}
 	}
@@ -98,9 +108,12 @@ public class UserData extends LiveData<UserData>
 	
 	public Bitmap getUserAvatar()
 	{
-		if(userAvatar!=null){
+		if (userAvatar != null)
+		{
 			return this.userAvatar;
-		}else{
+		}
+		else
+		{
 			userAvatar = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.diana);
 			return userAvatar;
 		}
@@ -140,15 +153,28 @@ public class UserData extends LiveData<UserData>
 	}
 	
 	@Override
-	protected void onActive() {
+	protected void onActive()
+	{
 		// 具有活跃的观察者时调用
 		Log.d(TAG, "Get an observer!");
 	}
 	
 	@Override
-	protected void onInactive() {
+	protected void onInactive()
+	{
 		// 没有任何活跃的观察者时调用
 		Log.d(TAG, "Get no observer!");
+	}
+	
+	public void logout()
+	{
+		firebaseUser = null;
+		userName = null;
+		userMail = null;
+		userAvatar = null;
+		userSession = null;
+		userStorageRef = null;
+		mContext = null;
 	}
 	
 }
