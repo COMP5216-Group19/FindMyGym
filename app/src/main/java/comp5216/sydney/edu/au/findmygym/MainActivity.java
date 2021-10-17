@@ -214,7 +214,13 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback
 	public void onAvatarClicked(View view)
 	{
 		userData.setUserName("YBB!");
-
+	}
+	
+	public void onLogoutClicked(MenuItem item)
+	{
+		userData.logout();
+		Intent intent = new Intent(mContext, LoginActivity.class);
+		startActivity(intent);
 	}
 	
 	
