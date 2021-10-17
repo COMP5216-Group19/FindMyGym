@@ -30,8 +30,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Gym A"
-            android:textSize="32sp"
             android:textColor="@color/black"
+            android:textSize="32sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -63,149 +63,152 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <GridLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:columnCount="3"
-            android:orientation="horizontal"
-            android:useDefaultMargins="true">
+            android:layout_marginTop="10dp">
 
             <TextView
                 android:id="@+id/gym_name_label"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_columnWeight="0.33"
                 android:text="@string/gym_name"
                 android:textAlignment="center"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                app:layout_constraintHorizontal_chainStyle="spread"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/gym_open_hrs_label"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/gym_open_hrs_label"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_columnWeight="0.34"
                 android:text="@string/gym_open_hrs"
                 android:textAlignment="center"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                app:layout_constraintLeft_toRightOf="@+id/gym_name_label"
+                app:layout_constraintRight_toLeftOf="@+id/gym_avg_rate_label"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/gym_rating_label"
+                android:id="@+id/gym_avg_rate_label"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_columnWeight="0.33"
                 android:text="@string/gym_avg_rate"
                 android:textAlignment="center"
-                android:textSize="18sp" />
-
-            <LinearLayout
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/gym_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/round_fill_color"
-                    android:minWidth="72dp"
-                    android:padding="5sp"
-                    android:text="Gym A"
-                    android:textAlignment="center"
-                    android:textColor="@color/black"
-                    android:textSize="18sp" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:gravity="center">
-
-                <TextView
-                    android:id="@+id/gym_open_hrs"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/round_fill_color"
-                    android:minWidth="72dp"
-                    android:padding="5sp"
-                    android:text="9AM-6PM"
-                    android:textAlignment="center"
-                    android:textColor="@color/black"
-                    android:textSize="18sp" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:gravity="center">
-
-                <TextView
-                    android:id="@+id/gym_avg_rate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/round_fill_color"
-                    android:minWidth="80dp"
-                    android:padding="5sp"
-                    android:text="5.0"
-                    android:textAlignment="center"
-                    android:textColor="@color/black"
-                    android:textSize="18sp" />
-
-            </LinearLayout>
+                android:textSize="18sp"
+                app:layout_constraintLeft_toRightOf="@+id/gym_open_hrs_label"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+                android:id="@+id/gym_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/round_fill_color"
+                android:minWidth="72dp"
+                android:padding="5sp"
+                android:text="Gym A"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintLeft_toLeftOf="@+id/gym_name_label"
+                app:layout_constraintRight_toRightOf="@+id/gym_name_label"
+                app:layout_constraintTop_toBottomOf="@+id/gym_name_label" />
+
+            <TextView
+                android:id="@+id/gym_avg_rate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/round_fill_color"
+                android:minWidth="72dp"
+                android:padding="5sp"
+                android:text="5.0"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintLeft_toLeftOf="@+id/gym_avg_rate_label"
+                app:layout_constraintRight_toRightOf="@+id/gym_avg_rate_label"
+                app:layout_constraintTop_toBottomOf="@+id/gym_avg_rate_label" />
+
+            <TextView
+                android:id="@+id/gym_open_hrs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/round_fill_color"
+                android:minWidth="72dp"
+                android:padding="5sp"
+                android:text="9AM-6PM"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintLeft_toLeftOf="@+id/gym_open_hrs_label"
+                app:layout_constraintRight_toRightOf="@+id/gym_open_hrs_label"
+                app:layout_constraintTop_toBottomOf="@+id/gym_open_hrs_label" />
+
+            <TextView
+                android:id="@+id/gym_address_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:padding="5sp"
                 android:text="@string/gym_address"
                 android:textAlignment="center"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                app:layout_constraintLeft_toLeftOf="@+id/gym_name"
+                app:layout_constraintRight_toRightOf="@+id/gym_name"
+                app:layout_constraintTop_toBottomOf="@+id/gym_name" />
 
             <TextView
                 android:id="@+id/gym_address"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_columnSpan="2"
-                android:layout_gravity="fill_horizontal"
-                android:layout_marginTop="20dp"
-                android:padding="5sp"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/round_fill_color"
-                android:minWidth="80dp"
-                android:text="blah Ave. blah Units"
+                android:minWidth="72dp"
+                android:padding="5sp"
+                android:text="Blah Ave. Blah Unit"
                 android:textAlignment="center"
                 android:textColor="@color/black"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                app:layout_constraintLeft_toLeftOf="@+id/gym_open_hrs"
+                app:layout_constraintRight_toRightOf="@+id/gym_avg_rate"
+                app:layout_constraintTop_toBottomOf="@+id/gym_open_hrs" />
 
             <TextView
+                android:id="@+id/gym_contact_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="10dp"
                 android:padding="5sp"
                 android:text="@string/gym_contact"
                 android:textAlignment="center"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                app:layout_constraintLeft_toLeftOf="@+id/gym_address_label"
+                app:layout_constraintRight_toRightOf="@+id/gym_address_label"
+                app:layout_constraintTop_toBottomOf="@+id/gym_address_label" />
 
             <TextView
                 android:id="@+id/gym_contact"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_columnSpan="2"
-                android:layout_gravity="fill_horizontal"
                 android:layout_marginTop="10dp"
-                android:padding="5sp"
                 android:background="@drawable/round_fill_color"
                 android:minWidth="72dp"
+                android:padding="5sp"
                 android:text="123456789"
                 android:textAlignment="center"
                 android:textColor="@color/black"
-                android:textSize="18sp" />
-        </GridLayout>
+                android:textSize="18sp"
+                app:layout_constraintLeft_toLeftOf="@+id/gym_address"
+                app:layout_constraintRight_toRightOf="@+id/gym_address"
+                app:layout_constraintTop_toBottomOf="@+id/gym_address" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -237,26 +240,26 @@
             android:id="@+id/gym_equip_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="48dp"
             android:layout_margin="15dp"
-            android:background="@drawable/round_fill_color">
+            android:background="@drawable/round_fill_color"
+            android:minHeight="48dp">
 
             <androidx.constraintlayout.helper.widget.Flow
                 android:id="@+id/gym_equip_container_flow"
-                app:layout_constraintTop_toTopOf="parent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:flow_wrapMode="chain"
+                app:constraint_referenced_ids="chip1"
                 app:flow_maxElementsWrap="3"
-                app:constraint_referenced_ids="chip1"/>
+                app:flow_wrapMode="chain"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="@string/gym_equip_climbing"
                 android:textSize="18sp"
-                app:chipBackgroundColor="#FF0000"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                app:chipBackgroundColor="#FF0000" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
