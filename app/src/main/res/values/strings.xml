@@ -29,4 +29,19 @@
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
     <string name="action_gym">Gym</string>
+    
+    <!--    Gym activity-->
+    <string name="gym_info">Gym Info</string>
+    <string name="gym_name">Name</string>
+    <string name="gym_open_hrs">Open Hrs.</string>
+    <string name="gym_avg_rate">Avg Rate</string>
+    <string name="gym_address">Address</string>
+    <string name="gym_contact">Contact</string>
+
+    <string name="gym_equipments">Equipments</string>
+    <string name="gym_equip_climbing">Climbing</string>
+    <string name="gym_equip_dumbbell">Dumbbell</string>
+    <string name="gym_equip_rowing">Rowing</string>
+    <string name="gym_equip_swimming">Swimming</string>
+    <string name="gym_equip_treadmill">Treadmill</string>
 </resources>
