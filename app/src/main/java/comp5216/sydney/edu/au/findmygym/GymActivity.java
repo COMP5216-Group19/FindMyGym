@@ -45,8 +45,6 @@ public class GymActivity extends AppCompatActivity {
                     .replace(R.id.gym_container, GymFragment.newInstance())
                     .commitNow();
         }
-
-
     }
 
     @Override

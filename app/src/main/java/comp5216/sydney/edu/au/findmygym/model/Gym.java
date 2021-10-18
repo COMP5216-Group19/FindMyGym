@@ -1,11 +1,13 @@
 package comp5216.sydney.edu.au.findmygym.model;
 
+import android.graphics.Bitmap;
+
 import java.util.List;
 
 /**
  * Class that represents a gym, passing data from map activity to gym activity.
  */
-public class GymInfo {
+public class Gym {
 
     /**
      * Name of this gym
@@ -15,7 +17,7 @@ public class GymInfo {
     /**
      * List of personal trainers
      */
-    private List<PersonalTrainerInfo> personalTrainers;
+    private List<PersonalTrainer> personalTrainers;
 
     /**
      * The following two attributes represents the opening hours
@@ -32,15 +34,16 @@ public class GymInfo {
     private String contact;
 
     private List<String> equipments;
+    private Bitmap gymPhoto;
 
-    public GymInfo(String gymName,
-                   List<PersonalTrainerInfo> personalTrainers,
-                   String openTime,
-                   String closeTime,
-                   double avgRating,
-                   String address,
-                   String contact,
-                   List<String> equipments) {
+    public Gym(String gymName,
+               List<PersonalTrainer> personalTrainers,
+               String openTime,
+               String closeTime,
+               double avgRating,
+               String address,
+               String contact,
+               List<String> equipments) {
         this.gymName = gymName;
         this.personalTrainers = personalTrainers;
         this.openTime = openTime;
@@ -49,6 +52,22 @@ public class GymInfo {
         this.address = address;
         this.contact = contact;
         this.equipments = equipments;
+    }
+
+    /**
+     * Sets the picture of this gym.
+     *
+     * @param gymPhoto the image bitmap
+     */
+    public void setGymPhoto(Bitmap gymPhoto) {
+        this.gymPhoto = gymPhoto;
+    }
+
+    /**
+     * @return the picture of this gym
+     */
+    public Bitmap getGymPhoto() {
+        return gymPhoto;
     }
 
     /**
@@ -61,7 +80,7 @@ public class GymInfo {
     /**
      * @return a list of current available personal trainers
      */
-    public List<PersonalTrainerInfo> getPersonalTrainers() {
+    public List<PersonalTrainer> getPersonalTrainers() {
         return personalTrainers;
     }
 

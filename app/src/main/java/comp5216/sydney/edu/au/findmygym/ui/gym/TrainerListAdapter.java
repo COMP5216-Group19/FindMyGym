@@ -16,14 +16,14 @@ import java.util.Calendar;
 import java.util.List;
 
 import comp5216.sydney.edu.au.findmygym.R;
-import comp5216.sydney.edu.au.findmygym.model.PersonalTrainerInfo;
+import comp5216.sydney.edu.au.findmygym.model.PersonalTrainer;
 import comp5216.sydney.edu.au.findmygym.model.TimeSlot;
 
 public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.ViewHolder> {
 
-    private final List<PersonalTrainerInfo> trainersList;
+    private final List<PersonalTrainer> trainersList;
 
-    TrainerListAdapter(List<PersonalTrainerInfo> trainersList) {
+    TrainerListAdapter(List<PersonalTrainer> trainersList) {
         this.trainersList = trainersList;
     }
 
@@ -37,7 +37,7 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        PersonalTrainerInfo trainer = trainersList.get(position);
+        PersonalTrainer trainer = trainersList.get(position);
         holder.trainerNameText.setText(trainer.getName());
         Context context = holder.itemView.getContext();
         for (TimeSlot timeSlot : trainer.getAvailableTimes()) {
