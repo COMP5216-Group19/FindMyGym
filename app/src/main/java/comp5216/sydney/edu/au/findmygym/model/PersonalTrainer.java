@@ -2,7 +2,7 @@ package comp5216.sydney.edu.au.findmygym.model;
 
 import java.util.List;
 
-public class PersonalTrainerInfo {
+public class PersonalTrainer {
 
     /**
      * Name of this trainer
@@ -14,7 +14,7 @@ public class PersonalTrainerInfo {
      */
     private final List<TimeSlot> availableTimes;
 
-    public PersonalTrainerInfo(String name, List<TimeSlot> availableTimes) {
+    public PersonalTrainer(String name, List<TimeSlot> availableTimes) {
         this.name = name;
         this.availableTimes = availableTimes;
     }

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.helper.widget.Flow;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -15,9 +16,12 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.chip.ChipGroup;
+
 import org.json.JSONObject;
 
 import comp5216.sydney.edu.au.findmygym.ui.gym.GymFragment;
+import comp5216.sydney.edu.au.findmygym.ui.gym.GymViewModel;
 
 public class GymActivity extends AppCompatActivity {
 
@@ -26,29 +30,13 @@ public class GymActivity extends AppCompatActivity {
     private JSONObject json;
     public boolean isFavourite;
 
-    TextView gymNameBig, gymNameSmall;
-    TextView gymOpenHrs;
-    TextView gymAvgRating;
-    TextView gymAddress;
-    TextView gymContact;
-
-    ConstraintLayout equipmentsContainer;
-    Flow equipmentsFlow;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gym_activity);
         mContext = GymActivity.this;
 
-        gymNameBig = findViewById(R.id.gym_name_big);
-        gymNameSmall = findViewById(R.id.gym_name);
-        gymOpenHrs = findViewById(R.id.gym_open_hrs);
-        gymAvgRating = findViewById(R.id.gym_avg_rate);
-        gymAddress = findViewById(R.id.gym_address);
-        gymContact = findViewById(R.id.gym_contact);
-        equipmentsContainer = findViewById(R.id.gym_equip_container);
-        equipmentsFlow = findViewById(R.id.gym_equip_container_flow);
+        GymViewModel mViewModel = new ViewModelProvider(this).get(GymViewModel.class);
 
         isFavourite = false;//Check the received json.
 
@@ -57,8 +45,6 @@ public class GymActivity extends AppCompatActivity {
                     .replace(R.id.gym_container, GymFragment.newInstance())
                     .commitNow();
         }
-
-
     }
 
     @Override

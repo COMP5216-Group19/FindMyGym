@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <!--    <TextView-->
+    <!--        android:id="@+id/gym_name_big"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:text="Gym A"-->
+    <!--        android:textColor="@color/black"-->
+    <!--        android:textSize="28sp"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:layout_constraintTop_toTopOf="parent" />-->
+
+    <ImageView
+        android:id="@+id/gym_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="#777777"
+        android:scaleType="centerCrop"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/gym_name_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="@string/gym_name"
+        android:textAlignment="center"
+        android:textSize="14sp"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/gym_open_hrs_label"
+        app:layout_constraintTop_toBottomOf="@+id/gym_image_view" />
+
+    <TextView
+        android:id="@+id/gym_open_hrs_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/gym_open_hrs"
+        android:textAlignment="center"
+        android:textSize="14sp"
+        app:layout_constraintLeft_toRightOf="@+id/gym_name_label"
+        app:layout_constraintRight_toLeftOf="@+id/gym_avg_rate_label"
+        app:layout_constraintTop_toTopOf="@+id/gym_name_label" />
+
+    <TextView
+        android:id="@+id/gym_avg_rate_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/gym_avg_rate"
+        android:textAlignment="center"
+        android:textSize="14sp"
+        app:layout_constraintLeft_toRightOf="@+id/gym_open_hrs_label"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/gym_name_label" />
+
+    <TextView
+        android:id="@+id/gym_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/round_fill_color"
+        android:minWidth="72dp"
+        android:padding="5sp"
+        android:text="Gym A"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintLeft_toLeftOf="@+id/gym_name_label"
+        app:layout_constraintRight_toRightOf="@+id/gym_name_label"
+        app:layout_constraintTop_toBottomOf="@+id/gym_name_label" />
+
+    <TextView
+        android:id="@+id/gym_open_hrs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/round_fill_color"
+        android:minWidth="72dp"
+        android:padding="5sp"
+        android:text="9AM-6PM"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintLeft_toLeftOf="@+id/gym_open_hrs_label"
+        app:layout_constraintRight_toRightOf="@+id/gym_open_hrs_label"
+        app:layout_constraintTop_toTopOf="@+id/gym_name" />
+
+    <TextView
+        android:id="@+id/gym_avg_rate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/round_fill_color"
+        android:minWidth="72dp"
+        android:padding="5sp"
+        android:text="5.0"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintLeft_toLeftOf="@+id/gym_avg_rate_label"
+        app:layout_constraintRight_toRightOf="@+id/gym_avg_rate_label"
+        app:layout_constraintTop_toTopOf="@+id/gym_name" />
+
+    <TextView
+        android:id="@+id/gym_address_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:padding="5sp"
+        android:text="@string/gym_address"
+        android:textAlignment="center"
+        android:textSize="14sp"
+        app:layout_constraintLeft_toLeftOf="@+id/gym_name"
+        app:layout_constraintRight_toRightOf="@+id/gym_name"
+        app:layout_constraintTop_toBottomOf="@+id/gym_name" />
+
+    <TextView
+        android:id="@+id/gym_address"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/round_fill_color"
+        android:minWidth="72dp"
+        android:padding="5sp"
+        android:text="Blah Ave. Blah Unit"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintLeft_toLeftOf="@+id/gym_open_hrs"
+        app:layout_constraintRight_toRightOf="@+id/gym_avg_rate"
+        app:layout_constraintTop_toTopOf="@id/gym_address_label"
+        app:layout_constraintBottom_toBottomOf="@id/gym_address_label"/>
+
+    <TextView
+        android:id="@+id/gym_contact_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:padding="5sp"
+        android:text="@string/gym_contact"
+        android:textAlignment="center"
+        android:textSize="14sp"
+        app:layout_constraintLeft_toLeftOf="@+id/gym_address_label"
+        app:layout_constraintRight_toRightOf="@+id/gym_address_label"
+        app:layout_constraintTop_toBottomOf="@+id/gym_address_label" />
+
+    <TextView
+        android:id="@+id/gym_contact"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/round_fill_color"
+        android:minWidth="72dp"
+        android:padding="5sp"
+        android:text="123456789"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintLeft_toLeftOf="@+id/gym_address"
+        app:layout_constraintRight_toRightOf="@+id/gym_address"
+        app:layout_constraintTop_toTopOf="@id/gym_contact_label"
+        app:layout_constraintBottom_toBottomOf="@id/gym_contact_label" />
+
+    <TextView
+        android:id="@+id/gym_equipments_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="15dp"
+        android:text="@string/gym_equipments"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gym_contact_label" />
+
+    <View
+        android:id="@+id/gym_equip_divider"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="10dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintTop_toBottomOf="@id/gym_equipments_label" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/gym_equipments_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:background="@drawable/round_fill_color_lighter"
+        app:layout_constraintTop_toBottomOf="@id/gym_equip_divider">
+
+        <com.google.android.material.chip.Chip
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/gym_equip_dumbbell"
+            android:textSize="14sp"
+            app:chipBackgroundColor="#0077FF" />
+
+    </com.google.android.material.chip.ChipGroup>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
