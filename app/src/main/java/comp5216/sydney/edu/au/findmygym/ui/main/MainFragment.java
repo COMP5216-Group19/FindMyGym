@@ -15,7 +15,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import comp5216.sydney.edu.au.findmygym.LoginActivity;
+import comp5216.sydney.edu.au.findmygym.MainActivity;
 import comp5216.sydney.edu.au.findmygym.R;
+import comp5216.sydney.edu.au.findmygym.model.UserData;
 
 public class MainFragment extends Fragment
 {
@@ -23,6 +26,7 @@ public class MainFragment extends Fragment
 	
 	private MainViewModel mViewModel;
 	TextView textView_Message;
+	MainActivity mActivity;
 	public static MainFragment newInstance()
 	{
 		return new MainFragment();
@@ -72,5 +76,7 @@ public class MainFragment extends Fragment
 			}
 		});
 		mViewModel.startTiming();
+		
+
 	}
 }

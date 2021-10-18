@@ -4,9 +4,11 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.3671875" />
+        <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/drawable/ic_apa_icon_googleSignIn_background.xml" value="0.18541666666666667" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/drawable/ic_apa_icon_p_background.xml" value="0.3671875" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/drawable/ic_findmygym_icon_p.xml" value="0.3671875" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/drawable/ic_launcher_background.xml" value="0.3671875" />
+        <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/drawable/ic_sign_in_with_google_button.xml" value="0.18541666666666667" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/activity_base.xml" value="0.17604166666666668" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/activity_map.xml" value="0.35104166666666664" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/activity_maps.xml" value="0.35104166666666664" />
@@ -14,6 +16,7 @@
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/content_map.xml" value="0.35104166666666664" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/fragment_gallery.xml" value="0.33697916666666666" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/fragment_home.xml" value="0.33697916666666666" />
+        <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/fragment_map.xml" value="0.33697916666666666" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/fragment_profile.xml" value="0.33697916666666666" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/fragment_schedule.xml" value="0.17604166666666668" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/fragment_slideshow.xml" value="0.17604166666666668" />
@@ -31,6 +34,7 @@
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/menu/main.xml" value="0.33697916666666666" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/menu/map.xml" value="0.33697916666666666" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/menu/standard.xml" value="0.33697916666666666" />
+        <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/mipmap-anydpi-v26/ic_apa_icon_googleSignIn.xml" value="0.3390625" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/mipmap-anydpi-v26/ic_apa_icon_p.xml" value="0.3671875" />
       </map>
     </option>
