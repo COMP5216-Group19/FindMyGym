@@ -1,5 +1,6 @@
 package comp5216.sydney.edu.au.findmygym.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PersonalTrainer {
@@ -17,6 +18,19 @@ public class PersonalTrainer {
     public PersonalTrainer(String name, List<TimeSlot> availableTimes) {
         this.name = name;
         this.availableTimes = availableTimes;
+    }
+
+    public PersonalTrainer(String name) {
+        this(name, new ArrayList<>());
+    }
+
+    /**
+     * Adds a timeslot to the list.
+     *
+     * @param timeSlot the object to be added
+     */
+    public void addTimeSlot(TimeSlot timeSlot) {
+        availableTimes.add(timeSlot);
     }
 
     /**

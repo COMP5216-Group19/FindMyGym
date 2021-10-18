@@ -2,6 +2,7 @@ package comp5216.sydney.edu.au.findmygym.model;
 
 import android.graphics.Bitmap;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -52,6 +53,44 @@ public class Gym {
         this.address = address;
         this.contact = contact;
         this.equipments = equipments;
+    }
+
+    public Gym(String gymName,
+               String openTime,
+               String closeTime,
+               double avgRating,
+               String address,
+               String contact) {
+        this(gymName,
+                new ArrayList<>(),
+                openTime,
+                closeTime,
+                avgRating,
+                address,
+                contact,
+                new ArrayList<>());
+    }
+
+    /**
+     * Adds a personal trainer to the list.
+     * <p>
+     * Utility method
+     *
+     * @param trainer the trainer to be added
+     */
+    public void addTrainer(PersonalTrainer trainer) {
+        personalTrainers.add(trainer);
+    }
+
+    /**
+     * Adds a equipment to the list.
+     * <p>
+     * Utility method
+     *
+     * @param equipment the equipment to be added
+     */
+    public void addEquipment(String equipment) {
+        equipments.add(equipment);
     }
 
     /**

@@ -9,11 +9,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
 
 import comp5216.sydney.edu.au.findmygym.R;
 
 public class GymRsvFragment extends Fragment {
 
+    TrainerListAdapter trainerListAdapter;
     private GymViewModel mViewModel;
     @Nullable
     @Override
@@ -26,5 +28,9 @@ public class GymRsvFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        RecyclerView recyclerView = view.findViewById(R.id.gym_trainer_recycler);
+        trainerListAdapter = new TrainerListAdapter(mViewModel.getGym().getPersonalTrainers());
+        recyclerView.setAdapter(trainerListAdapter);
     }
 }

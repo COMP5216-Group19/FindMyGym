@@ -1,5 +1,7 @@
 package comp5216.sydney.edu.au.findmygym.ui.gym;
 
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,24 +11,32 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
 import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.databinding.GymFragmentBinding;
+import comp5216.sydney.edu.au.findmygym.model.Gym;
 
 public class GymInfoFragment extends Fragment {
 
-    TextView gymNameSmall;
-    TextView gymOpenHrs;
-    TextView gymAvgRating;
-    TextView gymAddress;
-    TextView gymContact;
-    ChipGroup equipmentsContainer;
+    private static final int[] EQUIPMENTS_COLORS = {
+            0x0077ff, 0xff7777, 0x33ccff, 0xeeaa33
+    };
+
+    private TextView gymNameSmall;
+    private TextView gymOpenHrs;
+    private TextView gymAvgRating;
+    private TextView gymAddress;
+    private TextView gymContact;
+    private ChipGroup equipmentsContainer;
 
     private GymViewModel mViewModel;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -48,6 +58,34 @@ public class GymInfoFragment extends Fragment {
         gymAddress = view.findViewById(R.id.gym_address);
         gymContact = view.findViewById(R.id.gym_contact);
         equipmentsContainer = view.findViewById(R.id.gym_equipments_group);
+
+        Gym gym = mViewModel.getGym();
+
+        gymNameSmall.setText(gym.getGymName());
+        gymOpenHrs.setText(
+                getString(R.string.gym_time_format, gym.getOpenTime(), gym.getCloseTime()));
+        gymAvgRating.setText(getString(R.string.gym_rate_format, gym.getAvgRating()));
+        gymAddress.setText(gym.getAddress());
+        gymContact.setText(gym.getContact());
+
+        int[] chipColorIds = new int[]{
+                R.color.light_orange,
+                R.color.teal_700,
+                R.color.pink_red,
+                R.color.light_green
+        };
+        equipmentsContainer.removeAllViews();
+
+        for (String equip : gym.getEquipments()) {
+            Chip chip = new Chip(view.getContext());
+            int colorId = chipColorIds[(int) (Math.random() * chipColorIds.length)];
+            chip.setChipBackgroundColor(
+                    ColorStateList.valueOf(ContextCompat.getColor(view.getContext(), colorId)));
+            chip.setTextColor(Color.WHITE);
+            chip.setText(equip);
+
+            equipmentsContainer.addView(chip);
+        }
 
         ImageView imageView = view.findViewById(R.id.gym_image_view);
         imageView.setImageResource(R.drawable.fitness_gym_example_1484x983);
