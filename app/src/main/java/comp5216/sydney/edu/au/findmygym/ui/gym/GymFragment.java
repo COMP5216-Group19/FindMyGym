@@ -10,6 +10,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewbinding.ViewBinding;
 
 import android.util.Log;
@@ -20,6 +21,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.material.chip.ChipGroup;
+
 import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.databinding.GymActivityBinding;
 import comp5216.sydney.edu.au.findmygym.databinding.GymFragmentBinding;
@@ -28,6 +31,13 @@ import comp5216.sydney.edu.au.findmygym.ui.main.MainViewModel;
 public class GymFragment extends Fragment
 {
 	private final String TAG = "[GymFragment]";
+
+	TextView gymNameBig, gymNameSmall;
+	TextView gymOpenHrs;
+	TextView gymAvgRating;
+	TextView gymAddress;
+	TextView gymContact;
+	ChipGroup equipmentsContainer;
 	
 	private GymViewModel mViewModel;
 	private String gym_name;
@@ -43,16 +53,28 @@ public class GymFragment extends Fragment
 	                         @Nullable Bundle savedInstanceState)
 	{
 		binding = GymFragmentBinding.inflate(inflater, container, false);
-		return inflater.inflate(R.layout.gym_fragment, container, false);
+
+		mViewModel = new ViewModelProvider(requireActivity()).get(GymViewModel.class);
+		View view = inflater.inflate(R.layout.gym_fragment, container, false);
+
+		gymNameBig = view.findViewById(R.id.gym_name_big);
+		gymNameSmall = view.findViewById(R.id.gym_name);
+		gymOpenHrs = view.findViewById(R.id.gym_open_hrs);
+		gymAvgRating = view.findViewById(R.id.gym_avg_rate);
+		gymAddress = view.findViewById(R.id.gym_address);
+		gymContact = view.findViewById(R.id.gym_contact);
+		equipmentsContainer = view.findViewById(R.id.gym_equipments_group);
+
+		return view;
 	}
 	
-	@Override
-	public void onActivityCreated(@Nullable Bundle savedInstanceState)
-	{
-		super.onActivityCreated(savedInstanceState);
-		mViewModel = new ViewModelProvider(this).get(GymViewModel.class);
-		// TODO: Use the ViewModel
-	}
+//	@Override
+//	public void onActivityCreated(@Nullable Bundle savedInstanceState)
+//	{
+//		super.onActivityCreated(savedInstanceState);
+//		mViewModel = new ViewModelProvider(this).get(GymViewModel.class);
+//		// TODO: Use the ViewModel
+//	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

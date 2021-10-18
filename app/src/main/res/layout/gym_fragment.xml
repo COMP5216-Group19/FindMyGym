@@ -236,32 +236,21 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/gym_equip_container"
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/gym_equipments_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
-            android:background="@drawable/round_fill_color"
-            android:minHeight="48dp">
-
-            <androidx.constraintlayout.helper.widget.Flow
-                android:id="@+id/gym_equip_container_flow"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:constraint_referenced_ids="chip1"
-                app:flow_maxElementsWrap="3"
-                app:flow_wrapMode="chain"
-                app:layout_constraintTop_toTopOf="parent" />
+            android:background="@drawable/round_fill_color_lighter">
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chip1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/gym_equip_climbing"
+                android:text="@string/gym_equip_dumbbell"
                 android:textSize="18sp"
-                app:chipBackgroundColor="#FF0000" />
+                app:chipBackgroundColor="#0077FF" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.chip.ChipGroup>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -288,6 +277,12 @@
                 app:layout_constraintBottom_toBottomOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/gym_trainer_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp" />
 
     </LinearLayout>
 
