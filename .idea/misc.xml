@@ -12,16 +12,23 @@
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/activity_base.xml" value="0.17604166666666668" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/activity_map.xml" value="0.35104166666666664" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/activity_maps.xml" value="0.35104166666666664" />
+        <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/app_bar_main.xml" value="0.33697916666666666" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/app_bar_map.xml" value="0.33697916666666666" />
+        <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/content_main.xml" value="0.33697916666666666" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/content_map.xml" value="0.35104166666666664" />
+        <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/content_wallet.xml" value="0.33697916666666666" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/fragment_gallery.xml" value="0.33697916666666666" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/fragment_home.xml" value="0.33697916666666666" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/fragment_map.xml" value="0.33697916666666666" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/fragment_profile.xml" value="0.33697916666666666" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/fragment_schedule.xml" value="0.17604166666666668" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/fragment_slideshow.xml" value="0.17604166666666668" />
+        <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/fragment_wallet.xml" value="0.33697916666666666" />
+        <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/fragment_wallet_history.xml" value="0.33697916666666666" />
+        <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/fragment_wallet_membership.xml" value="0.33697916666666666" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/gym_activity.xml" value="0.17604166666666668" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/gym_fragment.xml" value="0.17604166666666668" />
+        <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/item_history.xml" value="0.33697916666666666" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/login_activity.xml" value="0.35104166666666664" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/login_fragment.xml" value="0.35104166666666664" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/main_activity.xml" value="0.20416666666666666" />
@@ -29,6 +36,8 @@
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/nav_header_main.xml" value="0.33697916666666666" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/nav_header_map.xml" value="0.33697916666666666" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/settings_activity.xml" value="0.33697916666666666" />
+        <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/wallet_history_tab.xml" value="0.33697916666666666" />
+        <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/layout/wallet_membership_tab.xml" value="0.33697916666666666" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/menu/activity_main_drawer.xml" value="0.33697916666666666" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/menu/gym.xml" value="0.5" />
         <entry key="..\:/OneDrive/EDU/COMP5216/FindMyGym/app/src/main/res/menu/main.xml" value="0.33697916666666666" />
