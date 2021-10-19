@@ -19,12 +19,14 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 import com.squareup.picasso.Picasso;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -59,9 +61,15 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback
 		setContentView(binding.getRoot());
 		
 		//YOU need to use API key to init the google map
-		// SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-		// 		.findFragmentById(R.id.map);
-		// mapFragment.getMapAsync(this);
+//		 SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+//		 		.findFragmentById(R.id.map);
+//		assert mapFragment != null;
+//		mapFragment.getMapAsync(this);
+		SupportMapFragment mapFragment = (SupportMapFragment)getSupportFragmentManager().
+				findFragmentById(R.id.map);
+		mapFragment.getMapAsync(this);
+
+
 		
 		
 		setSupportActionBar(binding.appBarMain.toolbar);
@@ -124,7 +132,16 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback
 		
 		
 	}
-	
+//	private void setUpMapIfNeeded() {
+//		if(mMap == null) {
+//			SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().
+//					findFragmentById(R.id.map);
+//			mapFragment.getMapAsync(this);
+//		}
+//
+//	}
+
+
 	//TEST
 	@Override
 	protected void onResume()
@@ -193,10 +210,12 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback
 		mMap = googleMap;
 		
 		// Add a marker in Sydney and move the camera
-		LatLng sydney = new LatLng(-34, 151);
+		LatLng sydney = new LatLng(-33.8692, 151.2089);
 		// mMap.setMyLocationEnabled(true);
 		mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
 		mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+		mMap.getUiSettings().setZoomControlsEnabled(true);
+		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 11));
 	}
 	
 	public void onSettingMenuClicked(MenuItem item)
