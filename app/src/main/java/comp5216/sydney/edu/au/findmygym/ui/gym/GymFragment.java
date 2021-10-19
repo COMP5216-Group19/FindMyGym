@@ -71,10 +71,9 @@ public class GymFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        String gym_name = "TESTING GYM";
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         Log.e("TEST", String.valueOf(actionBar == null));
-        actionBar.setTitle(gym_name);
+        actionBar.setTitle(mViewModel.getGym().getGymName());
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);//home button on
 

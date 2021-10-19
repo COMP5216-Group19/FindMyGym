@@ -16,6 +16,11 @@
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
     <string name="sync_header">Sync</string>
@@ -37,7 +42,7 @@
     <string name="gym_info"><b>Gym Info</b></string>
     <string name="gym_name">Name</string>
     <string name="gym_open_hrs">Open Hrs.</string>
-    <string name="gym_avg_rate">Avg Rate</string>
+    <string name="gym_avg_rate">Avg. Rating</string>
     <string name="gym_address">Address</string>
     <string name="gym_contact">Contact</string>
 
@@ -55,7 +60,12 @@
 
     <string name="gym_time_format">%s - %s</string>
     <string name="gym_time_format_am">%d:%02d AM</string>
+    <string name="gym_time_format_am_short">%d AM</string>
     <string name="gym_time_format_pm">%d:%02d AM</string>
 
+    <string name="gym_time_format_pm_short">%d PM</string>
+    <string name="gym_rate_format">%.1f</string>
 
+    <string name="gym_rsv">Reserve</string>
+    <string name="gym_confirm_rsv">Confirm reservation</string>
 </resources>

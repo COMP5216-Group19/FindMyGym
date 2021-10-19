@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.AndroidException;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,15 +21,15 @@ import com.google.android.material.chip.ChipGroup;
 
 import org.json.JSONObject;
 
+import comp5216.sydney.edu.au.findmygym.model.Reservation;
 import comp5216.sydney.edu.au.findmygym.ui.gym.GymFragment;
 import comp5216.sydney.edu.au.findmygym.ui.gym.GymViewModel;
 
 public class GymActivity extends AppCompatActivity {
 
-    String gym_name;
     Context mContext;
-    private JSONObject json;
     public boolean isFavourite;
+    GymViewModel mViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +37,9 @@ public class GymActivity extends AppCompatActivity {
         setContentView(R.layout.gym_activity);
         mContext = GymActivity.this;
 
-        GymViewModel mViewModel = new ViewModelProvider(this).get(GymViewModel.class);
+        mViewModel = new ViewModelProvider(this).get(GymViewModel.class);
 
-        isFavourite = false;//Check the received json.
+        isFavourite = mViewModel.getGym().isFavourite();
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -89,5 +90,20 @@ public class GymActivity extends AppCompatActivity {
             Toast.makeText(this.getBaseContext(), "Added to favourite!", Toast.LENGTH_SHORT).show();
         }
 
+    }
+
+    public void onConfirmReservation(View view) {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this)
+                .setMessage(R.string.gym_confirm_rsv)
+                .setPositiveButton(R.string.confirm, (dialog, which) -> {
+                    Reservation reservation = mViewModel.getReservation();
+                    System.out.println(reservation);
+                    // TODO: confirm this reservation
+                })
+                .setNegativeButton(R.string.cancel, (dialog, which) -> {
+                    // Nothing happens
+                });
+
+        builder.create().show();
     }
 }
