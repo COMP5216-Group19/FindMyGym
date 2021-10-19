@@ -97,7 +97,6 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
 		NavigationUI.setupWithNavController(navigationView, navController);//???
 		
-		
 		userData = UserData.getInstance();
 		headerView = navigationView.getHeaderView(0);
 		setObserver();//update nav_header
@@ -105,8 +104,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		setFabListener();
 		setSupportActionBar(binding.appBarMain.toolbar);
 	}
-	
-	
+
 	//TEST
 	@Override
 	protected void onResume()
@@ -140,7 +138,8 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 			}
 			case R.id.nav_profile:
 			{
-				switchFragment(new ProfileFragment());
+				//switchFragment(new ProfileFragment());
+				fragmentManager.beginTransaction().replace(android.R.id.content, new ProfileFragment(), "PROFILE_FRAGMENT").commit();
 				break;
 			}
 			case R.id.nav_wallet:
