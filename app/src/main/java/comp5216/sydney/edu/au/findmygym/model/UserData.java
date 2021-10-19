@@ -15,6 +15,9 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Comparator;
 
 import comp5216.sydney.edu.au.findmygym.MainActivity;
 import comp5216.sydney.edu.au.findmygym.R;
@@ -23,10 +26,12 @@ public class UserData extends LiveData<UserData>
 {
 	private final String TAG = "[UserData]";
 	
+	private ArrayList<PurchaseRecord> purchaseRecords;
 	private FirebaseUser firebaseUser;
 	private String userName;
 	private String userMail;
 	private Bitmap userAvatar;
+	private ArrayList<String> favGym;
 	private Session userSession;
 	private StorageReference userStorageRef;
 	private Context mContext;
@@ -38,7 +43,7 @@ public class UserData extends LiveData<UserData>
 	 */
 	public UserData()
 	{
-	
+		this.purchaseRecords = new ArrayList<>(1);
 	}
 	
 	/**
@@ -59,6 +64,31 @@ public class UserData extends LiveData<UserData>
 		return UserData;
 	}
 	
+	public ArrayList<PurchaseRecord> getPurchaseRecords()
+	{
+		return purchaseRecords;
+	}
+	
+	public void addPurchaseRecord(PurchaseRecord purchaseRecord)
+	{
+		this.purchaseRecords.add(purchaseRecord);
+		sortPurchaseRecords();
+		postValue(this);
+	}
+	
+	public void setPurchaseRecords(ArrayList<PurchaseRecord> purchaseRecords)
+	{
+		this.purchaseRecords = purchaseRecords;
+		sortPurchaseRecords();
+		postValue(this);
+	}
+	
+	public void removePurchaseRecord(int position)
+	{
+		this.purchaseRecords.remove(position);
+		postValue(this);
+	}
+	
 	public FirebaseUser getFirebaseUser()
 	{
 		return firebaseUser;
@@ -76,10 +106,10 @@ public class UserData extends LiveData<UserData>
 		{
 			return userName;
 		}
-		else
-		{
+		else if(firebaseUser != null){
 			return firebaseUser.getDisplayName();
 		}
+		return "GUEST: JOHN DOE";
 	}
 	
 	public void setUserName(String userName)
@@ -94,10 +124,10 @@ public class UserData extends LiveData<UserData>
 		{
 			return userMail;
 		}
-		else
-		{
+		else if(firebaseUser != null){
 			return firebaseUser.getEmail();
 		}
+		return "Go sign in, NOW!";
 	}
 	
 	public void setUserMail(String userMail)
@@ -112,6 +142,9 @@ public class UserData extends LiveData<UserData>
 		{
 			return this.userAvatar;
 		}
+		// else if(firebaseUser != null){
+		// 	return BitmapFactory()firebaseUser.getPhotoUrl();
+		// }
 		else
 		{
 			userAvatar = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.diana);
@@ -177,4 +210,25 @@ public class UserData extends LiveData<UserData>
 		mContext = null;
 	}
 	
+	public void sortPurchaseRecords(){
+		Log.e(TAG,"---------------------"+this.getPurchaseRecords().size());
+		this.purchaseRecords.sort(new Comparator<PurchaseRecord>()
+		{
+			@Override
+			public int compare(PurchaseRecord t1, PurchaseRecord t2)
+			{
+				Calendar c1 = t1.getTime();
+				Calendar c2 = t2.getTime();
+				if (c1.before(c2))
+				{
+					return 1;
+				}
+				if (c1.after(c2))
+				{
+					return -1;
+				}
+				return 0;
+			}
+		});
+	}
 }
