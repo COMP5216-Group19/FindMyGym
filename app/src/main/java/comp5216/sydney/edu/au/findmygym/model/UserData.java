@@ -31,6 +31,7 @@ public class UserData extends LiveData<UserData>
 	private String userName;
 	private String userMail;
 	private Bitmap userAvatar;
+	private ArrayList<String> favGym;
 	private Session userSession;
 	private StorageReference userStorageRef;
 	private Context mContext;
