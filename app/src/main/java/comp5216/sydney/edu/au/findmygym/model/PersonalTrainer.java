@@ -1,5 +1,7 @@
 package comp5216.sydney.edu.au.findmygym.model;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,5 +47,14 @@ public class PersonalTrainer {
      */
     public List<TimeSlot> getAvailableTimes() {
         return availableTimes;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "PersonalTrainer{" +
+                "name='" + name + '\'' +
+                ", availableTimes=" + availableTimes +
+                '}';
     }
 }

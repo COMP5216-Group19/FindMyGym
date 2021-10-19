@@ -10,6 +10,8 @@ import java.util.List;
  */
 public class Gym {
 
+    private int gymId;
+
     /**
      * Name of this gym
      */
@@ -37,7 +39,8 @@ public class Gym {
     private List<String> equipments;
     private Bitmap gymPhoto;
 
-    public Gym(String gymName,
+    public Gym(int gymId,
+               String gymName,
                List<PersonalTrainer> personalTrainers,
                String openTime,
                String closeTime,
@@ -55,13 +58,15 @@ public class Gym {
         this.equipments = equipments;
     }
 
-    public Gym(String gymName,
+    public Gym(int gymId,
+               String gymName,
                String openTime,
                String closeTime,
                double avgRating,
                String address,
                String contact) {
-        this(gymName,
+        this(gymId,
+                gymName,
                 new ArrayList<>(),
                 openTime,
                 closeTime,
@@ -107,6 +112,13 @@ public class Gym {
      */
     public Bitmap getGymPhoto() {
         return gymPhoto;
+    }
+
+    /**
+     * @return the id of this gym
+     */
+    public int getGymId() {
+        return gymId;
     }
 
     /**

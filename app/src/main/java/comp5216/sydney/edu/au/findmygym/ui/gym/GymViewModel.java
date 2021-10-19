@@ -25,7 +25,8 @@ public class GymViewModel extends ViewModel {
     }
 
     private void addTestGym() {
-        gym = new Gym("Gym A",
+        gym = new Gym(0,
+                "Gym A",
                 "9AM",
                 "6PM",
                 4.8,
@@ -45,11 +46,13 @@ public class GymViewModel extends ViewModel {
             gym.addTrainer(pt1);
 
             PersonalTrainer pt2 = new PersonalTrainer("Ada");
-            pt1.addTimeSlot(TimeSlot.timeSlotOnToday("9AM", "11AM"));
-            pt1.addTimeSlot(TimeSlot.timeSlotOnToday("1:00 PM", "3 PM"));
+            pt2.addTimeSlot(TimeSlot.timeSlotOnToday("9AM", "11AM"));
+            pt2.addTimeSlot(TimeSlot.timeSlotOnToday("1:00 PM", "3 PM"));
             gym.addTrainer(pt2);
         } catch (ParseException e) {
             Log.d(TAG, Arrays.toString(e.getStackTrace()));
+            // TODO: delete this
+            throw new RuntimeException(e);
         }
     }
 

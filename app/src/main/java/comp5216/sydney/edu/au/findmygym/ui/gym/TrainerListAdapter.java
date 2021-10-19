@@ -38,18 +38,7 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         PersonalTrainer trainer = trainersList.get(position);
-        holder.trainerNameText.setText(trainer.getName());
-        Context context = holder.itemView.getContext();
-        for (TimeSlot timeSlot : trainer.getAvailableTimes()) {
-            Chip chip = new Chip(context);
-            chip.setText(
-                    context.getString(R.string.gym_time_format,
-                            minutesToString(context, timeSlot.getBeginTime()),
-                            minutesToString(context, timeSlot.getEndTime()))
-            );
-            // Todo: only one chip can be selected
-            holder.trainerTimesGroup.addView(chip);
-        }
+        holder.bind(trainer);
     }
 
     @Override
@@ -57,7 +46,7 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
         return trainersList.size();
     }
 
-    public static String minutesToString(Context context, Calendar time) {
+    public static String calendarToTimeInDay(Context context, Calendar time) {
         int am_pm = time.get(Calendar.AM_PM);
         int hour = time.get(Calendar.HOUR);
         int minutes = time.get(Calendar.MINUTE);
@@ -69,12 +58,30 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView trainerNameText;
         ChipGroup trainerTimesGroup;
+//        View divider;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             trainerNameText = itemView.findViewById(R.id.trainer_name);
             trainerTimesGroup = itemView.findViewById(R.id.trainer_times_group);
+        }
+
+        void bind(PersonalTrainer trainer) {
+            trainerNameText.setText(trainer.getName());
+            Context context = itemView.getContext();
+            trainerTimesGroup.removeAllViews();
+            for (TimeSlot timeSlot : trainer.getAvailableTimes()) {
+                Chip chip = (Chip) LayoutInflater.from(context)
+                        .inflate(R.layout.trainer_timeslot_chip, null, false);
+                chip.setText(
+                        context.getString(R.string.gym_time_format,
+                                calendarToTimeInDay(context, timeSlot.getBeginTime()),
+                                calendarToTimeInDay(context, timeSlot.getEndTime()))
+                );
+                trainerTimesGroup.addView(chip);
+            }
+//            trainerTimesGroup.setOnCheckedChangeListener();
         }
     }
 }

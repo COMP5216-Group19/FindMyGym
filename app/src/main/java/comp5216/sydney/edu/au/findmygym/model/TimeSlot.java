@@ -1,5 +1,7 @@
 package comp5216.sydney.edu.au.findmygym.model;
 
+import androidx.annotation.NonNull;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -36,11 +38,21 @@ public class TimeSlot {
         Calendar calendar = Calendar.getInstance();
         str = str.replace(" ", "");
         SimpleDateFormat fmt;
-        if (str.contains(":")) fmt = new SimpleDateFormat("hha:mm", Locale.getDefault());
+        if (str.contains(":")) fmt = new SimpleDateFormat("hh:mma", Locale.getDefault());
         else fmt = new SimpleDateFormat("hha", Locale.getDefault());
         Date date = fmt.parse(str);
         if (date == null) throw new ParseException("Parse result is null", 0);
-        calendar.setTime(date);
+
+        // The parsed date is on 01/01/1970
+        // We just need the hour and minute field
+        Calendar tarCalendar = Calendar.getInstance();
+        tarCalendar.setTime(date);
+        calendar.set(Calendar.HOUR, tarCalendar.get(Calendar.HOUR));
+        calendar.set(Calendar.AM_PM, tarCalendar.get(Calendar.AM_PM));
+        calendar.set(Calendar.HOUR_OF_DAY, tarCalendar.get(Calendar.HOUR_OF_DAY));
+        calendar.set(Calendar.MINUTE, tarCalendar.get(Calendar.MINUTE));
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
 
         return calendar;
     }
@@ -57,5 +69,11 @@ public class TimeSlot {
      */
     public Calendar getEndTime() {
         return endTime;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return beginTime + " - " + endTime;
     }
 }
