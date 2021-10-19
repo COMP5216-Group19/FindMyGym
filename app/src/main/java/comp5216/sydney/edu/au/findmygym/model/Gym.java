@@ -10,12 +10,12 @@ import java.util.List;
  */
 public class Gym {
 
-    private int gymId;
+    private final int gymId;
 
     /**
      * Name of this gym
      */
-    private String gymName;
+    private final String gymName;
 
     /**
      * List of personal trainers
@@ -37,6 +37,8 @@ public class Gym {
     private String contact;
 
     private List<String> equipments;
+
+    private boolean favourite;
     private Bitmap gymPhoto;
 
     public Gym(int gymId,
@@ -47,7 +49,9 @@ public class Gym {
                double avgRating,
                String address,
                String contact,
+               boolean favourite,
                List<String> equipments) {
+        this.gymId = gymId;
         this.gymName = gymName;
         this.personalTrainers = personalTrainers;
         this.openTime = openTime;
@@ -55,6 +59,7 @@ public class Gym {
         this.avgRating = avgRating;
         this.address = address;
         this.contact = contact;
+        this.favourite = favourite;
         this.equipments = equipments;
     }
 
@@ -64,7 +69,8 @@ public class Gym {
                String closeTime,
                double avgRating,
                String address,
-               String contact) {
+               String contact,
+               boolean favourite) {
         this(gymId,
                 gymName,
                 new ArrayList<>(),
@@ -73,6 +79,7 @@ public class Gym {
                 avgRating,
                 address,
                 contact,
+                favourite,
                 new ArrayList<>());
     }
 
@@ -126,6 +133,22 @@ public class Gym {
      */
     public String getGymName() {
         return gymName;
+    }
+
+    /**
+     * @return whether this gym is marked as "favourite"
+     */
+    public boolean isFavourite() {
+        return favourite;
+    }
+
+    /**
+     * Sets the "favourite" attribute
+     *
+     * @param favourite whether this gym will be marked as "favourite"
+     */
+    public void setFavourite(boolean favourite) {
+        this.favourite = favourite;
     }
 
     /**

@@ -16,7 +16,6 @@ import comp5216.sydney.edu.au.findmygym.R;
 
 public class GymRsvFragment extends Fragment {
 
-    TrainerListAdapter trainerListAdapter;
     private GymViewModel mViewModel;
     @Nullable
     @Override
@@ -27,8 +26,11 @@ public class GymRsvFragment extends Fragment {
 
         RecyclerView recyclerView = view.findViewById(R.id.gym_trainer_recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        trainerListAdapter = new TrainerListAdapter(mViewModel.getGym().getPersonalTrainers());
-        recyclerView.setAdapter(trainerListAdapter);
+        mViewModel.trainerListAdapter =
+                new TrainerListAdapter(mViewModel.getGym().getPersonalTrainers(),
+                        recyclerView,
+                        view.findViewById(R.id.gym_reserve_button));
+        recyclerView.setAdapter(mViewModel.trainerListAdapter);
 
         return view;
     }
@@ -36,7 +38,5 @@ public class GymRsvFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-
     }
 }

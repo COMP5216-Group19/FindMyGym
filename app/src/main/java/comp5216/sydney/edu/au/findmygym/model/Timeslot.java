@@ -11,12 +11,12 @@ import java.util.Locale;
 /**
  * This class represents a segment of time.
  */
-public class TimeSlot {
+public class Timeslot {
 
     private final Calendar beginTime;
     private final Calendar endTime;
 
-    public TimeSlot(Calendar beginTime, Calendar endTime) {
+    public Timeslot(Calendar beginTime, Calendar endTime) {
         this.beginTime = beginTime;
         this.endTime = endTime;
     }
@@ -29,9 +29,9 @@ public class TimeSlot {
      * @return the parsed timeslot
      * @throws ParseException if any of the argument has wrong format
      */
-    public static TimeSlot timeSlotOnToday(String beginTimeStr, String endTimeStr)
+    public static Timeslot timeSlotOnToday(String beginTimeStr, String endTimeStr)
             throws ParseException {
-        return new TimeSlot(parseCalendarOnToday(beginTimeStr), parseCalendarOnToday(endTimeStr));
+        return new Timeslot(parseCalendarOnToday(beginTimeStr), parseCalendarOnToday(endTimeStr));
     }
 
     private static Calendar parseCalendarOnToday(String str) throws ParseException {

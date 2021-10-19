@@ -12,18 +12,21 @@ public class PersonalTrainer {
      */
     private final String name;
 
+    private final int trainerId;
+
     /**
      * Available timeslots of this trainer
      */
-    private final List<TimeSlot> availableTimes;
+    private final List<Timeslot> availableTimes;
 
-    public PersonalTrainer(String name, List<TimeSlot> availableTimes) {
+    public PersonalTrainer(int trainerId, String name, List<Timeslot> availableTimes) {
+        this.trainerId = trainerId;
         this.name = name;
         this.availableTimes = availableTimes;
     }
 
-    public PersonalTrainer(String name) {
-        this(name, new ArrayList<>());
+    public PersonalTrainer(int trainerId, String name) {
+        this(trainerId, name, new ArrayList<>());
     }
 
     /**
@@ -31,8 +34,15 @@ public class PersonalTrainer {
      *
      * @param timeSlot the object to be added
      */
-    public void addTimeSlot(TimeSlot timeSlot) {
+    public void addTimeSlot(Timeslot timeSlot) {
         availableTimes.add(timeSlot);
+    }
+
+    /**
+     * @return id of this trainer
+     */
+    public int getTrainerId() {
+        return trainerId;
     }
 
     /**
@@ -45,7 +55,7 @@ public class PersonalTrainer {
     /**
      * @return list of available timeslots of this trainer
      */
-    public List<TimeSlot> getAvailableTimes() {
+    public List<Timeslot> getAvailableTimes() {
         return availableTimes;
     }
 
