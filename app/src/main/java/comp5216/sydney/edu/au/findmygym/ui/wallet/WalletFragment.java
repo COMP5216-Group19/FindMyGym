@@ -88,6 +88,7 @@ public class WalletFragment extends Fragment
 		
 		tabLayout.addTab(tabLayout.newTab().setText("Membership"));
 		tabLayout.addTab(tabLayout.newTab().setText("History"));
+		tabLayout.addTab(tabLayout.newTab().setText("Card"));
 		
 		
 		

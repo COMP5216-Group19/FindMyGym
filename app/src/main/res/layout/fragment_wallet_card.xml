@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        tools:context=".ui.wallet.tabs.Wallet_Card">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/card_textview_title"
+            android:text="wallet_fragment3"
+            android:gravity="center"
+            android:textSize="40dp"
+            />
+    <LinearLayout
+            android:id="@+id/card_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="20dp"
+            >
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/card_recyclerview"
+                />
+        <Button
+                android:id="@+id/add_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="ADD CARD"
+                />
+    </LinearLayout>
+</FrameLayout>

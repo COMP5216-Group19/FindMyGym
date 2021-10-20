@@ -14,6 +14,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import java.util.ArrayList;
 
+import comp5216.sydney.edu.au.findmygym.ui.wallet.tabs.Wallet_Card;
 import comp5216.sydney.edu.au.findmygym.ui.wallet.tabs.Wallet_History;
 import comp5216.sydney.edu.au.findmygym.ui.wallet.tabs.Wallet_Membership;
 
@@ -38,6 +39,9 @@ public class FragmentAdapter extends FragmentStateAdapter
 			case 1:
 				Log.e(TAG, "createFragment: Wallet_History"+position);
 				return new Wallet_History();
+			case 2:
+				Log.e(TAG, "createFragment: Wallet_Card"+position);
+				return new Wallet_Card();
 		}
 		return new Wallet_Membership();
 	}
@@ -45,6 +49,6 @@ public class FragmentAdapter extends FragmentStateAdapter
 	@Override
 	public int getItemCount()
 	{
-		return 2;
+		return 3;
 	}
 }
