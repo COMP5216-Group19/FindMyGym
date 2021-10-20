@@ -9,6 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import comp5216.sydney.edu.au.findmygym.R;
 
@@ -20,7 +22,17 @@ public class GymRsvFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mViewModel = new ViewModelProvider(requireActivity()).get(GymViewModel.class);
 
-        return inflater.inflate(R.layout.gym_reservation_fragment, container, false);
+        View view = inflater.inflate(R.layout.gym_reservation_fragment, container, false);
+
+        RecyclerView recyclerView = view.findViewById(R.id.gym_trainer_recycler);
+        recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        mViewModel.trainerListAdapter =
+                new TrainerListAdapter(mViewModel.getGym().getPersonalTrainers(),
+                        recyclerView,
+                        view.findViewById(R.id.gym_reserve_button));
+        recyclerView.setAdapter(mViewModel.trainerListAdapter);
+
+        return view;
     }
 
     @Override

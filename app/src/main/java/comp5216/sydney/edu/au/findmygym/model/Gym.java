@@ -2,6 +2,7 @@ package comp5216.sydney.edu.au.findmygym.model;
 
 import android.graphics.Bitmap;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -9,10 +10,12 @@ import java.util.List;
  */
 public class Gym {
 
+    private final int gymId;
+
     /**
      * Name of this gym
      */
-    private String gymName;
+    private final String gymName;
 
     /**
      * List of personal trainers
@@ -34,16 +37,21 @@ public class Gym {
     private String contact;
 
     private List<String> equipments;
+
+    private boolean favourite;
     private Bitmap gymPhoto;
 
-    public Gym(String gymName,
+    public Gym(int gymId,
+               String gymName,
                List<PersonalTrainer> personalTrainers,
                String openTime,
                String closeTime,
                double avgRating,
                String address,
                String contact,
+               boolean favourite,
                List<String> equipments) {
+        this.gymId = gymId;
         this.gymName = gymName;
         this.personalTrainers = personalTrainers;
         this.openTime = openTime;
@@ -51,7 +59,50 @@ public class Gym {
         this.avgRating = avgRating;
         this.address = address;
         this.contact = contact;
+        this.favourite = favourite;
         this.equipments = equipments;
+    }
+
+    public Gym(int gymId,
+               String gymName,
+               String openTime,
+               String closeTime,
+               double avgRating,
+               String address,
+               String contact,
+               boolean favourite) {
+        this(gymId,
+                gymName,
+                new ArrayList<>(),
+                openTime,
+                closeTime,
+                avgRating,
+                address,
+                contact,
+                favourite,
+                new ArrayList<>());
+    }
+
+    /**
+     * Adds a personal trainer to the list.
+     * <p>
+     * Utility method
+     *
+     * @param trainer the trainer to be added
+     */
+    public void addTrainer(PersonalTrainer trainer) {
+        personalTrainers.add(trainer);
+    }
+
+    /**
+     * Adds a equipment to the list.
+     * <p>
+     * Utility method
+     *
+     * @param equipment the equipment to be added
+     */
+    public void addEquipment(String equipment) {
+        equipments.add(equipment);
     }
 
     /**
@@ -71,10 +122,33 @@ public class Gym {
     }
 
     /**
+     * @return the id of this gym
+     */
+    public int getGymId() {
+        return gymId;
+    }
+
+    /**
      * @return the name of this gym
      */
     public String getGymName() {
         return gymName;
+    }
+
+    /**
+     * @return whether this gym is marked as "favourite"
+     */
+    public boolean isFavourite() {
+        return favourite;
+    }
+
+    /**
+     * Sets the "favourite" attribute
+     *
+     * @param favourite whether this gym will be marked as "favourite"
+     */
+    public void setFavourite(boolean favourite) {
+        this.favourite = favourite;
     }
 
     /**
