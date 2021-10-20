@@ -84,12 +84,15 @@ public class GymFragment extends Fragment {
         viewPager.setAdapter(pagerAdapter);
 
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
-            if (position == 0) {
+            if (position == TabPagerAdapter.INFO_PAGE_POSITION) {
                 tab.setText(R.string.gym_info_tab);
                 tab.setIcon(R.drawable.outline_info_24);
-            } else {
+            } else if (position == TabPagerAdapter.RESERVATION_PAGE_POSITION) {
                 tab.setText(R.string.gym_reservation_tab);
                 tab.setIcon(R.drawable.outline_event_24);
+            } else if (position == TabPagerAdapter.REVIEW_PAGE_POSITION) {
+                tab.setText(R.string.gym_reviews_tab);
+                tab.setIcon(R.drawable.outline_rate_review_24);
             }
         }).attach();
     }

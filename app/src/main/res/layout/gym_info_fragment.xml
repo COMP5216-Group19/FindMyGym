@@ -15,6 +15,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
             android:paddingBottom="10dp">
 
             <ImageView
@@ -32,7 +34,6 @@
                 android:layout_marginTop="15dp"
                 android:text="@string/gym_name"
                 android:textAlignment="center"
-                android:textSize="14sp"
                 app:layout_constraintHorizontal_chainStyle="spread"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/gym_open_hrs_label"
@@ -44,7 +45,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/gym_open_hrs"
                 android:textAlignment="center"
-                android:textSize="14sp"
                 app:layout_constraintLeft_toRightOf="@+id/gym_name_label"
                 app:layout_constraintRight_toLeftOf="@+id/gym_avg_rate_label"
                 app:layout_constraintTop_toTopOf="@+id/gym_name_label" />
@@ -55,7 +55,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/gym_avg_rate"
                 android:textAlignment="center"
-                android:textSize="14sp"
                 app:layout_constraintLeft_toRightOf="@+id/gym_open_hrs_label"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/gym_name_label" />
@@ -71,7 +70,6 @@
                 android:text="Gym A"
                 android:textAlignment="center"
                 android:textColor="@color/black"
-                android:textSize="14sp"
                 app:layout_constraintLeft_toLeftOf="@+id/gym_name_label"
                 app:layout_constraintRight_toRightOf="@+id/gym_name_label"
                 app:layout_constraintTop_toBottomOf="@+id/gym_name_label" />
@@ -86,7 +84,6 @@
                 android:text="9AM-6PM"
                 android:textAlignment="center"
                 android:textColor="@color/black"
-                android:textSize="14sp"
                 app:layout_constraintLeft_toLeftOf="@+id/gym_open_hrs_label"
                 app:layout_constraintRight_toRightOf="@+id/gym_open_hrs_label"
                 app:layout_constraintTop_toTopOf="@+id/gym_name" />
@@ -101,7 +98,6 @@
                 android:text="5.0"
                 android:textAlignment="center"
                 android:textColor="@color/black"
-                android:textSize="14sp"
                 app:layout_constraintLeft_toLeftOf="@+id/gym_avg_rate_label"
                 app:layout_constraintRight_toRightOf="@+id/gym_avg_rate_label"
                 app:layout_constraintTop_toTopOf="@+id/gym_name" />
@@ -114,7 +110,6 @@
                 android:padding="5sp"
                 android:text="@string/gym_address"
                 android:textAlignment="center"
-                android:textSize="14sp"
                 app:layout_constraintLeft_toLeftOf="@+id/gym_name"
                 app:layout_constraintRight_toRightOf="@+id/gym_name"
                 app:layout_constraintTop_toBottomOf="@+id/gym_name" />
@@ -130,7 +125,6 @@
                 android:text="Blah Ave. Blah Unit"
                 android:textAlignment="center"
                 android:textColor="@color/black"
-                android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="@id/gym_address_label"
                 app:layout_constraintLeft_toLeftOf="@+id/gym_open_hrs"
                 app:layout_constraintRight_toRightOf="@+id/gym_avg_rate"
@@ -144,7 +138,6 @@
                 android:padding="5sp"
                 android:text="@string/gym_contact"
                 android:textAlignment="center"
-                android:textSize="14sp"
                 app:layout_constraintLeft_toLeftOf="@+id/gym_address_label"
                 app:layout_constraintRight_toRightOf="@+id/gym_address_label"
                 app:layout_constraintTop_toBottomOf="@+id/gym_address_label" />
@@ -160,7 +153,6 @@
                 android:text="123456789"
                 android:textAlignment="center"
                 android:textColor="@color/black"
-                android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="@id/gym_contact_label"
                 app:layout_constraintLeft_toLeftOf="@+id/gym_address"
                 app:layout_constraintRight_toRightOf="@+id/gym_address"
@@ -174,7 +166,6 @@
                 android:layout_marginEnd="15dp"
                 android:text="@string/gym_equipments"
                 android:textColor="@color/black"
-                android:textSize="14sp"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/gym_contact_label" />
 
@@ -197,9 +188,8 @@
                 <com.google.android.material.chip.Chip
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/gym_equip_dumbbell"
+                    android:text="Dumbbell"
                     android:textColor="@color/white"
-                    android:textSize="14sp"
                     app:chipBackgroundColor="#ff7777" />
 
             </com.google.android.material.chip.ChipGroup>

@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
-import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -73,26 +72,11 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
         return null;
     }
 
-    public static String calendarToTimeInDay(Context context, Calendar time) {
-        int am_pm = time.get(Calendar.AM_PM);
-        int hour = time.get(Calendar.HOUR);
-        int minutes = time.get(Calendar.MINUTE);
-        int fmtStrId;
-        if (minutes == 0) {
-            fmtStrId = am_pm == Calendar.AM ?
-                    R.string.gym_time_format_am_short : R.string.gym_time_format_pm_short;
-        } else {
-            fmtStrId = am_pm == Calendar.AM ?
-                    R.string.gym_time_format_am : R.string.gym_time_format_pm;
-        }
-        return context.getString(fmtStrId, hour, minutes);
-    }
-
     public static class ViewHolder extends RecyclerView.ViewHolder {
+        private final Map<Integer, Timeslot> chipTimeslotMap = new TreeMap<>();
         TextView trainerNameText;
         ChipGroup trainerTimesGroup;
         private PersonalTrainer trainer;
-        private final Map<Integer, Timeslot> chipTimeslotMap = new TreeMap<>();
 
         public ViewHolder(@NonNull View itemView, TrainerListAdapter adapter) {
             super(itemView);
@@ -128,11 +112,7 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
             for (Timeslot timeSlot : trainer.getAvailableTimes()) {
                 Chip chip = (Chip) LayoutInflater.from(context)
                         .inflate(R.layout.trainer_timeslot_chip, null, false);
-                chip.setText(
-                        context.getString(R.string.gym_time_format,
-                                calendarToTimeInDay(context, timeSlot.getBeginTime()),
-                                calendarToTimeInDay(context, timeSlot.getEndTime()))
-                );
+                chip.setText(timeSlot.toString(context));
                 trainerTimesGroup.addView(chip);
                 chipTimeslotMap.put(chip.getId(), timeSlot);
             }

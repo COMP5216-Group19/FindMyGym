@@ -1,25 +1,18 @@
 package comp5216.sydney.edu.au.findmygym;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.helper.widget.Flow;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.AndroidException;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.chip.ChipGroup;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
-import org.json.JSONObject;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import comp5216.sydney.edu.au.findmygym.model.Reservation;
 import comp5216.sydney.edu.au.findmygym.ui.gym.GymFragment;
@@ -27,8 +20,9 @@ import comp5216.sydney.edu.au.findmygym.ui.gym.GymViewModel;
 
 public class GymActivity extends AppCompatActivity {
 
-    Context mContext;
+    private final String TAG = "[GymActivity]";
     public boolean isFavourite;
+    Context mContext;
     GymViewModel mViewModel;
 
     @Override
@@ -38,6 +32,7 @@ public class GymActivity extends AppCompatActivity {
         mContext = GymActivity.this;
 
         mViewModel = new ViewModelProvider(this).get(GymViewModel.class);
+        // todo: set gym
 
         isFavourite = mViewModel.getGym().isFavourite();
 
@@ -92,18 +87,37 @@ public class GymActivity extends AppCompatActivity {
 
     }
 
-    public void onConfirmReservation(View view) {
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this)
-                .setMessage(R.string.gym_confirm_rsv)
-                .setPositiveButton(R.string.confirm, (dialog, which) -> {
-                    Reservation reservation = mViewModel.getReservation();
-                    System.out.println(reservation);
-                    // TODO: confirm this reservation
-                })
-                .setNegativeButton(R.string.cancel, (dialog, which) -> {
-                    // Nothing happens
-                });
+    public void onConfirmReservationClicked(View view) {
+        Reservation reservation = mViewModel.getReservation();
+        if (reservation != null) {
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this)
+                    .setTitle(R.string.gym_confirm_rsv)
+                    .setMessage(getString(R.string.gym_confirm_rsv_msg,
+                            reservation.getTrainer().getName(),
+                            reservation.getSelectedTimeSlot().toString(this)))
+                    .setPositiveButton(R.string.confirm, (dialog, which) -> {
+                        makeReservation(reservation);
+                    })
+                    .setNegativeButton(R.string.cancel, (dialog, which) -> {
+                        // Nothing happens
+                    });
+            builder.create().show();
+        } else {
+            // This should not happen, because when nothing selected, the "reserve"
+            // button should be disabled.
+            Log.e(TAG, "Reservation is null");
+            Toast.makeText(this, R.string.gym_rsv_null_error,
+                    Toast.LENGTH_SHORT).show();
+        }
 
-        builder.create().show();
+    }
+
+    /**
+     * Make a reservation.
+     *
+     * @param reservation the reservation to be made
+     */
+    public void makeReservation(Reservation reservation) {
+        // TODO: 预约
     }
 }

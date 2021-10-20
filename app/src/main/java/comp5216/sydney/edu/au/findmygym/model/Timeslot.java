@@ -1,5 +1,7 @@
 package comp5216.sydney.edu.au.findmygym.model;
 
+import android.content.Context;
+
 import androidx.annotation.NonNull;
 
 import java.text.ParseException;
@@ -7,6 +9,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+
+import comp5216.sydney.edu.au.findmygym.R;
 
 /**
  * This class represents a segment of time.
@@ -69,6 +73,27 @@ public class Timeslot {
      */
     public Calendar getEndTime() {
         return endTime;
+    }
+
+    public static String calendarToTimeInDay(Context context, Calendar time) {
+        int am_pm = time.get(Calendar.AM_PM);
+        int hour = time.get(Calendar.HOUR);
+        int minutes = time.get(Calendar.MINUTE);
+        int fmtStrId;
+        if (minutes == 0) {
+            fmtStrId = am_pm == Calendar.AM ?
+                    R.string.gym_time_format_am_short : R.string.gym_time_format_pm_short;
+        } else {
+            fmtStrId = am_pm == Calendar.AM ?
+                    R.string.gym_time_format_am : R.string.gym_time_format_pm;
+        }
+        return context.getString(fmtStrId, hour, minutes);
+    }
+
+    public String toString(Context context) {
+        return context.getString(R.string.gym_timeslot,
+                calendarToTimeInDay(context, beginTime),
+                calendarToTimeInDay(context, endTime));
     }
 
     @NonNull
