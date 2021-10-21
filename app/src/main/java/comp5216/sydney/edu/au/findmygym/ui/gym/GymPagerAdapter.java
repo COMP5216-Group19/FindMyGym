@@ -6,17 +6,15 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-public class TabPagerAdapter extends FragmentStateAdapter {
+public class GymPagerAdapter extends FragmentStateAdapter {
 
     public static final int INFO_PAGE_POSITION = 0;
     public static final int RESERVATION_PAGE_POSITION = 1;
-    public static final int REVIEW_PAGE_POSITION = 2;
 
     private GymInfoFragment gymInfoFragment;
     private GymRsvFragment gymRsvFragment;
-    private GymReviewsFragment gymReviewsFragment;
 
-    public TabPagerAdapter(@NonNull Fragment fragment) {
+    public GymPagerAdapter(@NonNull Fragment fragment) {
         super(fragment);
     }
 
@@ -28,21 +26,16 @@ public class TabPagerAdapter extends FragmentStateAdapter {
                 gymInfoFragment = new GymInfoFragment();
             }
             return gymInfoFragment;
-        } else if (position == RESERVATION_PAGE_POSITION) {
+        } else {
             if (gymRsvFragment == null) {
                 gymRsvFragment = new GymRsvFragment();
             }
             return gymRsvFragment;
-        } else {
-            if (gymReviewsFragment == null) {
-                gymReviewsFragment = new GymReviewsFragment();
-            }
-            return gymReviewsFragment;
         }
     }
 
     @Override
     public int getItemCount() {
-        return 3;
+        return 2;
     }
 }

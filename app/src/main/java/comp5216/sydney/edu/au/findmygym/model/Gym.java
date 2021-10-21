@@ -23,6 +23,11 @@ public class Gym {
     private List<PersonalTrainer> personalTrainers;
 
     /**
+     * List of user reviews
+     */
+    private List<Review> reviews;
+
+    /**
      * The following two attributes represents the opening hours
      */
     private String openTime;
@@ -50,7 +55,8 @@ public class Gym {
                String address,
                String contact,
                boolean favourite,
-               List<String> equipments) {
+               List<String> equipments,
+               List<Review> reviews) {
         this.gymId = gymId;
         this.gymName = gymName;
         this.personalTrainers = personalTrainers;
@@ -61,6 +67,7 @@ public class Gym {
         this.contact = contact;
         this.favourite = favourite;
         this.equipments = equipments;
+        this.reviews = reviews;
     }
 
     public Gym(int gymId,
@@ -80,29 +87,8 @@ public class Gym {
                 address,
                 contact,
                 favourite,
+                new ArrayList<>(),
                 new ArrayList<>());
-    }
-
-    /**
-     * Adds a personal trainer to the list.
-     * <p>
-     * Utility method
-     *
-     * @param trainer the trainer to be added
-     */
-    public void addTrainer(PersonalTrainer trainer) {
-        personalTrainers.add(trainer);
-    }
-
-    /**
-     * Adds a equipment to the list.
-     * <p>
-     * Utility method
-     *
-     * @param equipment the equipment to be added
-     */
-    public void addEquipment(String equipment) {
-        equipments.add(equipment);
     }
 
     /**
@@ -198,5 +184,12 @@ public class Gym {
      */
     public List<String> getEquipments() {
         return equipments;
+    }
+
+    /**
+     * @return list of users' reviews
+     */
+    public List<Review> getReviews() {
+        return reviews;
     }
 }

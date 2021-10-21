@@ -26,12 +26,6 @@
             android:icon="@drawable/outline_event_24"
             android:text="@string/gym_reservation_tab" />
 
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:icon="@drawable/outline_rate_review_24"
-            android:text="@string/gym_reviews_tab" />
-
     </com.google.android.material.tabs.TabLayout>
 
     <androidx.viewpager2.widget.ViewPager2

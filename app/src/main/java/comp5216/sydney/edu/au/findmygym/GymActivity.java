@@ -87,6 +87,13 @@ public class GymActivity extends AppCompatActivity {
 
     }
 
+    public void onDatePickerClicked(View view) {
+
+    }
+
+    /**
+     * Click handler of "RESERVE" button in reservation page.
+     */
     public void onConfirmReservationClicked(View view) {
         Reservation reservation = mViewModel.getReservation();
         if (reservation != null) {

@@ -2,7 +2,6 @@ package comp5216.sydney.edu.au.findmygym.ui.gym;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
@@ -10,8 +9,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewbinding.ViewBinding;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.util.Log;
@@ -20,21 +17,17 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import comp5216.sydney.edu.au.findmygym.R;
-import comp5216.sydney.edu.au.findmygym.databinding.GymActivityBinding;
 import comp5216.sydney.edu.au.findmygym.databinding.GymFragmentBinding;
-import comp5216.sydney.edu.au.findmygym.ui.main.MainViewModel;
 
 public class GymFragment extends Fragment {
     private final String TAG = "[GymFragment]";
 
-    TabPagerAdapter pagerAdapter;
+    GymPagerAdapter pagerAdapter;
 
     private GymViewModel mViewModel;
     private GymFragmentBinding binding;
@@ -80,19 +73,16 @@ public class GymFragment extends Fragment {
         TabLayout tabLayout = view.findViewById(R.id.gym_tab_layout);
         ViewPager2 viewPager = view.findViewById(R.id.gym_pager);
 
-        pagerAdapter = new TabPagerAdapter(this);
+        pagerAdapter = new GymPagerAdapter(this);
         viewPager.setAdapter(pagerAdapter);
 
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
-            if (position == TabPagerAdapter.INFO_PAGE_POSITION) {
+            if (position == GymPagerAdapter.INFO_PAGE_POSITION) {
                 tab.setText(R.string.gym_info_tab);
                 tab.setIcon(R.drawable.outline_info_24);
-            } else if (position == TabPagerAdapter.RESERVATION_PAGE_POSITION) {
+            } else if (position == GymPagerAdapter.RESERVATION_PAGE_POSITION) {
                 tab.setText(R.string.gym_reservation_tab);
                 tab.setIcon(R.drawable.outline_event_24);
-            } else if (position == TabPagerAdapter.REVIEW_PAGE_POSITION) {
-                tab.setText(R.string.gym_reviews_tab);
-                tab.setIcon(R.drawable.outline_rate_review_24);
             }
         }).attach();
     }

@@ -22,7 +22,7 @@ import comp5216.sydney.edu.au.findmygym.model.PersonalTrainer;
 import comp5216.sydney.edu.au.findmygym.model.Reservation;
 import comp5216.sydney.edu.au.findmygym.model.Timeslot;
 
-public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.ViewHolder> {
+public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.TrainerViewHolder> {
 
     private final List<PersonalTrainer> trainersList;
     private final RecyclerView recyclerView;
@@ -38,14 +38,14 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public TrainerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.trainer_view_holder, parent, false);
-        return new ViewHolder(view, this);
+                .inflate(R.layout.trainer_item_holder, parent, false);
+        return new TrainerViewHolder(view, this);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull TrainerViewHolder holder, int position) {
         PersonalTrainer trainer = trainersList.get(position);
         holder.bind(trainer);
     }
@@ -61,24 +61,24 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
     public Reservation getSelection() {
         for (int i = 0; i < getItemCount(); ++i) {
             View view = recyclerView.getChildAt(i);
-            ViewHolder viewHolder =
-                    (ViewHolder) recyclerView.getChildViewHolder(view);
-            int checkedId = viewHolder.trainerTimesGroup.getCheckedChipId();
+            TrainerViewHolder trainerViewHolder =
+                    (TrainerViewHolder) recyclerView.getChildViewHolder(view);
+            int checkedId = trainerViewHolder.trainerTimesGroup.getCheckedChipId();
             if (checkedId != View.NO_ID) {
-                return new Reservation(viewHolder.trainer,
-                        viewHolder.chipTimeslotMap.get(checkedId));
+                return new Reservation(trainerViewHolder.trainer,
+                        trainerViewHolder.chipTimeslotMap.get(checkedId));
             }
         }
         return null;
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class TrainerViewHolder extends RecyclerView.ViewHolder {
         private final Map<Integer, Timeslot> chipTimeslotMap = new TreeMap<>();
         TextView trainerNameText;
         ChipGroup trainerTimesGroup;
         private PersonalTrainer trainer;
 
-        public ViewHolder(@NonNull View itemView, TrainerListAdapter adapter) {
+        public TrainerViewHolder(@NonNull View itemView, TrainerListAdapter adapter) {
             super(itemView);
 
             trainerNameText = itemView.findViewById(R.id.trainer_name);
@@ -89,10 +89,10 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
                     // A chip is selected in this group, clear all selections in other groups
                     for (int i = 0; i < adapter.getItemCount(); ++i) {
                         View view = adapter.recyclerView.getChildAt(i);
-                        ViewHolder viewHolder =
-                                (ViewHolder) adapter.recyclerView.getChildViewHolder(view);
-                        if (viewHolder != this) {
-                            viewHolder.trainerTimesGroup.clearCheck();
+                        TrainerViewHolder trainerViewHolder =
+                                (TrainerViewHolder) adapter.recyclerView.getChildViewHolder(view);
+                        if (trainerViewHolder != this) {
+                            trainerViewHolder.trainerTimesGroup.clearCheck();
                         }
                     }
                     adapter.confirmButton.setEnabled(true);
@@ -111,7 +111,7 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
             chipTimeslotMap.clear();
             for (Timeslot timeSlot : trainer.getAvailableTimes()) {
                 Chip chip = (Chip) LayoutInflater.from(context)
-                        .inflate(R.layout.trainer_timeslot_chip, null, false);
+                        .inflate(R.layout.trainer_timeslot_chip, trainerTimesGroup, false);
                 chip.setText(timeSlot.toString(context));
                 trainerTimesGroup.addView(chip);
                 chipTimeslotMap.put(chip.getId(), timeSlot);

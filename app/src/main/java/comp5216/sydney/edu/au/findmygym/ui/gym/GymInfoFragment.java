@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,20 +17,22 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
+import java.text.DateFormat;
+
 import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.model.Gym;
+import comp5216.sydney.edu.au.findmygym.model.Review;
 
 public class GymInfoFragment extends Fragment {
 
-    private static final int[] EQUIPMENTS_COLORS = {
-            0x0077ff, 0xff7777, 0x33ccff, 0xeeaa33
-    };
-
     private GymViewModel mViewModel;
+    private DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT);
 
     @Nullable
     @Override
@@ -52,6 +56,7 @@ public class GymInfoFragment extends Fragment {
         TextView gymContact = view.findViewById(R.id.gym_contact);
         ChipGroup equipmentsContainer = view.findViewById(R.id.gym_equipments_group);
         ImageView gymImageView = view.findViewById(R.id.gym_image_view);
+        LinearLayout reviewsList = view.findViewById(R.id.gym_reviews_list);
 
         Gym gym = mViewModel.getGym();
 
@@ -87,5 +92,30 @@ public class GymInfoFragment extends Fragment {
 
             equipmentsContainer.addView(chip);
         }
+
+        for (Review review : gym.getReviews()) {
+            View itemView = makeReviewView(review, reviewsList);
+            reviewsList.addView(itemView);
+        }
+    }
+
+    private View makeReviewView(Review review, LinearLayout parent) {
+        View itemView = LayoutInflater.from(getContext())
+                .inflate(R.layout.review_item_holder, parent, false);
+        ImageView avatarView = itemView.findViewById(R.id.review_avatar_image);
+        RatingBar ratingBar = itemView.findViewById(R.id.review_user_rating);
+        TextView userNameText = itemView.findViewById(R.id.review_user_name);
+        TextView timeText = itemView.findViewById(R.id.review_date);
+        TextView commentText = itemView.findViewById(R.id.review_content);
+
+        Bitmap avatar = review.getUserAvatar();
+        if (avatar != null) {
+            avatarView.setImageBitmap(avatar);
+        }
+        userNameText.setText(review.getUserName());
+        ratingBar.setRating(review.getRating());
+        timeText.setText(dateFormat.format(review.getDateTime().getTime()));
+        commentText.setText(review.getComments());
+        return itemView;
     }
 }

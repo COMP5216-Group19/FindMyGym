@@ -24,13 +24,13 @@ public class GymRsvFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.gym_reservation_fragment, container, false);
 
-        RecyclerView recyclerView = view.findViewById(R.id.gym_trainer_recycler);
-        recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        mViewModel.trainerListAdapter =
-                new TrainerListAdapter(mViewModel.getGym().getPersonalTrainers(),
-                        recyclerView,
-                        view.findViewById(R.id.gym_reserve_button));
-        recyclerView.setAdapter(mViewModel.trainerListAdapter);
+//        RecyclerView recyclerView = view.findViewById(R.id.gym_trainer_recycler);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+//        mViewModel.trainerListAdapter =
+//                new TrainerListAdapter(mViewModel.getGym().getPersonalTrainers(),
+//                        recyclerView,
+//                        view.findViewById(R.id.gym_reserve_button));
+//        recyclerView.setAdapter(mViewModel.trainerListAdapter);
 
         return view;
     }
