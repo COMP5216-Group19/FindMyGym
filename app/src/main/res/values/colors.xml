@@ -16,9 +16,9 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="red_100">#F44336</color>
-    <color name="red_300">#3F51B5</color>
+    <color name="blue_900">#3F51B5</color>
     <color name="red_500">#9C27B0</color>
-    <color name="red_700">#2196F3</color>
+    <color name="blue_250">#2196F3</color>
     <color name="blue_100">#00BCD4</color>
     <color name="blue_300">#7BAAF7</color>
     <color name="blue_500">#009688</color>

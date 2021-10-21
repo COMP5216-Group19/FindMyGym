@@ -11,8 +11,10 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -35,6 +37,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.storage.StorageReference;
+import com.royrodriguez.transitionbutton.TransitionButton;
 
 import java.io.IOException;
 import java.net.URL;
@@ -49,7 +52,7 @@ public class LoginActivity extends BaseActivity
 	private static final int RC_SIGN_IN = 123;
 	private final String TAG = "[LoginActivity]";
 	private FirebaseAuth mAuth;
-	
+	TransitionButton transitionButton;
 	public Context mContext;
 	private StorageReference mStorageRef;
 	FirebaseUser firebaseUser;
@@ -94,18 +97,23 @@ public class LoginActivity extends BaseActivity
 				.build();
 		mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 		
+		
+		
 	}
 	
 	public void onLogin3rdClick(View view){
-		List<AuthUI.IdpConfig> providers = Arrays.asList(
-				new AuthUI.IdpConfig.EmailBuilder().build(),
-				new AuthUI.IdpConfig.PhoneBuilder().build(),
-				new AuthUI.IdpConfig.GoogleBuilder().build());
-		Intent signInIntent = AuthUI.getInstance()
-				.createSignInIntentBuilder()
-				.setAvailableProviders(providers)
-				.build();
-		signInLauncher.launch(signInIntent);
+		// List<AuthUI.IdpConfig> providers = Arrays.asList(
+		// 		new AuthUI.IdpConfig.EmailBuilder().build(),
+		// 		new AuthUI.IdpConfig.PhoneBuilder().build(),
+		// 		new AuthUI.IdpConfig.GoogleBuilder().build());
+		// Intent signInIntent = AuthUI.getInstance()
+		// 		.createSignInIntentBuilder()
+		// 		.setAvailableProviders(providers)
+		// 		.build();
+		// signInLauncher.launch(signInIntent);
+		
+		Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://accounts.google.com/signup/v2/webcreateaccount?hl=en&flowName=GlifWebSignIn&flowEntry=SignUp"));
+		startActivity(browserIntent);
 	}
 	
 	
@@ -143,7 +151,7 @@ public class LoginActivity extends BaseActivity
 		startActivity(intent);
 	}
 	
-	public void onGoogleClicked(View view)
+	public void onGoogleClicked()
 	{
 		Log.e(TAG, "onGoogleClicked: clicked!");
 		signIn();

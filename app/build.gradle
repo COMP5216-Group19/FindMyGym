@@ -94,5 +94,8 @@ dependencies {
     implementation "androidx.viewpager2:viewpager2:1.0.0"
     //credit card view
     implementation 'com.vinaygaba:creditcardview:1.0.4'
+    //scroll view
     implementation 'com.yarolegovich:discrete-scrollview:1.5.1'
+    //processing buttom
+    implementation 'com.royrodriguez:transitionbutton:0.2.0'
 }
