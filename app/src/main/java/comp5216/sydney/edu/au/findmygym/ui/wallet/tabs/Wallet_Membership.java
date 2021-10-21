@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
@@ -31,6 +32,7 @@ import java.util.Random;
 import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.model.CreditCard;
 import comp5216.sydney.edu.au.findmygym.model.Membership;
+import comp5216.sydney.edu.au.findmygym.model.UserData;
 
 public class Wallet_Membership extends Fragment
 {
@@ -51,9 +53,7 @@ public class Wallet_Membership extends Fragment
 		super.onViewCreated(view, savedInstanceState);
 		this.context = getContext();
 		
-		TextView textView = getView().findViewById(R.id.membership_textview_title);
-		textView.setText(TAG);
-		
+
 		Bitmap bitmap1 = BitmapFactory.decodeResource(context.getResources(), R.drawable.diana);
 		Bitmap bitmap2 = BitmapFactory.decodeResource(context.getResources(), R.drawable.ybb);
 		Bitmap bitmap3 = BitmapFactory.decodeResource(context.getResources(), R.drawable.azi);
@@ -61,6 +61,8 @@ public class Wallet_Membership extends Fragment
 		Bitmap bitmap5 = BitmapFactory.decodeResource(context.getResources(), R.drawable.mea);
 		List<Bitmap> bitmapList = Arrays.asList(bitmap1, bitmap2, bitmap3, bitmap4, bitmap5);
 		
+		
+		//mock data
 		ArrayList<Membership> memberships = new ArrayList<>();
 		for (int i = 0; i < 3; i++)
 		{
@@ -74,7 +76,13 @@ public class Wallet_Membership extends Fragment
 		
 		
 		DiscreteScrollView scrollView = getView().findViewById(R.id.wallet_membership_discreteScrollView);
-		MembershipAdapter membershipAdapter = new MembershipAdapter(memberships);
+		
+		UserData userData = UserData.getInstance();
+		//TODO
+		// userData.setMemberships( new ArrayList<>());
+		userData.setMemberships(memberships);
+		
+		MembershipAdapter membershipAdapter = new MembershipAdapter(context);
 		// scrollView.setAdapter(membershipAdapter);
 		InfiniteScrollAdapter infiniteScrollAdapter = InfiniteScrollAdapter.wrap(membershipAdapter);
 
@@ -102,7 +110,28 @@ public class Wallet_Membership extends Fragment
 				TextView start = getView().findViewById(R.id.membership_textview_startTime);
 				start.setText("Member since: "+membershipAdapter.getItem(position).getStartTimeStr());
 				TextView end = getView().findViewById(R.id.membership_textview_endTime);
-				end.setText("subscription ends at: "+membershipAdapter.getItem(position).getEndTimeStr());
+				end.setText("Subscription ends at: "+membershipAdapter.getItem(position).getEndTimeStr());
+			}
+		});
+		
+		TextView backgroundText = getView().findViewById(R.id.membership_textview_title);
+		userData.observe(getViewLifecycleOwner(), new Observer<UserData>()
+		{
+			@Override
+			public void onChanged(UserData userData)
+			{
+				// historyAdapter.setHistoryArrayList(userData.getPurchaseRecords());
+				membershipAdapter.notifyDataSetChanged();
+				int size = membershipAdapter.getItemCount();
+				if (size == 0)
+				{
+					backgroundText.setVisibility(View.VISIBLE);
+					backgroundText.setText("Ops, you haven't subscribe to any gym!");
+				}
+				else
+				{
+					backgroundText.setVisibility(View.GONE);
+				}
 			}
 		});
 	}

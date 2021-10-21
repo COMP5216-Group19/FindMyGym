@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:theme="@android:style/Theme.Holo.Dialog"
+        app:cardCornerRadius="20dp"
+        android:background="@color/white"
+        tools:context=".AddCardDialog">
+
+    <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/white">
+
+        <com.vinaygaba.creditcardview.CreditCardView
+                android:id="@+id/dialog_add_card_creditCardView"
+                android:layout_width="fill_parent"
+                android:layout_height="225dp"
+                app:putChip="true"
+                app:cardNumber=""
+                app:cardName=""
+                app:expiryDate=""
+                app:type="auto"
+                app:isEditable="true" />
+
+        <LinearLayout
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@color/white">
+
+            <Button
+                    android:id="@+id/dialog_add_card_no"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="NO"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="50dp"
+                    android:layout_marginRight="30dp" />
+
+            <Button
+                    android:id="@+id/dialog_add_card_yes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="YES"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="50dp" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+
+</androidx.cardview.widget.CardView>

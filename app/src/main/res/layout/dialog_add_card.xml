@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+    <com.vinaygaba.creditcardview.CreditCardView
+            android:id="@+id/dialog_add_card_creditCardView"
+            android:layout_width="fill_parent"
+            android:layout_height="225dp"
+            app:cardNumber=""
+            app:cardName=""
+            app:expiryDate = ""
+            app:type="auto"
+            app:putChip="true"
+            app:isEditable="true"
+            />
+    <LinearLayout
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+        <Button
+                android:id="@+id/dialog_add_card_no"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NO"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:layout_marginLeft="50dp"
+                android:layout_marginRight="30dp"/>
+
+        <Button
+                android:id="@+id/dialog_add_card_yes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="YES"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="50dp"/>
+
+
+    </LinearLayout>
+
+</LinearLayout>

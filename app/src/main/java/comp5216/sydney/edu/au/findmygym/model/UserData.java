@@ -28,6 +28,7 @@ public class UserData extends LiveData<UserData>
 	
 	private ArrayList<PurchaseRecord> purchaseRecords;
 	private ArrayList<CreditCard> creditCards;
+	private ArrayList<Membership> memberships;
 	private FirebaseUser firebaseUser;
 	private String userName;
 	private String userMail;
@@ -65,6 +66,10 @@ public class UserData extends LiveData<UserData>
 		return UserData;
 	}
 	
+	/**
+	 * PurchaseRecords
+	 */
+	
 	public ArrayList<PurchaseRecord> getPurchaseRecords()
 	{
 		return purchaseRecords;
@@ -90,6 +95,10 @@ public class UserData extends LiveData<UserData>
 		postValue(this);
 	}
 	
+	/**
+	 * CreditCards
+	 */
+	
 	public ArrayList<CreditCard> getCreditCards()
 	{
 		return creditCards;
@@ -110,8 +119,38 @@ public class UserData extends LiveData<UserData>
 	public void removeCreditCard(int position)
 	{
 		this.creditCards.remove(position);
+		Log.e(TAG, "removeCreditCard: "+this.getCreditCards() );
 		postValue(this);
 	}
+	
+	/**
+	 * Memberships
+	 */
+	
+	public ArrayList<Membership> getMemberships()
+	{
+		return memberships;
+	}
+	
+	public void addMembership(Membership membership)
+	{
+		this.memberships.add(0,membership);
+		postValue(this);
+	}
+	
+	public void setMemberships(ArrayList<Membership> memberships)
+	{
+		this.memberships = memberships;
+		postValue(this);
+	}
+	
+	public void removeMembership(int position)
+	{
+		this.memberships.remove(position);
+		postValue(this);
+	}
+	
+	
 	
 	public FirebaseUser getFirebaseUser()
 	{

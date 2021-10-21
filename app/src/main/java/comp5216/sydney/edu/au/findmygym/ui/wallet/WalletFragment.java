@@ -78,9 +78,9 @@ public class WalletFragment extends Fragment
 		
 		viewPager.setAdapter(fragmentAdapter);
 		
-		tabLayout.addTab(tabLayout.newTab().setText("Membership"));
-		tabLayout.addTab(tabLayout.newTab().setText("History"));
-		tabLayout.addTab(tabLayout.newTab().setText("Card"));
+		tabLayout.addTab(tabLayout.newTab().setText("Memberships"));
+		tabLayout.addTab(tabLayout.newTab().setText("Transactions"));
+		tabLayout.addTab(tabLayout.newTab().setText("Cards"));
 		
 		
 		

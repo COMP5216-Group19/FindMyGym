@@ -67,7 +67,7 @@ public class Wallet_History extends Fragment implements SwipeRefreshLayout.OnRef
 		Bitmap bitmap5 = BitmapFactory.decodeResource(context.getResources(), R.drawable.mea);
 		List<Bitmap> bitmapList = Arrays.asList(bitmap1,bitmap2,bitmap3,bitmap4,bitmap5);
 		
-		for (int i = 0; i < 20; i++)
+		for (int i = 0; i < 3; i++)
 		{
 			Calendar cal =  Calendar.getInstance();
 			Random random = new Random();
@@ -85,14 +85,25 @@ public class Wallet_History extends Fragment implements SwipeRefreshLayout.OnRef
 		TextView textView = getView().findViewById(R.id.history_textview_title);
 		textView.setText(TAG);
 		
-		
+		TextView backgroundText = getView().findViewById(R.id.history_textview_title);
 		userData.observe(getViewLifecycleOwner(), new Observer<UserData>()
 		{
 			@Override
 			public void onChanged(UserData userData)
 			{
-				// historyAdapter.setHistoryArrayList(userData.getPurchaseRecords());
 				historyAdapter.notifyDataSetChanged();
+				
+				int size = historyAdapter.getItemCount();
+				if (size == 0)
+				{
+					
+					backgroundText.setVisibility(View.VISIBLE);
+					backgroundText.setText("Ops, there's no record here!");
+				}
+				else
+				{
+					backgroundText.setVisibility(View.GONE);
+				}
 			}
 		});
 		
@@ -105,7 +116,6 @@ public class Wallet_History extends Fragment implements SwipeRefreshLayout.OnRef
 		new Handler().postDelayed(new Runnable() {
 			@Override
 			public void run() {
-				
 				Toast.makeText(getContext(),"Refreshed!",Toast.LENGTH_SHORT).show();
 				swipeRefreshLayout.setRefreshing(false);
 			}
