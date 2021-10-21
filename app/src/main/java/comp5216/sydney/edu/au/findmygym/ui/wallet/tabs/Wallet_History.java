@@ -11,12 +11,15 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -32,7 +35,7 @@ import comp5216.sydney.edu.au.findmygym.model.UserData;
 import pl.droidsonroids.gif.GifImageView;
 
 
-public class Wallet_History extends Fragment
+public class Wallet_History extends Fragment implements SwipeRefreshLayout.OnRefreshListener
 {
 	private final String TAG = "[Wallet_History]";
 	Context mContext;
@@ -40,6 +43,7 @@ public class Wallet_History extends Fragment
 	HistoryAdapter historyAdapter;
 	ArrayList<PurchaseRecord> historyList = new ArrayList<>();
 	UserData userData;
+	SwipeRefreshLayout swipeRefreshLayout;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,  Bundle savedInstanceState)
@@ -55,6 +59,9 @@ public class Wallet_History extends Fragment
 		super.onViewCreated(view, savedInstanceState);
 		mContext = getContext();
 		userData = UserData.getInstance();
+		swipeRefreshLayout = view.findViewById(R.id.wallet_history_refreshLayout);
+		swipeRefreshLayout.setOnRefreshListener(this);
+		
 		
 		Bitmap bitmap1 = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.diana);
 		Bitmap bitmap2 = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ybb);
@@ -91,6 +98,22 @@ public class Wallet_History extends Fragment
 				historyAdapter.notifyDataSetChanged();
 			}
 		});
+		
+	}
+	
+	
+	@Override
+	public void onRefresh()
+	{
+		new Handler().postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				
+				Toast.makeText(getContext(),"Refreshed!",Toast.LENGTH_SHORT).show();
+				swipeRefreshLayout.setRefreshing(false);
+			}
+		},2000);
+		
 		
 	}
 	

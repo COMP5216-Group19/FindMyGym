@@ -31,7 +31,7 @@ public class UserData extends LiveData<UserData>
 	private String userName;
 	private String userMail;
 	private Bitmap userAvatar;
-	private ArrayList<String> favGym;
+	private ArrayList<String> userFavGym;
 	private Session userSession;
 	private StorageReference userStorageRef;
 	private Context mContext;
@@ -172,11 +172,22 @@ public class UserData extends LiveData<UserData>
 	{
 		return this.firebaseUser.getPhotoUrl();
 	}
-	
-	
+
 	public void setUserAvatar(Bitmap userAvatar)
 	{
 		this.userAvatar = userAvatar;
+		postValue(this);
+	}
+
+	public ArrayList<String> getUserFavGym() {
+		if (userFavGym.size() == 0) {
+			userFavGym.add("TestFavGym");
+		}
+		return this.userFavGym;
+	}
+
+	public void setUserFavGym(ArrayList<String> userFavGym) {
+		this.userFavGym = userFavGym;
 		postValue(this);
 	}
 	

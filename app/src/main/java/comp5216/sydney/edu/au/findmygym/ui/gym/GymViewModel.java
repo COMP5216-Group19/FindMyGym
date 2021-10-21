@@ -13,19 +13,22 @@ import comp5216.sydney.edu.au.findmygym.model.Reservation;
 import comp5216.sydney.edu.au.findmygym.model.Timeslot;
 
 public class GymViewModel extends ViewModel {
-    // TODO: Implement the ViewModel
-    private final String TAG = "[GymViewModel]";
-
-    Gym gym;
+    private static final String TAG = "[GymViewModel]";
+    /**
+     * Adapter of reservation RecyclerView.
+     * <p>
+     * Store it here for simplifying the accessing from GymActivity
+     */
     TrainerListAdapter trainerListAdapter;
+    private Gym gym;
 
     public GymViewModel() {
         // todo: for test
-        addTestGym();
+        gym = testGym();
     }
 
-    private void addTestGym() {
-        gym = new Gym(0,
+    private static Gym testGym() {
+        Gym gym = new Gym(0,
                 "Gym A",
                 "9 AM",
                 "6 PM",
@@ -56,26 +59,34 @@ public class GymViewModel extends ViewModel {
         } catch (ParseException e) {
             Log.d(TAG, Arrays.toString(e.getStackTrace()));
         }
+        return gym;
     }
 
-    public void setGym(Gym gym) {
-        this.gym = gym;
-    }
-
+    /**
+     * @return the gym object stored in this model
+     */
     public Gym getGym() {
         return gym;
     }
 
+    /**
+     * Sets the gym object.
+     *
+     * @param gym the new gym object
+     */
+    public void setGym(Gym gym) {
+        this.gym = gym;
+    }
+
+    /**
+     * @return the selected reservation, or null if nothing selected
+     */
     public Reservation getReservation() {
         if (trainerListAdapter == null) {
             Log.e(TAG, "Recycler view adapter is null");
             return null;
         }
-        Reservation rsv = trainerListAdapter.getSelection();
-        if (rsv == null) {
-            Log.e(TAG, "Reservation is null");
-        }
-        return rsv;
+        return trainerListAdapter.getSelection();
     }
 
     @Override

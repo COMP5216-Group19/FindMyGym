@@ -20,7 +20,6 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
 import comp5216.sydney.edu.au.findmygym.R;
-import comp5216.sydney.edu.au.findmygym.databinding.GymFragmentBinding;
 import comp5216.sydney.edu.au.findmygym.model.Gym;
 
 public class GymInfoFragment extends Fragment {
@@ -58,7 +57,7 @@ public class GymInfoFragment extends Fragment {
 
         gymNameSmall.setText(gym.getGymName());
         gymOpenHrs.setText(
-                getString(R.string.gym_time_format, gym.getOpenTime(), gym.getCloseTime()));
+                getString(R.string.gym_timeslot, gym.getOpenTime(), gym.getCloseTime()));
         gymAvgRating.setText(getString(R.string.gym_rate_format, gym.getAvgRating()));
         gymAddress.setText(gym.getAddress());
         gymContact.setText(gym.getContact());
