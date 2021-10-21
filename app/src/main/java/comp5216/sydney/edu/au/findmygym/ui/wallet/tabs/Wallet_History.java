@@ -21,8 +21,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -32,13 +30,12 @@ import java.util.Random;
 import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.model.PurchaseRecord;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
-import pl.droidsonroids.gif.GifImageView;
 
 
 public class Wallet_History extends Fragment implements SwipeRefreshLayout.OnRefreshListener
 {
 	private final String TAG = "[Wallet_History]";
-	Context mContext;
+	Context context;
 	RecyclerView recyclerView;
 	HistoryAdapter historyAdapter;
 	ArrayList<PurchaseRecord> historyList = new ArrayList<>();
@@ -57,17 +54,17 @@ public class Wallet_History extends Fragment implements SwipeRefreshLayout.OnRef
 	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState)
 	{
 		super.onViewCreated(view, savedInstanceState);
-		mContext = getContext();
+		context = getContext();
 		userData = UserData.getInstance();
 		swipeRefreshLayout = view.findViewById(R.id.wallet_history_refreshLayout);
 		swipeRefreshLayout.setOnRefreshListener(this);
 		
 		
-		Bitmap bitmap1 = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.diana);
-		Bitmap bitmap2 = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ybb);
-		Bitmap bitmap3 = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.azi);
-		Bitmap bitmap4 = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.onion);
-		Bitmap bitmap5 = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.mea);
+		Bitmap bitmap1 = BitmapFactory.decodeResource(context.getResources(), R.drawable.diana);
+		Bitmap bitmap2 = BitmapFactory.decodeResource(context.getResources(), R.drawable.ybb);
+		Bitmap bitmap3 = BitmapFactory.decodeResource(context.getResources(), R.drawable.azi);
+		Bitmap bitmap4 = BitmapFactory.decodeResource(context.getResources(), R.drawable.onion);
+		Bitmap bitmap5 = BitmapFactory.decodeResource(context.getResources(), R.drawable.mea);
 		List<Bitmap> bitmapList = Arrays.asList(bitmap1,bitmap2,bitmap3,bitmap4,bitmap5);
 		
 		for (int i = 0; i < 20; i++)
@@ -81,8 +78,8 @@ public class Wallet_History extends Fragment implements SwipeRefreshLayout.OnRef
 		userData.setPurchaseRecords(historyList);
 		
 		recyclerView = getView().findViewById(R.id.history_recyclerview);
-		recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-		historyAdapter = new HistoryAdapter(mContext,historyList);
+		recyclerView.setLayoutManager(new LinearLayoutManager(context));
+		historyAdapter = new HistoryAdapter(context);
 		recyclerView.setAdapter(historyAdapter);
 		
 		TextView textView = getView().findViewById(R.id.history_textview_title);

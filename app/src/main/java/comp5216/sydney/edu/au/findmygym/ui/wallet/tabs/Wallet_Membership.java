@@ -13,7 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.vinaygaba.creditcardview.CreditCardView;
+
 import comp5216.sydney.edu.au.findmygym.R;
+import comp5216.sydney.edu.au.findmygym.model.CreditCard;
 
 public class Wallet_Membership extends Fragment
 {
@@ -36,5 +39,7 @@ public class Wallet_Membership extends Fragment
 		
 		TextView textView = getView().findViewById(R.id.membership_textview_title);
 		textView.setText(TAG);
+		CreditCardView creditCardView = getView().findViewById(R.id.card1);
+		creditCardView.setCardBackBackground(R.drawable.card_background_signature);
 	}
 }

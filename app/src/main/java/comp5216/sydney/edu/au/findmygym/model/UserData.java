@@ -27,6 +27,7 @@ public class UserData extends LiveData<UserData>
 	private final String TAG = "[UserData]";
 	
 	private ArrayList<PurchaseRecord> purchaseRecords;
+	private ArrayList<CreditCard> creditCards;
 	private FirebaseUser firebaseUser;
 	private String userName;
 	private String userMail;
@@ -86,6 +87,29 @@ public class UserData extends LiveData<UserData>
 	public void removePurchaseRecord(int position)
 	{
 		this.purchaseRecords.remove(position);
+		postValue(this);
+	}
+	
+	public ArrayList<CreditCard> getCreditCards()
+	{
+		return creditCards;
+	}
+	
+	public void addCreditCard(CreditCard creditCard)
+	{
+		this.creditCards.add(creditCard);
+		postValue(this);
+	}
+	
+	public void setCreditCards(ArrayList<CreditCard> creditCards)
+	{
+		this.creditCards = creditCards;
+		postValue(this);
+	}
+	
+	public void removeCreditCard(int position)
+	{
+		this.creditCards.remove(position);
 		postValue(this);
 	}
 	

@@ -10,6 +10,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.vinaygaba.creditcardview.CardNumberFormat;
+import com.vinaygaba.creditcardview.CardType;
 import com.vinaygaba.creditcardview.CreditCardView;
 
 import java.util.ArrayList;
@@ -31,11 +33,11 @@ class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder>
 		public boolean onItemLongClicked(int position);
 	}
 	
-	public CardAdapter(Context mContext, ArrayList<CreditCard> creditCardList)
+	public CardAdapter(Context mContext)
 	{
 		userData = UserData.getInstance();
 		this.mContext = mContext;
-		this.creditCardList = creditCardList;
+		this.creditCardList = userData.getCreditCards();
 	}
 	
 	
@@ -51,11 +53,11 @@ class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder>
 	public void onBindViewHolder(@NonNull CardAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position)
 	{
 		
-
+		holder.creditCardView.setType(CardType.AUTO);
+		holder.creditCardView.setCardNumberFormat(CardNumberFormat.MASKED_ALL_BUT_LAST_FOUR);
 		holder.creditCardView.setCardName(creditCardList.get(position).getCardName());
 		holder.creditCardView.setCardNumber(creditCardList.get(position).getCardNumber());
 		holder.creditCardView.setExpiryDate(creditCardList.get(position).getExpiryDate());
-		
 		holder.creditCardView.setOnClickListener(new View.OnClickListener()
 		{
 			@Override
@@ -70,8 +72,8 @@ class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder>
 			@Override
 			public boolean onLongClick(View view)
 			{
-				Toast.makeText(mContext, "LongClicked on" + creditCardList.get(position).getCardName(), Toast.LENGTH_SHORT).show();
-				// userData.removePurchaseRecord(position);
+				Toast.makeText(mContext, "Removed" + creditCardList.get(position).getCardName(), Toast.LENGTH_SHORT).show();
+				userData.removeCreditCard(position);
 				return false;
 			}
 		});

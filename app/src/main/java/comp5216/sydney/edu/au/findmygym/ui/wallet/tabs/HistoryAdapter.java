@@ -31,7 +31,7 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder>
 		public boolean onItemLongClicked(int position);
 	}
 	
-	public HistoryAdapter(Context mContext, ArrayList<PurchaseRecord> historyArrayList)
+	public HistoryAdapter(Context mContext)
 	{
 		userData = UserData.getInstance();
 		this.mContext = mContext;
@@ -70,7 +70,7 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder>
 			@Override
 			public boolean onLongClick(View view)
 			{
-				Toast.makeText(mContext, "LongClicked on" + historyArrayList.get(position).getTitle(), Toast.LENGTH_SHORT).show();
+				Toast.makeText(mContext, "Removed" + historyArrayList.get(position).getTitle(), Toast.LENGTH_SHORT).show();
 				userData.removePurchaseRecord(position);
 				return false;
 			}

@@ -16,7 +16,6 @@
             app:cardName="TEST CARD"
             app:cardNumberFormat="masked_all_but_last_four"
             app:type="auto"
-            app:brandLogo="@drawable/diana"
             app:putChip="true"
             app:expiryDate = "00/00"
             app:isEditable="true"
