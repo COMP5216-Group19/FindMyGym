@@ -22,17 +22,19 @@
             android:orientation="vertical"
             android:padding="20dp"
             >
+        <Button
+                android:id="@+id/wallet_card_button_addcard"
+                android:layout_marginBottom="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Add a new Card"
+                />
 
         <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/card_recyclerview"
                 />
-        <Button
-                android:id="@+id/add_card"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="ADD CARD"
-                />
+
     </LinearLayout>
 </FrameLayout>

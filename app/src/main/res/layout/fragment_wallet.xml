@@ -16,7 +16,8 @@
     <androidx.viewpager2.widget.ViewPager2
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
-            android:id="@+id/wallet_viewpager2">
+            android:id="@+id/wallet_viewpager2"
+            >
 
     </androidx.viewpager2.widget.ViewPager2>
 </LinearLayout>

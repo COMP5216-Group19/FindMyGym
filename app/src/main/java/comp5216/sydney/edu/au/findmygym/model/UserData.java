@@ -97,7 +97,7 @@ public class UserData extends LiveData<UserData>
 	
 	public void addCreditCard(CreditCard creditCard)
 	{
-		this.creditCards.add(creditCard);
+		this.creditCards.add(0,creditCard);
 		postValue(this);
 	}
 	

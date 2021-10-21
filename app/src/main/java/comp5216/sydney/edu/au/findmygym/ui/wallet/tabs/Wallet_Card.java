@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -68,7 +69,7 @@ public class Wallet_Card extends Fragment
 		ArrayList<CreditCard> cards = new ArrayList<>();
 		// cards.add(new CreditCard("5555555555554444", "master","0000"));
 		
-		for (int i = 0; i < 20; i++)
+		for (int i = 0; i < 2; i++)
 		{
 			String str ="";
 			for (int j = 0; j < 16; j++)
@@ -77,8 +78,6 @@ public class Wallet_Card extends Fragment
 				int result = r.nextInt(9-0) + 0;
 				str+=String.valueOf(result);
 			}
-			
-			
 			cards.add(new CreditCard(str,"Card"+i, "0000"));
 		}
 		
@@ -97,6 +96,16 @@ public class Wallet_Card extends Fragment
 			{
 				// historyAdapter.setHistoryArrayList(userData.getPurchaseRecords());
 				cardAdapter.notifyDataSetChanged();
+			}
+		});
+		
+		Button addCardBtn = getView().findViewById(R.id.wallet_card_button_addcard);
+		addCardBtn.setOnClickListener(new View.OnClickListener()
+		{
+			@Override
+			public void onClick(View view)
+			{
+				userData.addCreditCard(new CreditCard("0000000000000000","Click to edit me!", "0000"));
 			}
 		});
 	}

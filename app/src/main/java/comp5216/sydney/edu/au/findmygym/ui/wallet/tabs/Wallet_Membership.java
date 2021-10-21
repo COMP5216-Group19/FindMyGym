@@ -1,11 +1,14 @@
 package comp5216.sydney.edu.au.findmygym.ui.wallet.tabs;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,9 +17,20 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.vinaygaba.creditcardview.CreditCardView;
+import com.yarolegovich.discretescrollview.DiscreteScrollView;
+import com.yarolegovich.discretescrollview.InfiniteScrollAdapter;
+import com.yarolegovich.discretescrollview.transform.Pivot;
+import com.yarolegovich.discretescrollview.transform.ScaleTransformer;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Random;
 
 import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.model.CreditCard;
+import comp5216.sydney.edu.au.findmygym.model.Membership;
 
 public class Wallet_Membership extends Fragment
 {
@@ -39,7 +53,62 @@ public class Wallet_Membership extends Fragment
 		
 		TextView textView = getView().findViewById(R.id.membership_textview_title);
 		textView.setText(TAG);
-		CreditCardView creditCardView = getView().findViewById(R.id.card1);
-		creditCardView.setCardBackBackground(R.drawable.card_background_signature);
+		
+		Bitmap bitmap1 = BitmapFactory.decodeResource(context.getResources(), R.drawable.diana);
+		Bitmap bitmap2 = BitmapFactory.decodeResource(context.getResources(), R.drawable.ybb);
+		Bitmap bitmap3 = BitmapFactory.decodeResource(context.getResources(), R.drawable.azi);
+		Bitmap bitmap4 = BitmapFactory.decodeResource(context.getResources(), R.drawable.onion);
+		Bitmap bitmap5 = BitmapFactory.decodeResource(context.getResources(), R.drawable.mea);
+		List<Bitmap> bitmapList = Arrays.asList(bitmap1, bitmap2, bitmap3, bitmap4, bitmap5);
+		
+		ArrayList<Membership> memberships = new ArrayList<>();
+		for (int i = 0; i < 3; i++)
+		{
+			Calendar start =  Calendar.getInstance();
+			Calendar end =  Calendar.getInstance();
+			Random random = new Random();
+			end.set(Calendar.DAY_OF_MONTH,end.get(Calendar.DAY_OF_MONTH)+1);
+			start.set(Calendar.HOUR_OF_DAY,random.nextInt(23 - 0 + 1) + 0);
+			memberships.add(new Membership(i,"Membership"+i,getRandomItem(bitmapList),start,end));
+		}
+		
+		
+		DiscreteScrollView scrollView = getView().findViewById(R.id.wallet_membership_discreteScrollView);
+		MembershipAdapter membershipAdapter = new MembershipAdapter(memberships);
+		// scrollView.setAdapter(membershipAdapter);
+		InfiniteScrollAdapter infiniteScrollAdapter = InfiniteScrollAdapter.wrap(membershipAdapter);
+
+		scrollView.setAdapter(infiniteScrollAdapter);
+		
+		scrollView.setOverScrollEnabled(true);
+		scrollView.setItemTransformer(new ScaleTransformer.Builder()
+				.setMaxScale(1.05f)
+				.setMinScale(0.4f)
+				.setPivotX(Pivot.X.LEFT) // CENTER is a default one
+				.setPivotY(Pivot.Y.BOTTOM) // CENTER is a default one
+				.build());
+		
+		scrollView.addOnItemChangedListener(new DiscreteScrollView.OnItemChangedListener<RecyclerView.ViewHolder>()
+		{
+			@Override
+			public void onCurrentItemChanged(@Nullable RecyclerView.ViewHolder viewHolder, int adapterPosition)
+			{
+				
+				int position = infiniteScrollAdapter.getRealPosition(adapterPosition);
+				Log.e(TAG,"real: "+position);
+				Log.e(TAG,"selected: "+adapterPosition);
+				TextView gym = getView().findViewById(R.id.membership_textview_gym);
+				gym.setText("GymID: "+membershipAdapter.getItem(position).getGymID());
+				TextView start = getView().findViewById(R.id.membership_textview_startTime);
+				start.setText("Member since: "+membershipAdapter.getItem(position).getStartTimeStr());
+				TextView end = getView().findViewById(R.id.membership_textview_endTime);
+				end.setText("subscription ends at: "+membershipAdapter.getItem(position).getEndTimeStr());
+			}
+		});
+	}
+	
+	private <T> T getRandomItem(List<T> list)
+	{
+		return list.get(new Random().nextInt(list.size()));
 	}
 }
