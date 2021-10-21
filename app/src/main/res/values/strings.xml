@@ -52,7 +52,9 @@
     <string name="gym_info_tab">Info</string>
     <string name="gym_reservation_tab">Reservation</string>
 
-    <string name="gym_today">Today</string>
+    <string name="gym_today">Today\n%s</string>
+    <string name="gym_tomorrow">Tomorrow\n%s</string>
+    <string name="gym_select_day">Select a day</string>
     <string name="gym_timeslot">%s - %s</string>
     <string name="gym_time_format_am">%d:%02d AM</string>
     <string name="gym_time_format_am_short">%d AM</string>

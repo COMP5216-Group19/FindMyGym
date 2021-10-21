@@ -101,6 +101,8 @@ dependencies {
     //loading trim
     implementation 'com.romainpiel.shimmer:library:1.4.0@aar'
 
+    implementation 'com.wdullaer:materialdatetimepicker:4.2.3'
+
     // Material viewPager
 //    implementation 'com.github.florent37:materialviewpager:1.2.3'
 //

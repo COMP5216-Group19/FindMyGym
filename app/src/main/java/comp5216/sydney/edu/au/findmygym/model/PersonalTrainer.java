@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class PersonalTrainer {
 
@@ -57,6 +58,19 @@ public class PersonalTrainer {
      */
     public List<Timeslot> getAvailableTimes() {
         return availableTimes;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PersonalTrainer that = (PersonalTrainer) o;
+        return trainerId == that.trainerId && Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, trainerId);
     }
 
     @NonNull

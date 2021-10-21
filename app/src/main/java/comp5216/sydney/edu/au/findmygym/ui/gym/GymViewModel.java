@@ -4,6 +4,8 @@ import android.util.Log;
 
 import androidx.lifecycle.ViewModel;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,6 +26,9 @@ public class GymViewModel extends ViewModel {
      * Store it here for simplifying the accessing from GymActivity
      */
     TrainerListAdapter trainerListAdapter;
+
+    private final Calendar today = beginOfADay(Calendar.getInstance());
+
     private Gym gym;
 
     public GymViewModel() {
@@ -85,6 +90,49 @@ public class GymViewModel extends ViewModel {
     }
 
     /**
+     * Returns a calendar object that stores the 00:00:000 of the day, which has the same
+     * date as {@code time}.
+     *
+     * @param time the time to be calculated
+     * @return Returns a calendar object that stores the 00:00:000 of the day, which has the same
+     * date as {@code time}.
+     */
+    public static Calendar beginOfADay(Calendar time) {
+        Calendar day = Calendar.getInstance();
+        day.clear();
+        day.set(time.get(Calendar.YEAR),
+                time.get(Calendar.MONTH),
+                time.get(Calendar.DAY_OF_MONTH));
+
+        // This just forces calendar to compute fields
+        day.set(Calendar.MILLISECOND, 0);
+        return day;
+    }
+
+    public static boolean isSameDate(Calendar date1, Calendar date2) {
+        return date1.get(Calendar.YEAR) == date2.get(Calendar.YEAR) &&
+                date1.get(Calendar.MONTH) == date2.get(Calendar.MONTH) &&
+                date1.get(Calendar.DAY_OF_MONTH) == date2.get(Calendar.DAY_OF_MONTH);
+    }
+
+    /**
+     * Return whether {@code probableTomorrow} is the next day of {@code date}.
+     *
+     * @param date the date
+     * @param probableTomorrow another date
+     * @return whether {@code probableTomorrow} is the next day of {@code date}
+     */
+    public static boolean isNextDayOf(Calendar date, Calendar probableTomorrow) {
+        Calendar tom = (Calendar) probableTomorrow.clone();
+        tom.add(Calendar.DATE, 1);
+        return isSameDate(date, tom);
+    }
+
+    public Calendar getToday() {
+        return today;
+    }
+
+    /**
      * @return the gym object stored in this model
      */
     public Gym getGym() {
@@ -109,6 +157,11 @@ public class GymViewModel extends ViewModel {
             return null;
         }
         return trainerListAdapter.getSelection();
+    }
+
+    @NotNull
+    public TrainerListAdapter getTrainerListAdapter() {
+        return trainerListAdapter;
     }
 
     @Override

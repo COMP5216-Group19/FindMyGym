@@ -4,6 +4,7 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -100,6 +101,16 @@ public class Timeslot {
     }
 
     public String toString(Context context) {
+        Calendar endTime = Calendar.getInstance();
+        endTime.setTimeInMillis(beginTime.getTimeInMillis() + lengthMinutes * 60_000L);
+        DateFormat dateFormat =
+                DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.SHORT);
+        return context.getString(R.string.gym_timeslot,
+                dateFormat.format(beginTime.getTime()),
+                dateFormat.format(endTime.getTime()));
+    }
+
+    public String toStringWithoutDate(Context context) {
         Calendar endTime = Calendar.getInstance();
         endTime.setTimeInMillis(beginTime.getTimeInMillis() + lengthMinutes * 60_000L);
         return context.getString(R.string.gym_timeslot,
