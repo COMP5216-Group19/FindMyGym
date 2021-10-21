@@ -15,6 +15,7 @@ import com.vinaygaba.creditcardview.CardType;
 import com.vinaygaba.creditcardview.CreditCardView;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.model.CreditCard;
@@ -29,7 +30,8 @@ class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder>
 	Context mContext;
 	ArrayList<CreditCard> creditCardList;
 	
-	public interface OnItemLongClickListener {
+	public interface OnItemLongClickListener
+	{
 		public boolean onItemLongClicked(int position);
 	}
 	
@@ -54,10 +56,25 @@ class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder>
 	{
 		
 		holder.creditCardView.setType(CardType.AUTO);
+		holder.creditCardView.setIsFlippable(true);
+		double ran = Math.random();
+		if (ran < 0.5)
+		{
+			holder.creditCardView.setCardFrontBackground(R.drawable.cardbackground_sky);
+			holder.creditCardView.setCardBackBackground(R.drawable.cardbackground_sky);
+		}
+		else
+		{
+			holder.creditCardView.setCardFrontBackground(R.drawable.cardbackground_world);
+			holder.creditCardView.setCardBackBackground(R.drawable.cardbackground_world);
+		}
 		holder.creditCardView.setCardNumberFormat(CardNumberFormat.MASKED_ALL_BUT_LAST_FOUR);
 		holder.creditCardView.setCardName(creditCardList.get(position).getCardName());
 		holder.creditCardView.setCardNumber(creditCardList.get(position).getCardNumber());
 		holder.creditCardView.setExpiryDate(creditCardList.get(position).getExpiryDate());
+
+
+		holder.creditCardView.setCardBackBackground(R.drawable.cardbackground_sky);
 		holder.creditCardView.setOnClickListener(new View.OnClickListener()
 		{
 			@Override
@@ -74,11 +91,12 @@ class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder>
 			{
 				Toast.makeText(mContext, "Removed" + creditCardList.get(position).getCardName(), Toast.LENGTH_SHORT).show();
 				userData.removeCreditCard(position);
+				notifyDataSetChanged();
 				return false;
 			}
 		});
 		
-
+		
 	}
 	
 	@Override
@@ -87,8 +105,10 @@ class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder>
 		return creditCardList.size();
 	}
 	
-	public class ViewHolder extends RecyclerView.ViewHolder{
+	public class ViewHolder extends RecyclerView.ViewHolder
+	{
 		CreditCardView creditCardView;
+		
 		public ViewHolder(@NonNull View itemView)
 		{
 			super(itemView);

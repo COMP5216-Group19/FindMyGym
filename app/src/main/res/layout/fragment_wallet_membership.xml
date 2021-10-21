@@ -22,7 +22,8 @@
             android:id="@+id/wallet_membership_discreteScrollView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:dsv_orientation="horizontal" />
+            app:dsv_orientation="horizontal"
+            android:layout_marginBottom="150dp"/>
 
     <TextView
             android:layout_width="match_parent"

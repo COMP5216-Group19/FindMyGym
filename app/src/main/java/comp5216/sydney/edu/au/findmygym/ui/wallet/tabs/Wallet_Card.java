@@ -20,6 +20,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.auth.data.model.User;
 import com.vinaygaba.creditcardview.CreditCardView;
+import com.yarolegovich.discretescrollview.DiscreteScrollView;
+import com.yarolegovich.discretescrollview.InfiniteScrollAdapter;
+import com.yarolegovich.discretescrollview.transform.Pivot;
+import com.yarolegovich.discretescrollview.transform.ScaleTransformer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,7 +41,7 @@ public class Wallet_Card extends Fragment
 	private final String TAG = "[Wallet_Card]";
 	Context context;
 	CreditCardView creditCardView;
-	RecyclerView recyclerView;
+	DiscreteScrollView discreteScrollView;
 	CardAdapter cardAdapter;
 	UserData userData;
 	
@@ -84,18 +88,32 @@ public class Wallet_Card extends Fragment
 		// userData.setPurchaseRecords(historyList);
 		userData = UserData.getInstance();
 		userData.setCreditCards(cards);
-		recyclerView = getView().findViewById(R.id.card_recyclerview);
-		recyclerView.setLayoutManager(new LinearLayoutManager(context));
-		cardAdapter = new CardAdapter(context);
-		recyclerView.setAdapter(cardAdapter);
+		discreteScrollView = getView().findViewById(R.id.wallet_card_discreteScrollView);
+		// discreteScrollView.setLayoutManager(new LinearLayoutManager(context));
+		CardAdapter cardAdapter = new CardAdapter(context);
+		// scrollView.setAdapter(membershipAdapter);
+		InfiniteScrollAdapter infiniteScrollAdapter = InfiniteScrollAdapter.wrap(cardAdapter);
+		discreteScrollView.setAdapter(infiniteScrollAdapter);
+		discreteScrollView.setOverScrollEnabled(true);
+		discreteScrollView.setItemTransformer(new ScaleTransformer.Builder()
+				.setMaxScale(1.05f)
+				.setMinScale(0.4f)
+				.setPivotX(Pivot.X.LEFT) // CENTER is a default one
+				.setPivotY(Pivot.Y.BOTTOM) // CENTER is a default one
+				.build());
 		
-		userData.observe(getViewLifecycleOwner(), new Observer<UserData>()
+		discreteScrollView.addOnItemChangedListener(new DiscreteScrollView.OnItemChangedListener<RecyclerView.ViewHolder>()
 		{
 			@Override
-			public void onChanged(UserData userData)
+			public void onCurrentItemChanged(@Nullable RecyclerView.ViewHolder viewHolder, int adapterPosition)
 			{
-				// historyAdapter.setHistoryArrayList(userData.getPurchaseRecords());
-				cardAdapter.notifyDataSetChanged();
+				
+				int position = infiniteScrollAdapter.getRealPosition(adapterPosition);
+				int size = infiniteScrollAdapter.getRealItemCount();
+				Log.e(TAG,"real: "+position);
+				Log.e(TAG,"selected: "+adapterPosition);
+				TextView gym = getView().findViewById(R.id.wallet_card_textview_title);
+				gym.setText("Card("+position+"/"+size+")");
 			}
 		});
 		
@@ -106,6 +124,18 @@ public class Wallet_Card extends Fragment
 			public void onClick(View view)
 			{
 				userData.addCreditCard(new CreditCard("0000000000000000","Click to edit me!", "0000"));
+				discreteScrollView.scrollToPosition(0);
+				infiniteScrollAdapter.notifyDataSetChanged();
+			}
+		});
+		
+		userData.observe(getViewLifecycleOwner(), new Observer<UserData>()
+		{
+			@Override
+			public void onChanged(UserData userData)
+			{
+				// historyAdapter.setHistoryArrayList(userData.getPurchaseRecords());
+				infiniteScrollAdapter.notifyDataSetChanged();
 			}
 		});
 	}
