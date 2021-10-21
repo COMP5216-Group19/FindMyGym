@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import comp5216.sydney.edu.au.findmygym.databinding.FragmentProfileBinding;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
@@ -18,6 +19,7 @@ public class ProfileFragment extends Fragment {
 
     private ProfileViewModel profileViewModel;
     private FragmentProfileBinding binding;
+    private FavGymAdapter favGymAdapter;
 
     private UserData userData;
 
@@ -28,6 +30,7 @@ public class ProfileFragment extends Fragment {
 
         userData = UserData.getInstance();
         userData.setContext(this.getContext());
+        favGymAdapter = new FavGymAdapter(userData.getUserFavGym());
 
         binding = FragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -35,6 +38,8 @@ public class ProfileFragment extends Fragment {
        binding.avatarImage.setImageBitmap(userData.getUserAvatar());
        binding.nameText.setText(userData.getUserName());
        binding.emailText.setText(userData.getUserMail());
+       binding.favGymRecycler.setAdapter(favGymAdapter);
+       binding.favGymRecycler.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
 //		final TextView textView = binding.textProfile;
 //		profileViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>()
