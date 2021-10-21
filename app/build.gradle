@@ -98,4 +98,6 @@ dependencies {
     implementation 'com.yarolegovich:discrete-scrollview:1.5.1'
     //processing buttom
     implementation 'com.royrodriguez:transitionbutton:0.2.0'
+    //loading trim
+    implementation 'com.romainpiel.shimmer:library:1.4.0@aar'
 }
