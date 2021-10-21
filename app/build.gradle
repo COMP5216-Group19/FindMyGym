@@ -100,4 +100,12 @@ dependencies {
     implementation 'com.royrodriguez:transitionbutton:0.2.0'
     //loading trim
     implementation 'com.romainpiel.shimmer:library:1.4.0@aar'
+    //FlowingDrawer
+    implementation 'com.mxn.soul:flowingdrawer-core:2.1.0'
+    implementation 'com.nineoldandroids:library:2.4.0'
+    //voice-overlay
+    implementation 'com.algolia.instantsearch:voice:1.0.0-beta02'
+    //plotting graph
+    implementation 'com.jjoe64:graphview:4.2.2'
+
 }

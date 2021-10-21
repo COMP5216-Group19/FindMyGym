@@ -1,7 +1,9 @@
 package comp5216.sydney.edu.au.findmygym;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -12,6 +14,8 @@ import android.view.Menu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.algolia.instantsearch.voice.VoiceSpeechRecognizer;
+import com.algolia.instantsearch.voice.ui.VoiceInputDialogFragment;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -24,6 +28,8 @@ import com.google.android.material.navigation.NavigationView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -36,8 +42,9 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager2.widget.ViewPager2;
 
+import java.util.Arrays;
 import java.util.List;
-
+import com.algolia.instantsearch.voice.ui.Voice.*;
 import comp5216.sydney.edu.au.findmygym.databinding.ActivityMainBinding;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
 import comp5216.sydney.edu.au.findmygym.ui.map.MapFragment;
@@ -46,9 +53,10 @@ import comp5216.sydney.edu.au.findmygym.ui.schedule.ScheduleFragment;
 import comp5216.sydney.edu.au.findmygym.ui.wallet.WalletFragment;
 import pl.droidsonroids.gif.GifImageView;
 
-public class MainActivity extends BaseActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener
+public class MainActivity extends BaseActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener,VoiceSpeechRecognizer.ResultsListener
 {
 	private final String TAG = "[MainActivity]";
+	private static final int REQUEST_CODE_ENABLE = 11;
 	
 	private Context mContext;
 	private AppBarConfiguration mAppBarConfiguration;
@@ -59,6 +67,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 	private View headerView;
 	private DrawerLayout drawer;
 	private FragmentManager fragmentManager;
+	
 	ViewPager2 viewPager;
 	
 	@Override
@@ -273,8 +282,27 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 			@Override
 			public void onClick(View view)
 			{
-				Snackbar.make(view, "Replace with your own fab action", Snackbar.LENGTH_LONG)
-						.setAction("Action", null).show();
+				// Snackbar.make(view, "Replace with your own fab action", Snackbar.LENGTH_LONG)
+				// 		.setAction("Action", null).show();
+				//
+				
+				// int permission = ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO);
+				// if (permission != PackageManager.PERMISSION_GRANTED) {
+				// 	ActivityCompat.requestPermissions(getApplicationContext(), PERMISSION_AUDIO, GET_RECODE_AUDIO);
+				// }
+				if(ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED){
+					ActivityCompat.requestPermissions( MainActivity.this ,new String[]{android.Manifest.permission.RECORD_AUDIO},1);
+				}else {
+					VoiceInputDialogFragment voiceInputDialogFragment = new VoiceInputDialogFragment();
+					voiceInputDialogFragment.setSuggestions(
+							"find the closest gym",
+							"schedule",
+							"direction"
+					);
+					voiceInputDialogFragment.show(getSupportFragmentManager(), "DIALOG_INPUT");
+					voiceInputDialogFragment.setAutoStart(true);
+				}
+
 			}
 		});
 	}
@@ -366,4 +394,12 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 	// 	fragmentTransaction.replace(R.id.mainFragment, fragment);
 	// 	fragmentTransaction.commit();
 	// }
+	
+
+	
+	@Override
+	public void onResults(@NonNull String[] strings)
+	{
+		Toast.makeText(getApplicationContext(), Arrays.toString(strings),Toast.LENGTH_LONG).show();
+	}
 }
