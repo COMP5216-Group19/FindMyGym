@@ -204,8 +204,13 @@ public class UserData extends LiveData<UserData>
 	}
 
 	public ArrayList<String> getUserFavGym() {
-		if (userFavGym.size() == 0) {
-			userFavGym.add("TestFavGym");
+		if (userFavGym != null) {
+			if (userFavGym.size() == 0) {
+				userFavGym.add("TestFavGym");
+			}
+		} else {
+			userFavGym = new ArrayList<String>();
+			userFavGym.add("No fav gym now");
 		}
 		return this.userFavGym;
 	}

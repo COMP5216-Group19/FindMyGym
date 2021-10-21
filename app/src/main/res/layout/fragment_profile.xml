@@ -95,7 +95,7 @@
             app:layout_constraintTop_toBottomOf="@+id/favText" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView3"
+            android:id="@+id/favGymRecycler"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="5dp"
@@ -157,8 +157,8 @@
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/gym_info_divider"></LinearLayout>
+            app:layout_constraintStart_toStartOf="parent">
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
