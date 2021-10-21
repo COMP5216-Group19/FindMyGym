@@ -127,10 +127,16 @@ public class Wallet_Membership extends Fragment
 				{
 					backgroundText.setVisibility(View.VISIBLE);
 					backgroundText.setText("Ops, you haven't subscribe to any gym!");
+					getView().findViewById(R.id.membership_textview_gym).setVisibility(View.GONE);
+					getView().findViewById(R.id.membership_textview_startTime).setVisibility(View.GONE);
+					getView().findViewById(R.id.membership_textview_endTime).setVisibility(View.GONE);
 				}
 				else
 				{
 					backgroundText.setVisibility(View.GONE);
+					getView().findViewById(R.id.membership_textview_gym).setVisibility(View.VISIBLE);
+					getView().findViewById(R.id.membership_textview_startTime).setVisibility(View.VISIBLE);
+					getView().findViewById(R.id.membership_textview_endTime).setVisibility(View.VISIBLE);
 				}
 			}
 		});
