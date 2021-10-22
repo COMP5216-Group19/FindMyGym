@@ -152,17 +152,36 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/statisticText" />
 
-        <com.jjoe64.graphview.GraphView
-            android:id="@+id/profile_graphview"
+        <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="184dp"
-
+            android:layout_height="0dp"
             android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
             android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/statistics_devider" />
+            app:layout_constraintTop_toBottomOf="@+id/statistics_devider">
+
+            <com.jjoe64.graphview.GraphView
+                android:id="@+id/profileGraphView1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_weight="0.5" />
+
+            <com.jjoe64.graphview.GraphView
+                android:id="@+id/profileGraphView2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_weight="0.5" />
+        </LinearLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

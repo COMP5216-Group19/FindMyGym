@@ -9,6 +9,7 @@ import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 
+import com.firebase.ui.auth.data.model.User;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.StorageReference;
 
@@ -49,13 +50,7 @@ public class UserData extends LiveData<UserData>
 		this.purchaseRecords = new ArrayList<>(1);
 	}
 
-	public void addMockGym() {
-		allGyms = new ArrayList<>();
-//		Gym gym = new Gym(
-//				11111,
-//
-//		);
-	}
+
 	
 	/**
 	 * DCL
@@ -69,12 +64,31 @@ public class UserData extends LiveData<UserData>
 				if (UserData == null)
 				{
 					UserData = new UserData();
+					UserData.addMockGym();
 				}
 			}
 		}
 		return UserData;
 	}
-	
+
+	public void addMockGym() {
+		allGyms = new ArrayList<>();
+		Gym gym = new Gym(
+				1,
+				"TestGymName",
+				null,
+				null,
+				null,
+				"GymAddress",
+				"123-4567",
+				-33.887713,
+				151.224663,
+				null,
+				null
+		);
+		allGyms.add(gym);
+	}
+
 	/**
 	 * PurchaseRecords
 	 */
@@ -158,9 +172,7 @@ public class UserData extends LiveData<UserData>
 		this.memberships.remove(position);
 		postValue(this);
 	}
-	
-	
-	
+
 	public FirebaseUser getFirebaseUser()
 	{
 		return firebaseUser;
@@ -253,12 +265,10 @@ public class UserData extends LiveData<UserData>
 
 	public ArrayList<Integer> getFavouriteGyms() {
 		if (favouriteGyms != null) {
-			if (favouriteGyms.size() == 0) {
-				favouriteGyms.add(10000);
-			}
+
 		} else {
 			favouriteGyms = new ArrayList<Integer>();
-			favouriteGyms.add(1000000);
+			favouriteGyms.add(1);
 		}
 		return this.favouriteGyms;
 	}
