@@ -33,7 +33,7 @@ public class UserData extends LiveData<UserData>
 	private String userName;
 	private String userMail;
 	private Bitmap userAvatar;
-	private ArrayList<String> userFavGym;
+	private ArrayList<Integer> userFavGym;
 	private Session userSession;
 	private StorageReference userStorageRef;
 	private Context mContext;
@@ -242,19 +242,19 @@ public class UserData extends LiveData<UserData>
 		postValue(this);
 	}
 
-	public ArrayList<String> getUserFavGym() {
+	public ArrayList<Integer> getUserFavGym() {
 		if (userFavGym != null) {
 			if (userFavGym.size() == 0) {
-				userFavGym.add("TestFavGym");
+				userFavGym.add(10000);
 			}
 		} else {
-			userFavGym = new ArrayList<String>();
-			userFavGym.add("No fav gym now");
+			userFavGym = new ArrayList<Integer>();
+			userFavGym.add(1000000);
 		}
 		return this.userFavGym;
 	}
 
-	public void setUserFavGym(ArrayList<String> userFavGym) {
+	public void setUserFavGym(ArrayList<Integer> userFavGym) {
 		this.userFavGym = userFavGym;
 		postValue(this);
 	}
