@@ -13,6 +13,7 @@ import com.firebase.ui.auth.data.model.User;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.StorageReference;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
@@ -50,8 +51,6 @@ public class UserData extends LiveData<UserData>
 		this.purchaseRecords = new ArrayList<>(1);
 	}
 
-
-	
 	/**
 	 * DCL
 	 */
@@ -284,6 +283,12 @@ public class UserData extends LiveData<UserData>
 	}
 
 	public ArrayList<Reservation> getReservations() {
+		if (reservations != null) {
+
+		} else {
+			reservations = new ArrayList<Reservation>();
+			//reservations.add(null, new Timeslot( "",60 ));
+		}
 		return reservations;
 	}
 
