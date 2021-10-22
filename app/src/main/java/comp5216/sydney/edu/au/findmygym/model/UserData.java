@@ -273,6 +273,16 @@ public class UserData extends LiveData<UserData>
 		return this.favouriteGyms;
 	}
 
+	public void addToFavouriteGyms(int gymId) {
+		favouriteGyms.add(gymId);
+		// todo: 其他操作
+	}
+
+	public void removeFromFavouriteGyms(int gymId) {
+		favouriteGyms.remove(Integer.valueOf(gymId));
+		// todo: 其他操作
+	}
+
 	public void setFavouriteGyms(ArrayList<Integer> favouriteGyms) {
 		this.favouriteGyms = favouriteGyms;
 		postValue(this);

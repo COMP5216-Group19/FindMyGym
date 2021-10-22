@@ -14,7 +14,7 @@
             android:id="@+id/action_favourite"
             android:onClick="onAddToFavouriteClicked"
             android:title="Add to Favourite"
-            android:icon="@android:drawable/btn_star_big_off"
+            android:icon="@drawable/outline_star_border_24"
             app:showAsAction="ifRoom"/>
 
 

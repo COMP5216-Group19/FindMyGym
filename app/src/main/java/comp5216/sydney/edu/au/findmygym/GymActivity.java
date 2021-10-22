@@ -18,6 +18,7 @@ import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import java.util.Calendar;
 
 import comp5216.sydney.edu.au.findmygym.model.Reservation;
+import comp5216.sydney.edu.au.findmygym.model.UserData;
 import comp5216.sydney.edu.au.findmygym.ui.gym.GymFragment;
 import comp5216.sydney.edu.au.findmygym.ui.gym.GymViewModel;
 
@@ -79,12 +80,16 @@ public class GymActivity extends AppCompatActivity {
     public void onAddToFavouriteClicked(MenuItem item) {
 
         if (isFavourite) {
-            item.setIcon(android.R.drawable.btn_star_big_off);
+//            item.setIcon(android.R.drawable.btn_star_big_off);
+            item.setIcon(R.drawable.outline_star_border_24);
             isFavourite = false;
+            UserData.getInstance().removeFromFavouriteGyms(mViewModel.getGym().getGymId());
             Toast.makeText(this.getBaseContext(), "Removed from favourite!", Toast.LENGTH_SHORT).show();
         } else {
-            item.setIcon(android.R.drawable.btn_star_big_on);
+//            item.setIcon(android.R.drawable.btn_star_big_on);
+            item.setIcon(R.drawable.outline_star_24);
             isFavourite = true;
+            UserData.getInstance().addToFavouriteGyms(mViewModel.getGym().getGymId());
             Toast.makeText(this.getBaseContext(), "Added to favourite!", Toast.LENGTH_SHORT).show();
         }
 
