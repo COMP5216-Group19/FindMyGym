@@ -1,5 +1,7 @@
 package comp5216.sydney.edu.au.findmygym.model;
 
+import android.graphics.Bitmap;
+
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ public class PersonalTrainer {
     private final String name;
 
     private final int trainerId;
+    private Bitmap avatar;
 
     /**
      * Available timeslots of this trainer
@@ -37,6 +40,14 @@ public class PersonalTrainer {
      */
     public void addTimeSlot(Timeslot timeSlot) {
         availableTimes.add(timeSlot);
+    }
+
+    public void setAvatar(Bitmap avatar) {
+        this.avatar = avatar;
+    }
+
+    public Bitmap getAvatar() {
+        return avatar;
     }
 
     /**
