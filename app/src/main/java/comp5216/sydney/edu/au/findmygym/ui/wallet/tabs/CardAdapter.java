@@ -2,6 +2,7 @@ package comp5216.sydney.edu.au.findmygym.ui.wallet.tabs;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +16,10 @@ import com.vinaygaba.creditcardview.CardType;
 import com.vinaygaba.creditcardview.CreditCardView;
 
 import java.util.ArrayList;
-import java.util.Random;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.model.CreditCard;
-import comp5216.sydney.edu.au.findmygym.model.PurchaseRecord;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
 
 class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder>
@@ -27,8 +27,7 @@ class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder>
 	private final String TAG = "[CardAdapter]";
 	
 	private UserData userData;
-	Context mContext;
-	ArrayList<CreditCard> creditCardList;
+	Context context;
 	
 	public interface OnItemLongClickListener
 	{
@@ -38,8 +37,7 @@ class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder>
 	public CardAdapter(Context mContext)
 	{
 		userData = UserData.getInstance();
-		this.mContext = mContext;
-		this.creditCardList = userData.getCreditCards();
+		this.context = mContext;
 	}
 	
 	
@@ -54,9 +52,6 @@ class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder>
 	@Override
 	public void onBindViewHolder(@NonNull CardAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position)
 	{
-		
-		holder.creditCardView.setType(CardType.AUTO);
-		holder.creditCardView.setIsFlippable(true);
 		double ran = Math.random();
 		if (ran < 0.5)
 		{
@@ -68,19 +63,24 @@ class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder>
 			holder.creditCardView.setCardFrontBackground(R.drawable.cardbackground_world);
 			holder.creditCardView.setCardBackBackground(R.drawable.cardbackground_world);
 		}
+		// holder.creditCardView.setIsEditable(true);
+		holder.creditCardView.setIsFlippable(true);
+		holder.creditCardView.setType(CardType.AUTO);
 		holder.creditCardView.setCardNumberFormat(CardNumberFormat.MASKED_ALL_BUT_LAST_FOUR);
-		holder.creditCardView.setCardName(creditCardList.get(position).getCardName());
-		holder.creditCardView.setCardNumber(creditCardList.get(position).getCardNumber());
-		holder.creditCardView.setExpiryDate(creditCardList.get(position).getExpiryDate());
-
-
+		holder.creditCardView.setCardName(userData.getCreditCards().get(position).getCardName());
+		holder.creditCardView.setCardNumber(userData.getCreditCards().get(position).getCardNumber());
+		holder.creditCardView.setExpiryDate(userData.getCreditCards().get(position).getExpiryDate());
+		
+		
 		holder.creditCardView.setCardBackBackground(R.drawable.cardbackground_sky);
 		holder.creditCardView.setOnClickListener(new View.OnClickListener()
 		{
 			@Override
 			public void onClick(View view)
 			{
-				Toast.makeText(mContext, "Clicked on" + creditCardList.get(position).getCardName(), Toast.LENGTH_SHORT).show();
+				Log.e(TAG, "Clicked on getCardName" + userData.getCreditCards().get(position).getCardName());
+				Log.e(TAG, "Clicked on getCardNumber " + userData.getCreditCards().get(position).getCardNumber());
+				Log.e(TAG, "Clicked on getExpiryDate" + userData.getCreditCards().get(position).getExpiryDate());
 			}
 		});
 		
@@ -89,9 +89,37 @@ class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder>
 			@Override
 			public boolean onLongClick(View view)
 			{
-				Toast.makeText(mContext, "Removed" + creditCardList.get(position).getCardName(), Toast.LENGTH_SHORT).show();
-				userData.removeCreditCard(position);
-				notifyDataSetChanged();
+				new SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE)
+						.setTitleText("Delete this card?")
+						.setContentText("Deleted card CANNOT be recovered")
+						.setCancelText("NO")
+						.setConfirmText("YES")
+						.showCancelButton(true)
+						// .setConfirmButtonBackgroundColor(R.color.red_100)
+						// .setConfirmButtonTextColor(R.color.red_100)
+						.setCancelClickListener(new SweetAlertDialog.OnSweetClickListener()
+						{
+							@Override
+							public void onClick(SweetAlertDialog sDialog)
+							{
+								sDialog.dismissWithAnimation();
+							}
+						})
+						.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener()
+						{
+							@Override
+							public void onClick(SweetAlertDialog sDialog)
+							{
+								userData.removeCreditCard(position);
+								// notifyDataSetChanged();
+								sDialog.setTitleText("Deleted!")
+										.setContentText("Your record has been deleted!")
+										.setConfirmClickListener(null)
+										.showCancelButton(false)
+										.changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+							}
+						})
+						.show();
 				return false;
 			}
 		});
@@ -102,7 +130,7 @@ class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder>
 	@Override
 	public int getItemCount()
 	{
-		return creditCardList.size();
+		return userData.getCreditCards().size();
 	}
 	
 	public class ViewHolder extends RecyclerView.ViewHolder

@@ -13,9 +13,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentTabHost;
 import androidx.viewpager2.widget.ViewPager2;
-
 import com.google.android.material.tabs.TabLayout;
-
 import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.databinding.FragmentWalletBinding;
 import comp5216.sydney.edu.au.findmygym.ui.wallet.tabs.Wallet_History;
@@ -71,24 +69,18 @@ public class WalletFragment extends Fragment
 	
 	@Override
 	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-		// demoCollectionAdapter = new DemoCollectionAdapter(this);
-		// viewPager = view.findViewById(R.id.pager);
-		// viewPager.setAdapter(demoCollectionAdapter);
-		//
-		// TabLayout tabLayout = view.findViewById(R.id.tab_layout);
-		// new TabLayoutMediator(tabLayout, viewPager,
-		// 		(tab, position) -> tab.setText("OBJECT " + (position + 1))
-		// ).attach();
+
 		super.onViewCreated(view, savedInstanceState);
+
 		tabLayout = getView().findViewById(R.id.wallet_tabLayout);
 		viewPager = getView().findViewById(R.id.wallet_viewpager2);
 		FragmentAdapter fragmentAdapter = new FragmentAdapter(getActivity().getSupportFragmentManager(), getLifecycle());
 		
 		viewPager.setAdapter(fragmentAdapter);
 		
-		tabLayout.addTab(tabLayout.newTab().setText("Membership"));
-		tabLayout.addTab(tabLayout.newTab().setText("History"));
-		tabLayout.addTab(tabLayout.newTab().setText("Card"));
+		tabLayout.addTab(tabLayout.newTab().setText("Memberships"));
+		tabLayout.addTab(tabLayout.newTab().setText("Transactions"));
+		tabLayout.addTab(tabLayout.newTab().setText("Cards"));
 		
 		
 		

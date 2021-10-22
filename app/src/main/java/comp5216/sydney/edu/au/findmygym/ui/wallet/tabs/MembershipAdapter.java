@@ -1,5 +1,6 @@
 package comp5216.sydney.edu.au.findmygym.ui.wallet.tabs;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import java.util.List;
 
 import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.model.Membership;
+import comp5216.sydney.edu.au.findmygym.model.UserData;
 
 /**
  * Created by yarolegovich on 07.03.2017.
@@ -23,10 +25,10 @@ import comp5216.sydney.edu.au.findmygym.model.Membership;
 
 public class MembershipAdapter extends RecyclerView.Adapter<MembershipAdapter.ViewHolder> {
 	
-	private List<Membership> data;
-	
-	public MembershipAdapter(List<Membership> data) {
-		this.data = data;
+	private UserData userData = UserData.getInstance();
+	private Context context;
+	public MembershipAdapter(Context context) {
+		this.context = context;
 	}
 	
 	@NonNull
@@ -38,21 +40,21 @@ public class MembershipAdapter extends RecyclerView.Adapter<MembershipAdapter.Vi
 	}
 	
 	public Membership getItem(int position){
-		return data.get(position);
+		return userData.getMemberships().get(position);
 	}
 	
 	@Override
 	public void onBindViewHolder(ViewHolder holder, int position) {
 		Glide.with(holder.itemView.getContext())
-				.load(data.get(position).getImage())
+				.load(userData.getMemberships().get(position).getImage())
 				.into(holder.image);
-		holder.title.setText(data.get(position).getTitle());
+		holder.title.setText(userData.getMemberships().get(position).getTitle());
 		
 	}
 	
 	@Override
 	public int getItemCount() {
-		return data.size();
+		return userData.getMemberships().size();
 	}
 	
 	static class ViewHolder extends RecyclerView.ViewHolder {

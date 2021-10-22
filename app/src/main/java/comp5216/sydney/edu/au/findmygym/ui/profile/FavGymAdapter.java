@@ -22,9 +22,9 @@ import comp5216.sydney.edu.au.findmygym.model.Timeslot;
 import comp5216.sydney.edu.au.findmygym.ui.gym.TrainerListAdapter;
 
 public class FavGymAdapter extends RecyclerView.Adapter<FavGymAdapter.ViewHolder> {
-    private final ArrayList<String> favGymList;
+    private final ArrayList<Integer> favGymList;
 
-    public FavGymAdapter(ArrayList<String> favGymList) {
+    public FavGymAdapter(ArrayList<Integer> favGymList) {
         this.favGymList = favGymList;
     }
 
@@ -54,7 +54,7 @@ public class FavGymAdapter extends RecyclerView.Adapter<FavGymAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull FavGymAdapter.ViewHolder viewHolder, int position) {
-        viewHolder.getTextView().setText(favGymList.get(position));
+        viewHolder.getTextView().setText(favGymList.get(position).toString());
     }
 
     @Override

@@ -28,11 +28,12 @@ public class UserData extends LiveData<UserData>
 	
 	private ArrayList<PurchaseRecord> purchaseRecords;
 	private ArrayList<CreditCard> creditCards;
+	private ArrayList<Membership> memberships;
 	private FirebaseUser firebaseUser;
 	private String userName;
 	private String userMail;
 	private Bitmap userAvatar;
-	private ArrayList<String> userFavGym;
+	private ArrayList<Integer> userFavGym;
 	private Session userSession;
 	private StorageReference userStorageRef;
 	private Context mContext;
@@ -65,6 +66,10 @@ public class UserData extends LiveData<UserData>
 		return UserData;
 	}
 	
+	/**
+	 * PurchaseRecords
+	 */
+	
 	public ArrayList<PurchaseRecord> getPurchaseRecords()
 	{
 		return purchaseRecords;
@@ -90,6 +95,10 @@ public class UserData extends LiveData<UserData>
 		postValue(this);
 	}
 	
+	/**
+	 * CreditCards
+	 */
+	
 	public ArrayList<CreditCard> getCreditCards()
 	{
 		return creditCards;
@@ -110,8 +119,38 @@ public class UserData extends LiveData<UserData>
 	public void removeCreditCard(int position)
 	{
 		this.creditCards.remove(position);
+		Log.e(TAG, "removeCreditCard: "+this.getCreditCards() );
 		postValue(this);
 	}
+	
+	/**
+	 * Memberships
+	 */
+	
+	public ArrayList<Membership> getMemberships()
+	{
+		return memberships;
+	}
+	
+	public void addMembership(Membership membership)
+	{
+		this.memberships.add(0,membership);
+		postValue(this);
+	}
+	
+	public void setMemberships(ArrayList<Membership> memberships)
+	{
+		this.memberships = memberships;
+		postValue(this);
+	}
+	
+	public void removeMembership(int position)
+	{
+		this.memberships.remove(position);
+		postValue(this);
+	}
+	
+	
 	
 	public FirebaseUser getFirebaseUser()
 	{
@@ -203,19 +242,19 @@ public class UserData extends LiveData<UserData>
 		postValue(this);
 	}
 
-	public ArrayList<String> getUserFavGym() {
+	public ArrayList<Integer> getUserFavGym() {
 		if (userFavGym != null) {
 			if (userFavGym.size() == 0) {
-				userFavGym.add("TestFavGym");
+				userFavGym.add(10000);
 			}
 		} else {
-			userFavGym = new ArrayList<String>();
-			userFavGym.add("No fav gym now");
+			userFavGym = new ArrayList<Integer>();
+			userFavGym.add(1000000);
 		}
 		return this.userFavGym;
 	}
 
-	public void setUserFavGym(ArrayList<String> userFavGym) {
+	public void setUserFavGym(ArrayList<Integer> userFavGym) {
 		this.userFavGym = userFavGym;
 		postValue(this);
 	}
