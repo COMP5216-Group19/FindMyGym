@@ -31,7 +31,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
+        <EditText
             android:id="@+id/nameText"
             android:layout_width="0dp"
             android:layout_height="36dp"
@@ -41,8 +41,13 @@
             android:textSize="28sp"
             android:textStyle="bold"
             android:textColor="#363636"
+            android:background="@android:color/transparent"
+            android:maxLines="1"
+            android:inputType="text"
+            android:focusableInTouchMode="true"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/avatarImage" />
+            app:layout_constraintTop_toBottomOf="@+id/avatarImage"
+            android:focusable="true" />
 
         <TextView
             android:id="@+id/emailText"
@@ -147,13 +152,16 @@
             app:layout_constraintTop_toBottomOf="@+id/statisticText" />
 
         <com.jjoe64.graphview.GraphView
-                android:id="@+id/profile_graphview"
-                app:layout_constraintTop_toBottomOf="@id/statistics_devider"
-                app:layout_constraintBottom_toBottomOf="parent"
+            android:id="@+id/profile_graphview"
+            android:layout_width="0dp"
+            android:layout_height="184dp"
 
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-               />
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/statistics_devider" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

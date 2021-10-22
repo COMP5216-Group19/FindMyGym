@@ -18,9 +18,9 @@
             android:layout_height="82dp"
             android:paddingTop="@dimen/nav_header_vertical_spacing"
             app:srcCompat="@mipmap/ic_launcher"
-            android:onClick="onAvatarClicked"
             android:contentDescription="@string/nav_header_desc"
             android:id="@+id/header_avatar" />
+    <!--            android:onClick="onAvatarClicked"-->
 
     <TextView
             android:layout_width="match_parent"
