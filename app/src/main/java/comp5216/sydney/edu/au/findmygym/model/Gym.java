@@ -21,7 +21,7 @@ public class Gym {
     /**
      * List of personal trainers
      */
-    private List<PersonalTrainer> personalTrainers;
+    private List<Integer> personalTrainerIds;
 
     /**
      * List of user reviews
@@ -45,7 +45,7 @@ public class Gym {
 
     public Gym(int gymId,
                String gymName,
-               List<PersonalTrainer> personalTrainers,
+               List<Integer> personalTrainerIds,
                Calendar openTime,
                Calendar closeTime,
                String address,
@@ -56,7 +56,7 @@ public class Gym {
                List<Review> reviews) {
         this.gymId = gymId;
         this.gymName = gymName;
-        this.personalTrainers = personalTrainers;
+        this.personalTrainerIds = personalTrainerIds;
         this.openTime = openTime;
         this.closeTime = closeTime;
         this.address = address;
@@ -129,8 +129,8 @@ public class Gym {
     /**
      * @return a list of current available personal trainers
      */
-    public List<PersonalTrainer> getPersonalTrainers() {
-        return personalTrainers;
+    public List<Integer> getPersonalTrainerIds() {
+        return personalTrainerIds;
     }
 
     /**

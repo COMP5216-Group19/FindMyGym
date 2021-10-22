@@ -30,7 +30,7 @@ import comp5216.sydney.edu.au.findmygym.model.Timeslot;
 
 public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.TrainerViewHolder> {
 
-    private final List<PersonalTrainer> trainersList;
+    private final List<Integer> trainersList;
     private final GymViewModel mViewModel;
     /**
      * Date selected of reservation maker
@@ -44,7 +44,7 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
     private List<PersonalTrainer> trainersOfSelectedDate;
     private Reservation reservation;
 
-    TrainerListAdapter(List<PersonalTrainer> trainersList,
+    TrainerListAdapter(List<Integer> trainersList,
                        RecyclerView recyclerView,
                        GymViewModel viewModel,
                        Button reserveButton,
@@ -59,8 +59,9 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
         setSelectedDate(mViewModel.getToday());
     }
 
-    private void makeAvailableDays(List<PersonalTrainer> personalTrainers) {
-        for (PersonalTrainer trainer : personalTrainers) {
+    private void makeAvailableDays(List<Integer> personalTrainers) {
+        for (Integer trainerIds : personalTrainers) {
+            PersonalTrainer trainer = mViewModel.findTrainerById(trainerIds);
             for (Timeslot timeslot : trainer.getAvailableTimes()) {
                 Calendar beginTime = timeslot.getBeginTime();
                 Calendar thatDay = GymViewModel.beginOfADay(beginTime);
@@ -74,7 +75,8 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
         this.selectedDate = selectedDate;
 
         trainersOfSelectedDate = new ArrayList<>();
-        for (PersonalTrainer trainer : trainersList) {
+        for (Integer trainerIds : trainersList) {
+            PersonalTrainer trainer = mViewModel.findTrainerById(trainerIds);
             for (Timeslot timeslot : trainer.getAvailableTimes()) {
                 if (GymViewModel.isSameDate(timeslot.getBeginTime(), selectedDate)) {
                     trainersOfSelectedDate.add(trainer);

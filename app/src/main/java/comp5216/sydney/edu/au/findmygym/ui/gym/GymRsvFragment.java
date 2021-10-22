@@ -28,7 +28,7 @@ public class GymRsvFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         if (mViewModel.trainerListAdapter == null) {
             mViewModel.trainerListAdapter =
-                    new TrainerListAdapter(mViewModel.getGym().getPersonalTrainers(),
+                    new TrainerListAdapter(mViewModel.getGym().getPersonalTrainerIds(),
                             recyclerView,
                             mViewModel,
                             view.findViewById(R.id.gym_reserve_button),

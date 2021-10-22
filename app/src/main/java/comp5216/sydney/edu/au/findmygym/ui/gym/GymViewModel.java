@@ -9,8 +9,10 @@ import org.jetbrains.annotations.NotNull;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 import comp5216.sydney.edu.au.findmygym.model.CalendarUtil;
 import comp5216.sydney.edu.au.findmygym.model.Gym;
@@ -31,13 +33,24 @@ public class GymViewModel extends ViewModel {
     private final Calendar today = beginOfADay(Calendar.getInstance());
 
     private Gym gym;
+    List<PersonalTrainer> allPersonalTrainers;
 
     public GymViewModel() {
-        // todo: for test
-        gym = testGym();
+        // TODO: get data
+        addTestGym();
     }
 
-    private static Gym testGym() {
+    public PersonalTrainer findTrainerById(int trainerId) {
+        for (PersonalTrainer pt : allPersonalTrainers) {
+            if (pt.getTrainerId() == trainerId) {
+                return pt;
+            }
+        }
+        return null;
+    }
+
+    private void addTestGym() {
+        allPersonalTrainers = new ArrayList<>();
         Gym gym = new Gym(0,
                 "Gym A",
                 CalendarUtil.stringToCalendar("1970-01-01 09:00"),
@@ -78,16 +91,19 @@ public class GymViewModel extends ViewModel {
 
             // Not on today
             pt1.addTimeSlot(Timeslot.fromDate(df.parse("2021-10-23 9:30AM"), 90));
-            gym.getPersonalTrainers().add(pt1);
+            gym.getPersonalTrainerIds().add(1);
 
             PersonalTrainer pt2 = new PersonalTrainer(2, "Ada");
             pt2.addTimeSlot(Timeslot.timeSlotOnToday("9AM", "11AM"));
             pt2.addTimeSlot(Timeslot.timeSlotOnToday("1:00 PM", "3 PM"));
-            gym.getPersonalTrainers().add(pt2);
+            gym.getPersonalTrainerIds().add(2);
+
+            allPersonalTrainers.add(pt1);
+            allPersonalTrainers.add(pt2);
         } catch (ParseException e) {
             Log.d(TAG, Arrays.toString(e.getStackTrace()));
         }
-        return gym;
+        this.gym = gym;
     }
 
     /**
