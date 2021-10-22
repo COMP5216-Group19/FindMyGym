@@ -8,18 +8,15 @@ import android.se.omapi.Session;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.StorageReference;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
+import java.util.List;
 
-import comp5216.sydney.edu.au.findmygym.MainActivity;
 import comp5216.sydney.edu.au.findmygym.R;
 
 public class UserData extends LiveData<UserData>
@@ -33,10 +30,14 @@ public class UserData extends LiveData<UserData>
 	private String userName;
 	private String userMail;
 	private Bitmap userAvatar;
-	private ArrayList<Integer> userFavGym;
+	private ArrayList<Integer> favouriteGyms;
+	private ArrayList<Reservation> reservations;
 	private Session userSession;
 	private StorageReference userStorageRef;
 	private Context mContext;
+
+	// todo: mock的list
+	public List<Gym> allGyms;
 	
 	private volatile static UserData UserData;
 	
@@ -46,6 +47,14 @@ public class UserData extends LiveData<UserData>
 	public UserData()
 	{
 		this.purchaseRecords = new ArrayList<>(1);
+	}
+
+	public void addMockGym() {
+		allGyms = new ArrayList<>();
+//		Gym gym = new Gym(
+//				11111,
+//
+//		);
 	}
 	
 	/**
@@ -242,20 +251,20 @@ public class UserData extends LiveData<UserData>
 		postValue(this);
 	}
 
-	public ArrayList<Integer> getUserFavGym() {
-		if (userFavGym != null) {
-			if (userFavGym.size() == 0) {
-				userFavGym.add(10000);
+	public ArrayList<Integer> getFavouriteGyms() {
+		if (favouriteGyms != null) {
+			if (favouriteGyms.size() == 0) {
+				favouriteGyms.add(10000);
 			}
 		} else {
-			userFavGym = new ArrayList<Integer>();
-			userFavGym.add(1000000);
+			favouriteGyms = new ArrayList<Integer>();
+			favouriteGyms.add(1000000);
 		}
-		return this.userFavGym;
+		return this.favouriteGyms;
 	}
 
-	public void setUserFavGym(ArrayList<Integer> userFavGym) {
-		this.userFavGym = userFavGym;
+	public void setFavouriteGyms(ArrayList<Integer> favouriteGyms) {
+		this.favouriteGyms = favouriteGyms;
 		postValue(this);
 	}
 	
@@ -263,7 +272,15 @@ public class UserData extends LiveData<UserData>
 	{
 		this.mContext = mContext;
 	}
-	
+
+	public ArrayList<Reservation> getReservations() {
+		return reservations;
+	}
+
+	public void setReservations(ArrayList<Reservation> reservations) {
+		this.reservations = reservations;
+	}
+
 	@Override
 	protected void onActive()
 	{

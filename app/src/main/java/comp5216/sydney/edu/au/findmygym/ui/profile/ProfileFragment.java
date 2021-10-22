@@ -5,26 +5,20 @@ import static android.app.Activity.RESULT_OK;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -76,7 +70,7 @@ public class ProfileFragment extends Fragment
 
 		userData = UserData.getInstance();
 		userData.setContext(this.getContext());
-		FavGymAdapter favGymAdapter = new FavGymAdapter(userData.getUserFavGym());
+		FavGymAdapter favGymAdapter = new FavGymAdapter(userData.getFavouriteGyms());
 
 		binding.avatarImage.setImageBitmap(userData.getUserAvatar());
 		binding.nameText.setText(userData.getUserName());

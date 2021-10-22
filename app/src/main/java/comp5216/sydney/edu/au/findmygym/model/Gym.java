@@ -88,6 +88,14 @@ public class Gym {
                 new ArrayList<>());
     }
 
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
     /**
      * Sets the picture of this gym.
      *
