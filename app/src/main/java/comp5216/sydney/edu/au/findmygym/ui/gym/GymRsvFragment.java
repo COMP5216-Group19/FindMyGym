@@ -26,10 +26,20 @@ public class GymRsvFragment extends Fragment {
 
         RecyclerView recyclerView = view.findViewById(R.id.gym_trainer_recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        mViewModel.trainerListAdapter =
-                new TrainerListAdapter(mViewModel.getGym().getPersonalTrainers(),
-                        recyclerView,
-                        view.findViewById(R.id.gym_reserve_button));
+        if (mViewModel.trainerListAdapter == null) {
+            mViewModel.trainerListAdapter =
+                    new TrainerListAdapter(mViewModel.getGym().getPersonalTrainerIds(),
+                            recyclerView,
+                            mViewModel,
+                            view.findViewById(R.id.gym_reserve_button),
+                            view.findViewById(R.id.gym_picked_date_text));
+        } else {
+            mViewModel.trainerListAdapter.recyclerView = recyclerView;
+            mViewModel.trainerListAdapter.reserveButton =
+                    view.findViewById(R.id.gym_reserve_button);
+            mViewModel.trainerListAdapter.dateText =
+                    view.findViewById(R.id.gym_picked_date_text);
+        }
         recyclerView.setAdapter(mViewModel.trainerListAdapter);
 
         return view;

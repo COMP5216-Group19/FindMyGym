@@ -1,9 +1,12 @@
 package comp5216.sydney.edu.au.findmygym.model;
 
+import android.graphics.Bitmap;
+
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class PersonalTrainer {
 
@@ -13,6 +16,7 @@ public class PersonalTrainer {
     private final String name;
 
     private final int trainerId;
+    private Bitmap avatar;
 
     /**
      * Available timeslots of this trainer
@@ -38,6 +42,14 @@ public class PersonalTrainer {
         availableTimes.add(timeSlot);
     }
 
+    public void setAvatar(Bitmap avatar) {
+        this.avatar = avatar;
+    }
+
+    public Bitmap getAvatar() {
+        return avatar;
+    }
+
     /**
      * @return id of this trainer
      */
@@ -57,6 +69,19 @@ public class PersonalTrainer {
      */
     public List<Timeslot> getAvailableTimes() {
         return availableTimes;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PersonalTrainer that = (PersonalTrainer) o;
+        return trainerId == that.trainerId && Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, trainerId);
     }
 
     @NonNull

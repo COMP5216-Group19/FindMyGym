@@ -13,6 +13,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
+
+import java.util.Calendar;
 
 import comp5216.sydney.edu.au.findmygym.model.Reservation;
 import comp5216.sydney.edu.au.findmygym.ui.gym.GymFragment;
@@ -87,6 +90,31 @@ public class GymActivity extends AppCompatActivity {
 
     }
 
+    private void onDateSelectedListener(DatePickerDialog view,
+                                        int year, int monthOfYear, int dayOfMonth) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.clear();
+        calendar.set(year, monthOfYear, dayOfMonth);
+        mViewModel.getTrainerListAdapter().setSelectedDate(calendar);
+        mViewModel.getTrainerListAdapter().refresh();
+    }
+
+    public void onDatePickerClicked(View view) {
+        DatePickerDialog pickerDialog = DatePickerDialog.newInstance(
+                this::onDateSelectedListener,
+                mViewModel.getToday().get(Calendar.YEAR),
+                mViewModel.getToday().get(Calendar.MONTH),
+                mViewModel.getToday().get(Calendar.DAY_OF_MONTH)
+        );
+        pickerDialog.setSelectableDays(mViewModel.getTrainerListAdapter().getSelectableDays());
+        pickerDialog.setHighlightedDays(
+                new Calendar[]{mViewModel.getTrainerListAdapter().getSelectedDate()});
+        pickerDialog.show(getSupportFragmentManager(), TAG);
+    }
+
+    /**
+     * Click handler of "RESERVE" button in reservation page.
+     */
     public void onConfirmReservationClicked(View view) {
         Reservation reservation = mViewModel.getReservation();
         if (reservation != null) {
