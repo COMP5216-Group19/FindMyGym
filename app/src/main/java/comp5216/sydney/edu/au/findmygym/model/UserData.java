@@ -15,6 +15,9 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Comparator;
 
 import comp5216.sydney.edu.au.findmygym.MainActivity;
 import comp5216.sydney.edu.au.findmygym.R;
@@ -23,10 +26,14 @@ public class UserData extends LiveData<UserData>
 {
 	private final String TAG = "[UserData]";
 	
+	private ArrayList<PurchaseRecord> purchaseRecords;
+	private ArrayList<CreditCard> creditCards;
+	private ArrayList<Membership> memberships;
 	private FirebaseUser firebaseUser;
 	private String userName;
 	private String userMail;
 	private Bitmap userAvatar;
+	private ArrayList<Integer> userFavGym;
 	private Session userSession;
 	private StorageReference userStorageRef;
 	private Context mContext;
@@ -38,7 +45,7 @@ public class UserData extends LiveData<UserData>
 	 */
 	public UserData()
 	{
-	
+		this.purchaseRecords = new ArrayList<>(1);
 	}
 	
 	/**
@@ -59,6 +66,92 @@ public class UserData extends LiveData<UserData>
 		return UserData;
 	}
 	
+	/**
+	 * PurchaseRecords
+	 */
+	
+	public ArrayList<PurchaseRecord> getPurchaseRecords()
+	{
+		return purchaseRecords;
+	}
+	
+	public void addPurchaseRecord(PurchaseRecord purchaseRecord)
+	{
+		this.purchaseRecords.add(purchaseRecord);
+		sortPurchaseRecords();
+		postValue(this);
+	}
+	
+	public void setPurchaseRecords(ArrayList<PurchaseRecord> purchaseRecords)
+	{
+		this.purchaseRecords = purchaseRecords;
+		sortPurchaseRecords();
+		postValue(this);
+	}
+	
+	public void removePurchaseRecord(int position)
+	{
+		this.purchaseRecords.remove(position);
+		postValue(this);
+	}
+	
+	/**
+	 * CreditCards
+	 */
+	
+	public ArrayList<CreditCard> getCreditCards()
+	{
+		return creditCards;
+	}
+	
+	public void addCreditCard(CreditCard creditCard)
+	{
+		this.creditCards.add(0,creditCard);
+		postValue(this);
+	}
+	
+	public void setCreditCards(ArrayList<CreditCard> creditCards)
+	{
+		this.creditCards = creditCards;
+		postValue(this);
+	}
+	
+	public void removeCreditCard(int position)
+	{
+		this.creditCards.remove(position);
+		Log.e(TAG, "removeCreditCard: "+this.getCreditCards() );
+		postValue(this);
+	}
+	
+	/**
+	 * Memberships
+	 */
+	
+	public ArrayList<Membership> getMemberships()
+	{
+		return memberships;
+	}
+	
+	public void addMembership(Membership membership)
+	{
+		this.memberships.add(0,membership);
+		postValue(this);
+	}
+	
+	public void setMemberships(ArrayList<Membership> memberships)
+	{
+		this.memberships = memberships;
+		postValue(this);
+	}
+	
+	public void removeMembership(int position)
+	{
+		this.memberships.remove(position);
+		postValue(this);
+	}
+	
+	
+	
 	public FirebaseUser getFirebaseUser()
 	{
 		return firebaseUser;
@@ -76,10 +169,10 @@ public class UserData extends LiveData<UserData>
 		{
 			return userName;
 		}
-		else
-		{
+		else if(firebaseUser != null){
 			return firebaseUser.getDisplayName();
 		}
+		return "GUEST: JOHN DOE";
 	}
 	
 	public void setUserName(String userName)
@@ -94,10 +187,10 @@ public class UserData extends LiveData<UserData>
 		{
 			return userMail;
 		}
-		else
-		{
+		else if(firebaseUser != null){
 			return firebaseUser.getEmail();
 		}
+		return "Go sign in, NOW!";
 	}
 	
 	public void setUserMail(String userMail)
@@ -112,6 +205,9 @@ public class UserData extends LiveData<UserData>
 		{
 			return this.userAvatar;
 		}
+		// else if(firebaseUser != null){
+		// 	return BitmapFactory()firebaseUser.getPhotoUrl();
+		// }
 		else
 		{
 			userAvatar = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.diana);
@@ -139,11 +235,27 @@ public class UserData extends LiveData<UserData>
 	{
 		return this.firebaseUser.getPhotoUrl();
 	}
-	
-	
+
 	public void setUserAvatar(Bitmap userAvatar)
 	{
 		this.userAvatar = userAvatar;
+		postValue(this);
+	}
+
+	public ArrayList<Integer> getUserFavGym() {
+		if (userFavGym != null) {
+			if (userFavGym.size() == 0) {
+				userFavGym.add(10000);
+			}
+		} else {
+			userFavGym = new ArrayList<Integer>();
+			userFavGym.add(1000000);
+		}
+		return this.userFavGym;
+	}
+
+	public void setUserFavGym(ArrayList<Integer> userFavGym) {
+		this.userFavGym = userFavGym;
 		postValue(this);
 	}
 	
@@ -177,4 +289,25 @@ public class UserData extends LiveData<UserData>
 		mContext = null;
 	}
 	
+	public void sortPurchaseRecords(){
+		Log.e(TAG,"---------------------"+this.getPurchaseRecords().size());
+		this.purchaseRecords.sort(new Comparator<PurchaseRecord>()
+		{
+			@Override
+			public int compare(PurchaseRecord t1, PurchaseRecord t2)
+			{
+				Calendar c1 = t1.getTime();
+				Calendar c2 = t2.getTime();
+				if (c1.before(c2))
+				{
+					return 1;
+				}
+				if (c1.after(c2))
+				{
+					return -1;
+				}
+				return 0;
+			}
+		});
+	}
 }

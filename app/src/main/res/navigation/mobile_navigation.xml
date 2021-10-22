@@ -3,10 +3,10 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/mobile_navigation"
-        app:startDestination="@+id/nav_home">
+        app:startDestination="@+id/nav_map">
 
     <fragment
-            android:id="@+id/nav_home"
+            android:id="@+id/nav_map"
             android:name="comp5216.sydney.edu.au.findmygym.ui.map.MapFragment"
             android:label="@string/menu_map"
             tools:layout="@layout/fragment_map" />
@@ -22,4 +22,10 @@
             android:name="comp5216.sydney.edu.au.findmygym.ui.profile.ProfileFragment"
             android:label="@string/menu_profile"
             tools:layout="@layout/fragment_profile" />
+
+    <fragment
+            android:id="@+id/nav_wallet"
+            android:name="comp5216.sydney.edu.au.findmygym.ui.wallet.WalletFragment"
+            android:label="@string/menu_wallet"
+            tools:layout="@layout/fragment_wallet" />
 </navigation>

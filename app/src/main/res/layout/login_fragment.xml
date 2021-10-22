@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/login"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.login.LoginFragment">
-
-
 
 
     <ImageView
@@ -19,15 +17,13 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="120dp"/>
+            android:layout_marginTop="120dp" />
 
     <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/account_layout"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            >
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_centerHorizontal="true"></com.google.android.material.textfield.TextInputLayout>
 
     <EditText
             android:id="@+id/login_textedit_account"
@@ -66,11 +62,28 @@
             android:text="LOGIN"
             app:layout_constraintLeft_toLeftOf="parent"
             android:layout_marginLeft="80dp"
-
+            android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@+id/login_textedit_password"
             android:layout_marginTop="40dp"
             app:cornerRadius="9dp" />
 
+    <com.royrodriguez.transitionbutton.TransitionButton
+            android:layout_width="match_parent"
+            android:layout_marginLeft="100dp"
+            android:layout_marginRight="100dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/login_button_google"
+            android:text="Sign in with Google"
+            android:textAlignment="center"
+            app:layout_constraintTop_toBottomOf="@+id/login_textedit_password"
+            android:layout_marginTop="40dp"
+            app:defaultColor="@color/blue_900"
+            app:loaderColor="@android:color/white"
+            android:textColor="@android:color/white"
+            app:layout_constraintRight_toRightOf="parent"
+            app:circularflow_radiusInDP="5dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:gravity="center_horizontal" />
 
     <TextView
             android:id="@+id/login_texteview_signup"
@@ -80,17 +93,12 @@
             android:text="Do not have an account? Sign up here."
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/login_button_login"
+            android:gravity="bottom|center"
+            app:layout_constraintTop_toBottomOf="@+id/login_button_google"
             android:layout_marginTop="30dp" />
 
-    <com.google.android.gms.common.SignInButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/login_button_google"
-            android:onClick="onGoogleClicked"
-            app:layout_constraintLeft_toRightOf="@+id/login_button_login"
-            app:layout_constraintTop_toBottomOf="@+id/login_textedit_password"
-            android:layout_marginStart="40dp"
-            android:layout_marginTop="36dp" />
 
-</androidx.constraintlayout.widget.ConstraintLayout >
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

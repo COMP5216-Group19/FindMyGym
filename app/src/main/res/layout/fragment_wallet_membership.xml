@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        tools:context=".ui.wallet.tabs.Wallet_Membership">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/membership_textview_title"
+            android:text="wallet_fragment1"
+            android:gravity="center"
+            android:textSize="40dp"
+            android:visibility="gone"
+            />
+
+                />
+    <com.yarolegovich.discretescrollview.DiscreteScrollView
+            android:id="@+id/wallet_membership_discreteScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:dsv_orientation="horizontal"
+            android:layout_marginBottom="150dp"/>
+
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/membership_textview_gym"
+            android:text="Gym"
+            android:gravity="bottom|center"
+            android:textSize="25dp"
+            android:textStyle="bold"
+            android:paddingBottom="90dp"
+            />
+
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/membership_textview_startTime"
+            android:text="StartTime"
+            android:gravity="bottom|center"
+            android:textSize="15dp"
+            android:paddingBottom="60dp"
+            />
+
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintTop_toBottomOf="@id/membership_textview_startTime"
+            android:id="@+id/membership_textview_endTime"
+            android:text="EndTime"
+            android:paddingBottom="30dp"
+            android:gravity="bottom|center"
+            android:textSize="15dp"
+            />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

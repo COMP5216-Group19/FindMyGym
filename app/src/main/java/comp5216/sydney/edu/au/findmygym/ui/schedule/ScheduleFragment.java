@@ -69,14 +69,14 @@ public class ScheduleFragment extends Fragment
 	{
 		mViewModel = new ViewModelProvider(this).get(ScheduleViewModel.class);
 		textView_Message = (TextView) getView().findViewById(R.id.message);
-		Log.e(TAG, textView_Message.getText().toString());
+		// Log.e(TAG, textView_Message.getText().toString());
 		
 		mViewModel.getUserTimer().observe(getViewLifecycleOwner(), new Observer<Integer>()
 		{
 			@Override
 			public void onChanged(Integer userTimer)
 			{
-				Log.e(TAG,"userData changed");
+				// Log.e(TAG,"userData changed");
 				// textView_Message.setText(mViewModel.getUserTimer().toString());
 				textView_Message.setText(String.valueOf(userTimer));
 				
@@ -86,7 +86,7 @@ public class ScheduleFragment extends Fragment
 		textView_Message.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Log.e(TAG, "textView_Message - onClick");
+				// Log.e(TAG, "textView_Message - onClick");
 				mViewModel.getUserTimer().setValue(0);
 				mViewModel.currentSecond= 0;
 			}

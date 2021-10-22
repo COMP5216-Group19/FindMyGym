@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/wallet_card_item_container">
+
+    <com.vinaygaba.creditcardview.CreditCardView
+            android:id="@+id/wallet_card_item_creditCardView"
+            android:layout_width="fill_parent"
+            android:layout_height="225dp"
+            app:cardNumber="0000000000000000"
+            app:cardName="TEST CARD"
+            app:type="auto"
+            app:putChip="true"
+            app:expiryDate = "00/00"
+            app:isEditable="true"
+            />
+
+
+</LinearLayout>
