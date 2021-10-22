@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 
+import comp5216.sydney.edu.au.findmygym.model.CalendarUtil;
 import comp5216.sydney.edu.au.findmygym.model.Gym;
 import comp5216.sydney.edu.au.findmygym.model.PersonalTrainer;
 import comp5216.sydney.edu.au.findmygym.model.Reservation;
@@ -39,12 +40,12 @@ public class GymViewModel extends ViewModel {
     private static Gym testGym() {
         Gym gym = new Gym(0,
                 "Gym A",
-                "9 AM",
-                "6 PM",
-                4.8,
+                CalendarUtil.stringToCalendar("1970-01-01 09:00"),
+                CalendarUtil.stringToCalendar("1970-01-01 18:00"),
                 "Blah Ave. Blah Unit",
                 "12345678",
-                false);
+                123.45,
+                -27.5);
         gym.getEquipments().add("Barbell");
         gym.getEquipments().add("Bicycle");
         gym.getEquipments().add("Climbing");

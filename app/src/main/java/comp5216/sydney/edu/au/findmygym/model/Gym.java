@@ -3,6 +3,7 @@ package comp5216.sydney.edu.au.findmygym.model;
 import android.graphics.Bitmap;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -30,31 +31,27 @@ public class Gym {
     /**
      * The following two attributes represents the opening hours
      */
-    private String openTime;
-    private String closeTime;
-
-    /**
-     * Average rating
-     */
-    private double avgRating;
+    private Calendar openTime;
+    private Calendar closeTime;
 
     private String address;
     private String contact;
 
     private List<String> equipments;
+    private double longitude;
+    private double latitude;
 
-    private boolean favourite;
     private Bitmap gymPhoto;
 
     public Gym(int gymId,
                String gymName,
                List<PersonalTrainer> personalTrainers,
-               String openTime,
-               String closeTime,
-               double avgRating,
+               Calendar openTime,
+               Calendar closeTime,
                String address,
                String contact,
-               boolean favourite,
+               double longitude,
+               double latitude,
                List<String> equipments,
                List<Review> reviews) {
         this.gymId = gymId;
@@ -62,31 +59,31 @@ public class Gym {
         this.personalTrainers = personalTrainers;
         this.openTime = openTime;
         this.closeTime = closeTime;
-        this.avgRating = avgRating;
         this.address = address;
         this.contact = contact;
-        this.favourite = favourite;
         this.equipments = equipments;
         this.reviews = reviews;
+        this.longitude = longitude;
+        this.latitude = latitude;
     }
 
     public Gym(int gymId,
                String gymName,
-               String openTime,
-               String closeTime,
-               double avgRating,
+               Calendar openTime,
+               Calendar closeTime,
                String address,
                String contact,
-               boolean favourite) {
+               double longitude,
+               double latitude) {
         this(gymId,
                 gymName,
                 new ArrayList<>(),
                 openTime,
                 closeTime,
-                avgRating,
                 address,
                 contact,
-                favourite,
+                longitude,
+                latitude,
                 new ArrayList<>(),
                 new ArrayList<>());
     }
@@ -125,16 +122,8 @@ public class Gym {
      * @return whether this gym is marked as "favourite"
      */
     public boolean isFavourite() {
-        return favourite;
-    }
-
-    /**
-     * Sets the "favourite" attribute
-     *
-     * @param favourite whether this gym will be marked as "favourite"
-     */
-    public void setFavourite(boolean favourite) {
-        this.favourite = favourite;
+        // todo
+        return false;
     }
 
     /**
@@ -147,14 +136,14 @@ public class Gym {
     /**
      * @return string representation of open time, e.g. 9AM
      */
-    public String getOpenTime() {
+    public Calendar getOpenTime() {
         return openTime;
     }
 
     /**
      * @return string representation of close time, e.g. 6PM
      */
-    public String getCloseTime() {
+    public Calendar getCloseTime() {
         return closeTime;
     }
 
@@ -162,7 +151,11 @@ public class Gym {
      * @return average user rating of this gym
      */
     public double getAvgRating() {
-        return avgRating;
+        double total = 0.0;
+        for (Review review : reviews) {
+            total += review.getRating();
+        }
+        return total / reviews.size();
     }
 
     /**
