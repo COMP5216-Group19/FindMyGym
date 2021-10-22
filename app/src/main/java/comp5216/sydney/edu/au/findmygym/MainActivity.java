@@ -384,8 +384,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		Intent intent = new Intent(mContext, LoginActivity.class);
 		startActivity(intent);
 	}
-	
-	
+
 	// 传递数据
 	// private void sendTestFunction()
 	// {
@@ -398,30 +397,10 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 	// 	fragmentTransaction.replace(R.id.mainFragment, fragment);
 	// 	fragmentTransaction.commit();
 	// }
-	
 
-	
 	@Override
 	public void onResults(@NonNull String[] strings)
 	{
 		Toast.makeText(getApplicationContext(), Arrays.toString(strings),Toast.LENGTH_LONG).show();
 	}
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            View v = getCurrentFocus();
-            if ( v instanceof EditText) {
-                Rect outRect = new Rect();
-                v.getGlobalVisibleRect(outRect);
-                if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
-                    Log.d("focus", "touchevent");
-                    v.clearFocus();
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                }
-            }
-        }
-        return super.dispatchTouchEvent(event);
-    }
 }
