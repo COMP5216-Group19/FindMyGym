@@ -11,6 +11,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
+
+import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -182,6 +184,8 @@ public class ProfileFragment extends Fragment
 
 		PieData pieData = new PieData(pieDataSet);
 		pieData.setDrawValues(true);
+
+		pieChart.spin( 3000,0,-360f, Easing.EaseInOutQuad);
 
 		pieChart.setData(pieData);
 		pieChart.invalidate();
