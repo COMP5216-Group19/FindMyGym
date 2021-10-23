@@ -171,6 +171,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback
 		getLocationPermission();
 		updateLocationUI();
 		getDeviceLocation();
+		mMap.setMyLocationEnabled(true);
 
 //		// Add a marker in Sydney and move the camera
 //		LatLng gym1 = new LatLng(-33.79911, 151.1792);
@@ -255,10 +256,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback
 							locationTextView.setText(msg);
 
 							// Add a marker for my current location on the map
-							MarkerOptions marker = new MarkerOptions().position(
-									new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()))
-									.title("I am here");
-							mMap.addMarker(marker);
+//							MarkerOptions marker = new MarkerOptions().position(
+//									new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()))
+//									.title("I am here");
+//							mMap.addMarker(marker);
 						} else {
 							Log.d(TAG, "Current location is null. Using defaults.");
 							Log.e(TAG, "Exception: %s", task.getException());
