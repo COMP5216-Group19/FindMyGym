@@ -75,32 +75,144 @@ public class UserData extends LiveData<UserData>
 		allGyms = new ArrayList<>();
 		Gym gym0 = new Gym(
 				0,
-				"Gym A",
+				"Minus Fitness Gym Chatswood",
 				null,
 				null,
 				null,
-				"GymA-Address",
+				"763 Pacific Hwy, Chatswood NSW 2067",
 				"123-4567",
-				-33.887713,
-				151.224663,
+				-33.79911,
+				151.1792,
 				null,
 				null
 		);
 		Gym gym1 = new Gym(
 				1,
-				"GymB",
+				"Minus Fitness Crows Nest",
 				null,
 				null,
 				null,
-				"GymAddress",
+				"400 Pacific Hwy, Crows Nest NSW 2065",
 				"123-4567",
-				-33.887713,
-				151.224663,
+				-33.82581,
+				151.19854,
+				null,
+				null
+		);
+		Gym gym2 = new Gym(
+				2,
+				"Fitness Second St Leonards",
+				null,
+				null,
+				null,
+				"55 Christie St, St Leonards NSW 2065",
+				"123-4567",
+				-33.82445,
+				151.19584,
+				null,
+				null
+		);
+		Gym gym3 = new Gym(
+				3,
+				"Fitness Second North Sydney",
+				null,
+				null,
+				null,
+				"1 Elizabeth Plaza, North Sydney NSW 2060",
+				"123-4567",
+				-33.83945,
+				151.20809,
+				null,
+				null
+		);
+		Gym gym4 = new Gym(
+				4,
+				"Fitness Second Bond St",
+				null,
+				null,
+				null,
+				"20 Bond St, Sydney NSW 2000",
+				"123-4567",
+				-33.86441,
+				151.20829,
+				null,
+				null
+		);
+		Gym gym5 = new Gym(
+				5,
+				"Minus Fitness Market Street",
+				null,
+				null,
+				null,
+				"25 Market St, Sydney NSW 2000",
+				"123-4567",
+				-33.87115,
+				151.20522,
+				null,
+				null
+		);
+		Gym gym6 = new Gym(
+				6,
+				"Minus Fitness Waterloo",
+				null,
+				null,
+				null,
+				"11A Lachlan St, Waterloo NSW 2017",
+				"123-4567",
+				-33.90103,
+				151.21178,
+				null,
+				null
+		);
+		Gym gym7 = new Gym(
+				7,
+				"Notime Fitness North Sydey",
+				null,
+				null,
+				null,
+				"118 Walker St, North Sydney NSW 2060",
+				"123-4567",
+				-33.837711,
+				151.208801,
+				null,
+				null
+		);
+		Gym gym8 = new Gym(
+				8,
+				"Notime Fitness City",
+				null,
+				null,
+				null,
+				"227 Elizabeth St, Sydney NSW 2000",
+				"123-4567",
+				-33.8706586,
+				151.2102227,
+				null,
+				null
+		);
+		Gym gym9 = new Gym(
+				9,
+				"Sliver's Gym",
+				null,
+				null,
+				null,
+				"7-9 West St, North Sydney NSW 2060",
+				"123-4567",
+				-33.8334692,
+				151.2052855,
 				null,
 				null
 		);
 		allGyms.add(gym0);
 		allGyms.add(gym1);
+		allGyms.add(gym2);
+		allGyms.add(gym3);
+		allGyms.add(gym4);
+		allGyms.add(gym5);
+		allGyms.add(gym6);
+		allGyms.add(gym7);
+		allGyms.add(gym8);
+		allGyms.add(gym9);
 	}
 
 	public void addMockReservations()
