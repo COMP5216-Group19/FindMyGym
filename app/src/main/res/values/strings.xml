@@ -70,4 +70,10 @@
 
     <string name="gym_image_description">Photo of this gym</string>
     <string name="gym_review_item_description">Avatar of the user who wrote this review</string>
+
+    <string name="gym_self_price">Gym price</string>
+    <string name="gym_trainer_price">Coach Price</string>
+    <string name="gym_tax_price">Tax</string>
+    <string name="gym_total_price">Total</string>
+    <string name="gym_money_fmt">$%.2f</string>
 </resources>

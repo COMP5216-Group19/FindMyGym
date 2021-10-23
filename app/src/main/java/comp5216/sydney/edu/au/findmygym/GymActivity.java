@@ -21,6 +21,7 @@ import comp5216.sydney.edu.au.findmygym.model.Reservation;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
 import comp5216.sydney.edu.au.findmygym.ui.gym.GymFragment;
 import comp5216.sydney.edu.au.findmygym.ui.gym.GymViewModel;
+import comp5216.sydney.edu.au.findmygym.ui.gym.TrainerReservation;
 
 public class GymActivity extends AppCompatActivity {
 
@@ -117,31 +118,32 @@ public class GymActivity extends AppCompatActivity {
         pickerDialog.show(getSupportFragmentManager(), TAG);
     }
 
+    public void onTimePickerClicked(View view) {
+
+    }
+
     /**
      * Click handler of "RESERVE" button in reservation page.
      */
     public void onConfirmReservationClicked(View view) {
-        Reservation reservation = mViewModel.getReservation();
-        if (reservation != null) {
-            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this)
-                    .setTitle(R.string.gym_confirm_rsv)
-                    .setMessage(getString(R.string.gym_confirm_rsv_msg,
-                            reservation.getTrainer().getName(),
-                            reservation.getSelectedTimeSlot().toString(this)))
-                    .setPositiveButton(R.string.confirm, (dialog, which) -> {
-                        makeReservation(reservation);
-                    })
-                    .setNegativeButton(R.string.cancel, (dialog, which) -> {
-                        // Nothing happens
-                    });
-            builder.create().show();
-        } else {
-            // This should not happen, because when nothing selected, the "reserve"
-            // button should be disabled.
-            Log.e(TAG, "Reservation is null");
-            Toast.makeText(this, R.string.gym_rsv_null_error,
-                    Toast.LENGTH_SHORT).show();
-        }
+        TrainerReservation trainerRsv = mViewModel.getReservation();
+
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.gym_confirm_rsv)
+                .setMessage(R.string.gym_confirm_rsv)
+                .setPositiveButton(R.string.confirm, (dialog, which) -> {
+                    Reservation reservation = new Reservation(
+                            UserData.getInstance().getUserId(),
+                            mViewModel.getGym().getGymId(),
+                            trainerRsv == null ? null : trainerRsv.trainer.getTrainerId(),
+                            mViewModel.getSelectedGymTimeslot());
+                    makeReservation(reservation);
+                })
+                .setNegativeButton(R.string.cancel, (dialog, which) -> {
+                    // Nothing happens
+                });
+        builder.create().show();
+
 
     }
 
