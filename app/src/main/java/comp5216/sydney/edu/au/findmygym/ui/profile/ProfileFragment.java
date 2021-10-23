@@ -1,11 +1,6 @@
 package comp5216.sydney.edu.au.findmygym.ui.profile;
 
-import static android.app.Activity.RESULT_OK;
-
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,17 +9,30 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.google.common.collect.BiMap;
 
-import java.io.FileNotFoundException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.databinding.FragmentProfileBinding;
@@ -40,6 +48,11 @@ public class ProfileFragment extends Fragment
 	private FragmentProfileBinding binding;
 	private UserData userData;
 	private ArrayList<Reservation> reservations;
+	public Map<Integer, Integer> exerciseLog = new HashMap<>();
+	public Map<Integer, Integer> gymLog = new HashMap<>();
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+	String currentTime = sdf.format(Calendar.getInstance().getTime());
+	Integer currentTimeInt = Integer.parseInt(currentTime);
 
 	public View onCreateView(@NonNull LayoutInflater inflater,
 	                         ViewGroup container, Bundle savedInstanceState)
@@ -69,6 +82,8 @@ public class ProfileFragment extends Fragment
 		userData = UserData.getInstance();
 		userData.setContext(this.getContext());
 		reservations = userData.getReservations();
+		exerciseLog = getExLogFromReservations(reservations);
+
 		//TODO: need to change allGyms into firebase databases
 		FavGymAdapter favGymAdapter = new FavGymAdapter(userData.getFavouriteGyms(), userData.allGyms);
 
@@ -88,25 +103,93 @@ public class ProfileFragment extends Fragment
 
 		});
 
-		GraphView lineChart = (GraphView) getView().findViewById(R.id.profileGraphView1);
-		LineGraphSeries<DataPoint> lineSeries = new LineGraphSeries<DataPoint>(new DataPoint[] {
-				new DataPoint(0, 1),
-				new DataPoint(1, 5),
-				new DataPoint(2, 3),
-				new DataPoint(3, 2),
-				new DataPoint(4, 6)
-		});
-		lineChart.addSeries(lineSeries);
+		BarChart barChart = getView().findViewById(R.id.barchart);
+		List<BarEntry> list=new ArrayList<>();
+		int i = 0;
+		while (i<7) {
+			if (!exerciseLog.containsKey(currentTimeInt - i)) {
+				list.add(new BarEntry(7 - i, 0));
+				i++;
+				continue;
+			}
 
-		GraphView pieChart = (GraphView) getView().findViewById(R.id.profileGraphView2);
-		LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[] {
-				new DataPoint(0, 1),
-				new DataPoint(1, 5),
-				new DataPoint(2, 3),
-				new DataPoint(3, 2),
-				new DataPoint(4, 6)
+			list.add(new BarEntry(7 - i, exerciseLog.get(currentTimeInt - i)));
+			i++;
+		}
+
+		BarDataSet barDataSet=new BarDataSet(list,"ExTime");   //list是你这条线的数据  "语文" 是你对这条线的描述
+		BarData barData=new BarData(barDataSet);
+		barChart.setData(barData);
+
+		barChart.getDescription().setEnabled(false);
+
+		Legend legend = barChart.getLegend();
+		legend.setEnabled(false);
+
+		XAxis xAxis= barChart.getXAxis();
+		xAxis.setDrawGridLines(false);
+		xAxis.setTextSize(10f);
+		xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+		//X轴自定义坐标
+		xAxis.setValueFormatter(new ValueFormatter() {   //X轴自定义坐标
+			@Override
+			public String getAxisLabel(float v, AxisBase axisBase) {
+				if (v==1){
+					return getNDaysBeforeDate(6);
+				}
+				if (v==4){
+					return getNDaysBeforeDate(3);
+				}
+				if (v==7){
+					return getNDaysBeforeDate(0);
+				}
+				return "";//注意这里需要改成 ""
+			}
 		});
-		pieChart.addSeries(series);
+
+		YAxis AxisLeft = barChart.getAxisLeft();
+		YAxis AxisRight = barChart.getAxisRight();
+		AxisLeft.setDrawGridLines(false);
+		AxisRight.setDrawGridLines(false);
+		barChart.getAxisRight().setEnabled(false);
+		barChart.getAxisLeft().setEnabled(false);
+
+		barChart.animateY(3000); //在Y轴的动画  参数是动画执行时间 毫秒为单位
+		barChart.notifyDataSetChanged();
+		barChart.invalidate();
+
+		//Set PieChart
+		PieChart pieChart = getView().findViewById(R.id.pieChart);
+		ArrayList<PieEntry> pieEntryList = new ArrayList<PieEntry>();
+		ArrayList<Integer> colors = new ArrayList<Integer>();
+		colors.add(Color.parseColor("#f17548"));
+		colors.add(Color.parseColor("#FF9933"));
+
+
+	}
+
+	public String getNDaysBeforeDate(Integer N) {
+		SimpleDateFormat sdf2 = new SimpleDateFormat("MM-dd");
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.DATE, -N);
+
+		return sdf2.format(calendar.getTime());
+	}
+
+	public Map<Integer, Integer> getExLogFromReservations(ArrayList<Reservation> reservations) {
+		Map<Integer, Integer> exLog = new HashMap<>();
+
+		for (Reservation rev: reservations) {
+			Integer eachBeginTime = Integer.parseInt(sdf.format(rev.getSelectedTimeSlot().getBeginTime().getTime()));
+			Integer eachLength = rev.getSelectedTimeSlot().getLengthMinutes();
+			if (exLog.containsKey(eachBeginTime)) {
+				exLog.put(eachBeginTime, exLog.get(eachBeginTime) + eachLength);
+			}
+
+			else exLog.put(eachBeginTime, eachLength);
+		}
+
+		return exLog;
 	}
 
 	@Override

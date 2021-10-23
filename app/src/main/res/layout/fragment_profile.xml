@@ -165,21 +165,36 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/statistics_devider">
 
-            <com.jjoe64.graphview.GraphView
-                android:id="@+id/profileGraphView1"
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/barchart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_weight="0.5" />
+<!--            <com.jjoe64.graphview.GraphView-->
+<!--                android:id="@+id/profileGraphView1"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:layout_marginStart="5dp"-->
+<!--                android:layout_marginEnd="5dp"-->
+<!--                android:layout_weight="0.5" />-->
+
+            <com.github.mikephil.charting.charts.PieChart
+                android:id = "@+id/pieChart"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginStart="5dp"
                 android:layout_marginEnd="5dp"
                 android:layout_weight="0.5" />
 
-            <com.jjoe64.graphview.GraphView
-                android:id="@+id/profileGraphView2"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:layout_weight="0.5" />
+<!--            <com.jjoe64.graphview.GraphView-->
+<!--                android:id="@+id/profileGraphView2"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:layout_marginStart="5dp"-->
+<!--                android:layout_marginEnd="5dp"-->
+<!--                android:layout_weight="0.5" />-->
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
