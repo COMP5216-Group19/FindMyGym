@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.firebase.ui.auth.data.model.User;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
@@ -21,15 +22,14 @@ import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.model.Gym;
 import comp5216.sydney.edu.au.findmygym.model.PersonalTrainer;
 import comp5216.sydney.edu.au.findmygym.model.Timeslot;
+import comp5216.sydney.edu.au.findmygym.model.UserData;
 import comp5216.sydney.edu.au.findmygym.ui.gym.TrainerListAdapter;
 
 public class FavGymAdapter extends RecyclerView.Adapter<FavGymAdapter.ViewHolder> {
-    private final ArrayList<Integer> favGymList;
-    private final List<Gym> gymList;
+    private UserData userData = UserData.getInstance();
 
-    public FavGymAdapter(ArrayList<Integer> favGymList, List<Gym> gymList) {
-        this.favGymList = favGymList;
-        this.gymList = gymList;
+    public FavGymAdapter() {
+
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -58,16 +58,16 @@ public class FavGymAdapter extends RecyclerView.Adapter<FavGymAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull FavGymAdapter.ViewHolder viewHolder, int position) {
-        viewHolder.getTextView().setText(findGymById(favGymList, position));
+        viewHolder.getTextView().setText(findGymById(userData.getFavouriteGyms(), position));
     }
 
     public String findGymById(ArrayList<Integer> favGymList, int position) {
         int id = favGymList.get(position);
         String name = "";
 
-        for (int i = 0; i < gymList.size(); i++) {
-            if (gymList.get(i).getGymId() == id) {
-                name = gymList.get(i).getGymName();
+        for (int i = 0; i < userData.allGyms.size(); i++) {
+            if (userData.allGyms.get(i).getGymId() == id) {
+                name = userData.allGyms.get(i).getGymName();
             }
         }
         return name;
@@ -75,6 +75,6 @@ public class FavGymAdapter extends RecyclerView.Adapter<FavGymAdapter.ViewHolder
 
     @Override
     public int getItemCount() {
-        return favGymList.size();
+        return userData.getFavouriteGyms().size();
     }
 }

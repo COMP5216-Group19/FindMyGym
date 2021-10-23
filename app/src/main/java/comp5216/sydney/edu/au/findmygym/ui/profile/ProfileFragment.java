@@ -82,7 +82,7 @@ public class ProfileFragment extends Fragment
 		trainerLog = getTrainerLogFromReservations(reservations);
 
 		//TODO: need to change allGyms into firebase databases
-		FavGymAdapter favGymAdapter = new FavGymAdapter(userData.getFavouriteGyms(), userData.allGyms);
+		FavGymAdapter favGymAdapter = new FavGymAdapter();
 
 		binding.avatarImage.setImageBitmap(userData.getUserAvatar());
 		binding.nameText.setText(userData.getUserName());
