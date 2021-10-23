@@ -5,14 +5,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -22,14 +20,13 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.ValueFormatter;
-import com.google.common.collect.BiMap;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,14 +39,13 @@ import comp5216.sydney.edu.au.findmygym.model.UserData;
 public class ProfileFragment extends Fragment
 {
 	private final String TAG = "[ProfileFragment]";
-	private static final int PICK_IMAGE = 100;
 
 	private ProfileViewModel profileViewModel;
 	private FragmentProfileBinding binding;
 	private UserData userData;
 	private ArrayList<Reservation> reservations;
 	public Map<Integer, Integer> exerciseLog = new HashMap<>();
-	public Map<Integer, Integer> gymLog = new HashMap<>();
+	public Map<String, Integer> trainerLog = new HashMap<>();
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 	String currentTime = sdf.format(Calendar.getInstance().getTime());
 	Integer currentTimeInt = Integer.parseInt(currentTime);
@@ -83,6 +79,7 @@ public class ProfileFragment extends Fragment
 		userData.setContext(this.getContext());
 		reservations = userData.getReservations();
 		exerciseLog = getExLogFromReservations(reservations);
+		trainerLog = getTrainerLogFromReservations(reservations);
 
 		//TODO: need to change allGyms into firebase databases
 		FavGymAdapter favGymAdapter = new FavGymAdapter(userData.getFavouriteGyms(), userData.allGyms);
@@ -158,13 +155,36 @@ public class ProfileFragment extends Fragment
 		barChart.notifyDataSetChanged();
 		barChart.invalidate();
 
+
+
 		//Set PieChart
 		PieChart pieChart = getView().findViewById(R.id.pieChart);
-		ArrayList<PieEntry> pieEntryList = new ArrayList<PieEntry>();
-		ArrayList<Integer> colors = new ArrayList<Integer>();
-		colors.add(Color.parseColor("#f17548"));
-		colors.add(Color.parseColor("#FF9933"));
 
+		Legend pieLegend = pieChart.getLegend();
+		pieLegend.setEnabled(false);
+		pieChart.getDescription().setEnabled(false);
+
+		List<PieEntry> strings = new ArrayList<>();
+		for (Map.Entry<String, Integer> entry : trainerLog.entrySet()) {
+			strings.add(new PieEntry((entry.getValue().floatValue() /reservations.size()) * 100F, entry.getKey()));
+		}
+		//(entry.getValue()/reservations.size()) * 100F
+
+		PieDataSet pieDataSet = new PieDataSet(strings,"Label");
+
+		ArrayList<Integer> colors = new ArrayList<Integer>();
+		colors.add(Color.parseColor("#6BE61A"));
+		colors.add(Color.parseColor("#4474BB"));
+		colors.add(Color.parseColor("#AA7755"));
+		colors.add(Color.parseColor("#BB5C44"));
+		colors.add(Color.parseColor("#E61A1A"));
+		pieDataSet.setColors(colors);
+
+		PieData pieData = new PieData(pieDataSet);
+		pieData.setDrawValues(true);
+
+		pieChart.setData(pieData);
+		pieChart.invalidate();
 
 	}
 
@@ -184,12 +204,26 @@ public class ProfileFragment extends Fragment
 			Integer eachLength = rev.getSelectedTimeSlot().getLengthMinutes();
 			if (exLog.containsKey(eachBeginTime)) {
 				exLog.put(eachBeginTime, exLog.get(eachBeginTime) + eachLength);
+			} else {
+				exLog.put(eachBeginTime, eachLength);
 			}
-
-			else exLog.put(eachBeginTime, eachLength);
 		}
 
 		return exLog;
+	}
+
+	public Map<String, Integer> getTrainerLogFromReservations(ArrayList<Reservation> reservations) {
+		Map<String, Integer> trainerLog = new HashMap<>();
+		for (Reservation rev: reservations) {
+			String trainerName = rev.getTrainer().getName();
+			if (trainerLog.containsKey(trainerName)) {
+				trainerLog.put(trainerName, trainerLog.get(trainerName) + 1);
+			} else {
+				trainerLog.put(trainerName, 1);
+			}
+		}
+
+		return trainerLog;
 	}
 
 	@Override

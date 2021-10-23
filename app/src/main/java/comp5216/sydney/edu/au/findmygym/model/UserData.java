@@ -107,16 +107,21 @@ public class UserData extends LiveData<UserData>
 	{
 		reservations = new ArrayList<Reservation>();
 		Reservation rev1 = new Reservation(
-				null,
+				new PersonalTrainer(1, "Marry", null),
 				new Timeslot(CalendarUtil.stringToCalendar("2021-10-23 09:00"), 60)
 		);
 		Reservation rev2 = new Reservation(
-				null,
+				new PersonalTrainer(0, "Jack", null),
 				new Timeslot(CalendarUtil.stringToCalendar("2021-10-20 09:00"), 60)
+		);
+		Reservation rev3 = new Reservation(
+				new PersonalTrainer(0, "Jack", null),
+				new Timeslot(CalendarUtil.stringToCalendar("2021-10-23 08:00"), 120)
 		);
 
 		reservations.add(rev1);
 		reservations.add(rev2);
+		reservations.add(rev3);
 	}
 
 	/**
