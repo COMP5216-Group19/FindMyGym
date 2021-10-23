@@ -4,6 +4,8 @@ import android.util.Log;
 
 import androidx.lifecycle.ViewModel;
 
+import com.wdullaer.materialdatetimepicker.time.Timepoint;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.text.DateFormat;
@@ -177,7 +179,17 @@ public class GymViewModel extends ViewModel {
     }
 
     public Timeslot getSelectedGymTimeslot() {
-        return null;
+        if (trainerListAdapter == null) {
+            Log.e(TAG, "Recycler view adapter is null");
+            return null;
+        }
+        Calendar date = trainerListAdapter.getSelectedDate();
+        Timepoint timepoint = trainerListAdapter.getSelectedTime();
+        Calendar dateTime = (Calendar) date.clone();
+        dateTime.set(Calendar.HOUR_OF_DAY, timepoint.getHour());
+        dateTime.set(Calendar.MINUTE, timepoint.getMinute());
+        // todo: length of time
+        return new Timeslot(dateTime, 0);
     }
 
     @NotNull

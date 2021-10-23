@@ -115,6 +115,10 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
         return selectedDate;
     }
 
+    public Timepoint getSelectedTime() {
+        return selectedTime;
+    }
+
     public Calendar[] getSelectableDays() {
         return availableDays.toArray(new Calendar[0]);
     }
