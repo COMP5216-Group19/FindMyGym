@@ -14,6 +14,8 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
+import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
+import com.wdullaer.materialdatetimepicker.time.Timepoint;
 
 import java.util.Calendar;
 
@@ -105,6 +107,13 @@ public class GymActivity extends AppCompatActivity {
         mViewModel.getTrainerListAdapter().refresh();
     }
 
+    private void onTimeSelectedListener(TimePickerDialog view,
+                                        int hourOfDay, int minute, int second) {
+        Timepoint timepoint = new Timepoint(hourOfDay, minute);
+        mViewModel.getTrainerListAdapter().setSelectedTime(timepoint);
+        mViewModel.getTrainerListAdapter().refresh();
+    }
+
     public void onDatePickerClicked(View view) {
         DatePickerDialog pickerDialog = DatePickerDialog.newInstance(
                 this::onDateSelectedListener,
@@ -119,7 +128,21 @@ public class GymActivity extends AppCompatActivity {
     }
 
     public void onTimePickerClicked(View view) {
-
+        TimePickerDialog pickerDialog = TimePickerDialog.newInstance(
+                this::onTimeSelectedListener,
+                false
+        );
+        Calendar openTime = mViewModel.getGym().getOpenTime();
+        Timepoint openTp = new Timepoint(openTime.get(Calendar.HOUR_OF_DAY),
+                        openTime.get(Calendar.MINUTE));
+        Calendar closeTime = mViewModel.getGym().getCloseTime();
+        Timepoint closeTp = new Timepoint(closeTime.get(Calendar.HOUR_OF_DAY),
+                closeTime.get(Calendar.MINUTE));
+        pickerDialog.setMinTime(openTp);
+        pickerDialog.setMaxTime(closeTp);
+        System.out.println(openTp);
+        System.out.println(closeTp);
+        pickerDialog.show(getSupportFragmentManager(), TAG);
     }
 
     /**

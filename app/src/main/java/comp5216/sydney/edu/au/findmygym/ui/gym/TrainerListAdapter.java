@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.wdullaer.materialdatetimepicker.time.Timepoint;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -36,9 +37,11 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
      * Date selected of reservation maker
      */
     Calendar selectedDate;
+    Timepoint selectedTime;
     RecyclerView recyclerView;
     Button reserveButton;
     TextView dateText;
+    TextView timeText;
 
     private Set<Calendar> availableDays = new TreeSet<>();
     private List<PersonalTrainer> trainersOfSelectedDate;
@@ -48,12 +51,14 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
                        RecyclerView recyclerView,
                        GymViewModel viewModel,
                        Button reserveButton,
-                       TextView dateText) {
+                       TextView dateText,
+                       TextView timeText) {
         this.mViewModel = viewModel;
         this.trainersList = trainersList;
         this.recyclerView = recyclerView;
         this.reserveButton = reserveButton;
         this.dateText = dateText;
+        this.timeText = timeText;
         makeAvailableDays(trainersList);
 
         setSelectedDate(mViewModel.getToday());
@@ -69,6 +74,13 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
                 availableDays.add(thatDay);
             }
         }
+    }
+
+    public void setSelectedTime(Timepoint time) {
+        this.selectedTime = time;
+
+        timeText.setText(Timeslot.hourMinutesToString(recyclerView.getContext(),
+                time.getHour(), time.getMinute(), false));
     }
 
     public void setSelectedDate(Calendar selectedDate) {

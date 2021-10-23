@@ -6,7 +6,7 @@
     android:paddingStart="15dp"
     android:paddingEnd="15dp">
 
-    <com.google.android.material.button.MaterialButton
+    <Button
         android:id="@+id/gym_date_picker"
         style="@style/Widget.App.Button.OutlinedButton.IconOnly"
         android:layout_width="wrap_content"
@@ -17,7 +17,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:strokeWidth="0dp" />
 
-    <com.google.android.material.textview.MaterialTextView
+    <TextView
         android:id="@+id/gym_picked_date_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -28,7 +28,7 @@
         app:layout_constraintLeft_toRightOf="@id/gym_date_picker"
         app:layout_constraintTop_toTopOf="@id/gym_date_picker" />
 
-    <com.google.android.material.button.MaterialButton
+    <Button
         android:id="@+id/gym_time_picker"
         style="@style/Widget.App.Button.OutlinedButton.IconOnly"
         android:layout_width="wrap_content"
@@ -38,6 +38,17 @@
         app:layout_constraintLeft_toRightOf="@id/gym_picked_date_text"
         app:layout_constraintTop_toTopOf="parent"
         app:strokeWidth="0dp" />
+
+    <TextView
+        android:id="@+id/gym_picked_time_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2:00 PM"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@id/gym_time_picker"
+        app:layout_constraintLeft_toRightOf="@id/gym_time_picker"
+        app:layout_constraintTop_toTopOf="@id/gym_time_picker" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/gym_trainer_recycler"

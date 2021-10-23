@@ -19,7 +19,8 @@ public class GymRsvFragment extends Fragment {
     private GymViewModel mViewModel;
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mViewModel = new ViewModelProvider(requireActivity()).get(GymViewModel.class);
 
         View view = inflater.inflate(R.layout.gym_reservation_fragment, container, false);
@@ -32,7 +33,8 @@ public class GymRsvFragment extends Fragment {
                             recyclerView,
                             mViewModel,
                             view.findViewById(R.id.gym_reserve_button),
-                            view.findViewById(R.id.gym_picked_date_text));
+                            view.findViewById(R.id.gym_picked_date_text),
+                            view.findViewById(R.id.gym_picked_time_text));
         } else {
             mViewModel.trainerListAdapter.recyclerView = recyclerView;
             mViewModel.trainerListAdapter.reserveButton =

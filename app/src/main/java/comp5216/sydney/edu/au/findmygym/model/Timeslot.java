@@ -85,19 +85,25 @@ public class Timeslot {
         return lengthMinutes;
     }
 
-    public static String calendarToTimeInDay(Context context, Calendar time) {
-        int am_pm = time.get(Calendar.AM_PM);
-        int hour = time.get(Calendar.HOUR);
-        int minutes = time.get(Calendar.MINUTE);
+    public static String hourMinutesToString(Context context, int hourOfDay, int minutes,
+                                             boolean noMinutesIfZero) {
+        boolean isAm = hourOfDay < 12;
+        int hour = isAm ? hourOfDay : hourOfDay - 12;
         int fmtStrId;
-        if (minutes == 0) {
-            fmtStrId = am_pm == Calendar.AM ?
+        if (minutes == 0 && noMinutesIfZero) {
+            fmtStrId = isAm ?
                     R.string.gym_time_format_am_short : R.string.gym_time_format_pm_short;
         } else {
-            fmtStrId = am_pm == Calendar.AM ?
+            fmtStrId = isAm ?
                     R.string.gym_time_format_am : R.string.gym_time_format_pm;
         }
         return context.getString(fmtStrId, hour, minutes);
+    }
+
+    public static String calendarToTimeInDay(Context context, Calendar time) {
+        int hourOfDay = time.get(Calendar.HOUR_OF_DAY);
+        int minutes = time.get(Calendar.MINUTE);
+        return hourMinutesToString(context, hourOfDay, minutes, true);
     }
 
     public String toString(Context context) {
