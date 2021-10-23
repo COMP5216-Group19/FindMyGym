@@ -173,13 +173,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback
 		getDeviceLocation();
 		mMap.setMyLocationEnabled(true);
 
-//		// Add a marker in Sydney and move the camera
-//		LatLng gym1 = new LatLng(-33.79911, 151.1792);
-//		mMap.addMarker(new MarkerOptions()
-//				.position(gym1)
-//				.title("Gym1")
-//				.snippet("Minus Fitness Gym Chatswood")
-//				.icon(BitmapFromVector(getActivity().getApplicationContext(),R.drawable.ic_baseline_fitness_center_24)));
+		// Add a marker in Sydney and move the camera
+		LatLng gym1 = new LatLng(-33.79911, 151.1792);
+		mMap.addMarker(new MarkerOptions()
+				.position(gym1)
+				.title("Gym1")
+				.snippet("Minus Fitness Gym Chatswood")
+				.icon(BitmapFromVector(getActivity().getApplicationContext(),R.drawable.ic_baseline_fitness_center_24)));
 //		mMap.moveCamera(CameraUpdateFactory.newLatLng(gym1));
 //		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(gym1, DEFAULT_ZOOM));
 
