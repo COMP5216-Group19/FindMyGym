@@ -118,6 +118,7 @@ dependencies {
     implementation 'com.algolia.instantsearch:voice:1.0.0-beta02'
     //plotting graph
     implementation 'com.jjoe64:graphview:4.2.2'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     //delete dialog
     implementation 'com.github.f0ris.sweetalert:library:1.6.2'
 

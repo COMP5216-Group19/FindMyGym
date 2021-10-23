@@ -13,6 +13,7 @@ import com.firebase.ui.auth.data.model.User;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.StorageReference;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
@@ -50,8 +51,6 @@ public class UserData extends LiveData<UserData>
 		this.purchaseRecords = new ArrayList<>(1);
 	}
 
-
-	
 	/**
 	 * DCL
 	 */
@@ -65,6 +64,7 @@ public class UserData extends LiveData<UserData>
 				{
 					UserData = new UserData();
 					UserData.addMockGym();
+					UserData.addMockReservations();
 				}
 			}
 		}
@@ -73,9 +73,22 @@ public class UserData extends LiveData<UserData>
 
 	public void addMockGym() {
 		allGyms = new ArrayList<>();
-		Gym gym = new Gym(
+		Gym gym0 = new Gym(
+				0,
+				"Gym A",
+				null,
+				null,
+				null,
+				"GymA-Address",
+				"123-4567",
+				-33.887713,
+				151.224663,
+				null,
+				null
+		);
+		Gym gym1 = new Gym(
 				1,
-				"TestGymName",
+				"GymB",
 				null,
 				null,
 				null,
@@ -86,7 +99,24 @@ public class UserData extends LiveData<UserData>
 				null,
 				null
 		);
-		allGyms.add(gym);
+		allGyms.add(gym0);
+		allGyms.add(gym1);
+	}
+
+	public void addMockReservations()
+	{
+		reservations = new ArrayList<Reservation>();
+		Reservation rev1 = new Reservation(
+				null,
+				new Timeslot(CalendarUtil.stringToCalendar("2021-10-23 09:00"), 60)
+		);
+		Reservation rev2 = new Reservation(
+				null,
+				new Timeslot(CalendarUtil.stringToCalendar("2021-10-20 09:00"), 60)
+		);
+
+		reservations.add(rev1);
+		reservations.add(rev2);
 	}
 
 	/**
@@ -294,6 +324,12 @@ public class UserData extends LiveData<UserData>
 	}
 
 	public ArrayList<Reservation> getReservations() {
+		if (reservations != null) {
+
+		} else {
+			reservations = new ArrayList<Reservation>();
+			//reservations.add(null, new Timeslot("",60 ));
+		}
 		return reservations;
 	}
 
