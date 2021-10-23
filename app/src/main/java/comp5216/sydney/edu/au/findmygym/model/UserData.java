@@ -76,132 +76,112 @@ public class UserData extends LiveData<UserData>
 		Gym gym0 = new Gym(
 				0,
 				"Minus Fitness Gym Chatswood",
-				null,
-				null,
-				null,
+				CalendarUtil.stringToCalendarNoDate("08:30"),
+				CalendarUtil.stringToCalendarNoDate("17:30"),
+				19.9,
 				"763 Pacific Hwy, Chatswood NSW 2067",
 				"123-4567",
 				-33.79911,
-				151.1792,
-				null,
-				null
+				151.1792
 		);
 		Gym gym1 = new Gym(
 				1,
 				"Minus Fitness Crows Nest",
-				null,
-				null,
-				null,
+				CalendarUtil.stringToCalendarNoDate("08:30"),
+				CalendarUtil.stringToCalendarNoDate("17:30"),
+				20,
 				"400 Pacific Hwy, Crows Nest NSW 2065",
 				"123-4567",
 				-33.82581,
-				151.19854,
-				null,
-				null
+				151.19854
 		);
 		Gym gym2 = new Gym(
 				2,
 				"Fitness Second St Leonards",
-				null,
-				null,
-				null,
+				CalendarUtil.stringToCalendarNoDate("09:00"),
+				CalendarUtil.stringToCalendarNoDate("19:00"),
+				20,
 				"55 Christie St, St Leonards NSW 2065",
 				"123-4567",
 				-33.82445,
-				151.19584,
-				null,
-				null
+				151.19584
 		);
 		Gym gym3 = new Gym(
 				3,
 				"Fitness Second North Sydney",
-				null,
-				null,
-				null,
+				CalendarUtil.stringToCalendarNoDate("09:00"),
+				CalendarUtil.stringToCalendarNoDate("19:00"),
+				20,
 				"1 Elizabeth Plaza, North Sydney NSW 2060",
 				"123-4567",
 				-33.83945,
-				151.20809,
-				null,
-				null
+				151.20809
 		);
 		Gym gym4 = new Gym(
 				4,
 				"Fitness Second Bond St",
-				null,
-				null,
-				null,
+				CalendarUtil.stringToCalendarNoDate("09:00"),
+				CalendarUtil.stringToCalendarNoDate("19:00"),
+				20,
 				"20 Bond St, Sydney NSW 2000",
 				"123-4567",
 				-33.86441,
-				151.20829,
-				null,
-				null
+				151.20829
 		);
 		Gym gym5 = new Gym(
 				5,
 				"Minus Fitness Market Street",
-				null,
-				null,
-				null,
+				CalendarUtil.stringToCalendarNoDate("09:00"),
+				CalendarUtil.stringToCalendarNoDate("19:00"),
+				16,
 				"25 Market St, Sydney NSW 2000",
 				"123-4567",
 				-33.87115,
-				151.20522,
-				null,
-				null
+				151.20522
 		);
 		Gym gym6 = new Gym(
 				6,
 				"Minus Fitness Waterloo",
-				null,
-				null,
-				null,
+				CalendarUtil.stringToCalendarNoDate("09:00"),
+				CalendarUtil.stringToCalendarNoDate("19:00"),
+				15,
 				"11A Lachlan St, Waterloo NSW 2017",
 				"123-4567",
 				-33.90103,
-				151.21178,
-				null,
-				null
+				151.21178
 		);
 		Gym gym7 = new Gym(
 				7,
 				"Notime Fitness North Sydey",
-				null,
-				null,
-				null,
+				CalendarUtil.stringToCalendarNoDate("09:00"),
+				CalendarUtil.stringToCalendarNoDate("19:00"),
+				20,
 				"118 Walker St, North Sydney NSW 2060",
 				"123-4567",
 				-33.837711,
-				151.208801,
-				null,
-				null
+				151.208801
 		);
 		Gym gym8 = new Gym(
 				8,
 				"Notime Fitness City",
-				null,
-				null,
-				null,
+				CalendarUtil.stringToCalendarNoDate("09:00"),
+				CalendarUtil.stringToCalendarNoDate("19:00"),
+				20,
 				"227 Elizabeth St, Sydney NSW 2000",
 				"123-4567",
 				-33.8706586,
-				151.2102227,
-				null,
-				null
+				151.2102227
 		);
 		Gym gym9 = new Gym(
 				9,
 				"Sliver's Gym",
-				null,
-				null,
-				null,
+				CalendarUtil.stringToCalendarNoDate("09:00"),
+				CalendarUtil.stringToCalendarNoDate("19:00"),
+				20,
 				"7-9 West St, North Sydney NSW 2060",
 				"123-4567",
 				-33.8334692,
-				151.2052855,
-				null,
-				null
+				151.2052855
 		);
 		allGyms.add(gym0);
 		allGyms.add(gym1);
@@ -219,15 +199,15 @@ public class UserData extends LiveData<UserData>
 	{
 		reservations = new ArrayList<Reservation>();
 		Reservation rev1 = new Reservation(
-				new PersonalTrainer(1, "Marry", null),
+				new PersonalTrainer(1, "Marry", 30, null),
 				new Timeslot(CalendarUtil.stringToCalendar("2021-10-23 09:00"), 60)
 		);
 		Reservation rev2 = new Reservation(
-				new PersonalTrainer(0, "Jack", null),
+				new PersonalTrainer(0, "Jack", 35, null),
 				new Timeslot(CalendarUtil.stringToCalendar("2021-10-20 09:00"), 60)
 		);
 		Reservation rev3 = new Reservation(
-				new PersonalTrainer(0, "Jack", null),
+				new PersonalTrainer(0, "Jack", 65, null),
 				new Timeslot(CalendarUtil.stringToCalendar("2021-10-23 08:00"), 120)
 		);
 

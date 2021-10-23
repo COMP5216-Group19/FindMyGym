@@ -16,6 +16,7 @@ public class PersonalTrainer {
     private final String name;
 
     private final int trainerId;
+    private double price;
     private Bitmap avatar;
 
     /**
@@ -23,14 +24,23 @@ public class PersonalTrainer {
      */
     private final List<Timeslot> availableTimes;
 
-    public PersonalTrainer(int trainerId, String name, List<Timeslot> availableTimes) {
+    public PersonalTrainer(int trainerId, String name, double price, List<Timeslot> availableTimes) {
         this.trainerId = trainerId;
         this.name = name;
         this.availableTimes = availableTimes;
+        this.price = price;
     }
 
-    public PersonalTrainer(int trainerId, String name) {
-        this(trainerId, name, new ArrayList<>());
+    public PersonalTrainer(int trainerId, String name, double price) {
+        this(trainerId, name, price, new ArrayList<>());
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 
     /**
