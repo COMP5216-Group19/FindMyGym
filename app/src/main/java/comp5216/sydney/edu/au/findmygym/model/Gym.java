@@ -130,7 +130,10 @@ public class Gym {
      * @return whether this gym is marked as "favourite"
      */
     public boolean isFavourite() {
-        // todo
+        List<Integer> favouriteGyms = UserData.getInstance().getFavouriteGyms();
+        for (int gid : favouriteGyms) {
+            if (gid == gymId) return true;
+        }
         return false;
     }
 
