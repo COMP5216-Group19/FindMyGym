@@ -356,14 +356,14 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 	public void onMapReady(GoogleMap googleMap)
 	{
 		mMap = googleMap;
-		
-		// Add a marker in Sydney and move the camera
-		LatLng sydney = new LatLng(-34, 151);
-		// mMap.setMyLocationEnabled(true);
-		mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-		mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+//
+//		// Add a marker in Sydney and move the camera
+//		LatLng sydney = new LatLng(-34, 151);
+//		// mMap.setMyLocationEnabled(true);
+//		mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+//		mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 	}
-	
+
 	public void onSettingMenuClicked(MenuItem item)
 	{
 		Intent intent = new Intent(mContext, SettingsActivity.class);
