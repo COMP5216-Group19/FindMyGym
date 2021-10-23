@@ -1,5 +1,9 @@
 package comp5216.sydney.edu.au.findmygym.ui.map;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -11,6 +15,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -19,6 +24,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -127,11 +134,37 @@ public class MapFragment extends Fragment implements OnMapReadyCallback
 		mMap = googleMap;
 
 		// Add a marker in Sydney and move the camera
-		LatLng sydney = new LatLng(-34, 151);
+		LatLng gym1 = new LatLng(-33.79911, 151.1792);
 		mMap.addMarker(new MarkerOptions()
-				.position(sydney)
-				.title("Marker in Sydney"));
-		mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+				.position(gym1)
+				.title("Gym1")
+				.snippet("Minus Fitness Gym Chatswood")
+				.icon(BitmapFromVector(getActivity().getApplicationContext(),R.drawable.ic_baseline_fitness_center_24)));
+		mMap.moveCamera(CameraUpdateFactory.newLatLng(gym1));
+		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(gym1, 15));
 
 	}
+	private BitmapDescriptor BitmapFromVector(Context context, int vectorResId) {
+		// below line is use to generate a drawable.
+		Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+
+		// below line is use to set bounds to our vector drawable.
+		vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
+
+		// below line is use to create a bitmap for our
+		// drawable which we have added.
+		Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+
+		// below line is use to add bitmap in our canvas.
+		Canvas canvas = new Canvas(bitmap);
+
+		// below line is use to draw our
+		// vector drawable in canvas.
+		vectorDrawable.draw(canvas);
+
+		// after generating our bitmap we are returning our bitmap.
+		return BitmapDescriptorFactory.fromBitmap(bitmap);
+	}
+
+
 }
