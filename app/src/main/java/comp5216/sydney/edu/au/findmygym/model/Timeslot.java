@@ -4,6 +4,7 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -18,11 +19,17 @@ import comp5216.sydney.edu.au.findmygym.R;
 public class Timeslot {
 
     private final Calendar beginTime;
-    private final Calendar endTime;
+    private final int lengthMinutes;
 
-    public Timeslot(Calendar beginTime, Calendar endTime) {
+    public Timeslot(Calendar beginTime, int lengthMinutes) {
         this.beginTime = beginTime;
-        this.endTime = endTime;
+        this.lengthMinutes = lengthMinutes;
+    }
+
+    public static Timeslot fromDate(Date beginDate, int lengthMinutes) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(beginDate);
+        return new Timeslot(calendar, lengthMinutes);
     }
 
     /**
@@ -35,7 +42,10 @@ public class Timeslot {
      */
     public static Timeslot timeSlotOnToday(String beginTimeStr, String endTimeStr)
             throws ParseException {
-        return new Timeslot(parseCalendarOnToday(beginTimeStr), parseCalendarOnToday(endTimeStr));
+        Calendar begin = parseCalendarOnToday(beginTimeStr);
+        Calendar end = parseCalendarOnToday(endTimeStr);
+        return new Timeslot(begin,
+                (int) ((end.getTimeInMillis() - begin.getTimeInMillis()) / 60_000));
     }
 
     private static Calendar parseCalendarOnToday(String str) throws ParseException {
@@ -69,10 +79,10 @@ public class Timeslot {
     }
 
     /**
-     * @return end time of this time segment
+     * @return the length of this timeslot, in minutes
      */
-    public Calendar getEndTime() {
-        return endTime;
+    public int getLengthMinutes() {
+        return lengthMinutes;
     }
 
     public static String calendarToTimeInDay(Context context, Calendar time) {
@@ -91,6 +101,18 @@ public class Timeslot {
     }
 
     public String toString(Context context) {
+        Calendar endTime = Calendar.getInstance();
+        endTime.setTimeInMillis(beginTime.getTimeInMillis() + lengthMinutes * 60_000L);
+        DateFormat dateFormat =
+                DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.SHORT);
+        return context.getString(R.string.gym_timeslot,
+                dateFormat.format(beginTime.getTime()),
+                dateFormat.format(endTime.getTime()));
+    }
+
+    public String toStringWithoutDate(Context context) {
+        Calendar endTime = Calendar.getInstance();
+        endTime.setTimeInMillis(beginTime.getTimeInMillis() + lengthMinutes * 60_000L);
         return context.getString(R.string.gym_timeslot,
                 calendarToTimeInDay(context, beginTime),
                 calendarToTimeInDay(context, endTime));
@@ -99,6 +121,6 @@ public class Timeslot {
     @NonNull
     @Override
     public String toString() {
-        return beginTime + " - " + endTime;
+        return beginTime.getTime().toString() + " - " + lengthMinutes;
     }
 }

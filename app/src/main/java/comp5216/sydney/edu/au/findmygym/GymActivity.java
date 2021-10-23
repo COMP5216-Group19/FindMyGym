@@ -13,8 +13,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
+
+import java.util.Calendar;
 
 import comp5216.sydney.edu.au.findmygym.model.Reservation;
+import comp5216.sydney.edu.au.findmygym.model.UserData;
 import comp5216.sydney.edu.au.findmygym.ui.gym.GymFragment;
 import comp5216.sydney.edu.au.findmygym.ui.gym.GymViewModel;
 
@@ -76,17 +80,46 @@ public class GymActivity extends AppCompatActivity {
     public void onAddToFavouriteClicked(MenuItem item) {
 
         if (isFavourite) {
-            item.setIcon(android.R.drawable.btn_star_big_off);
+//            item.setIcon(android.R.drawable.btn_star_big_off);
+            item.setIcon(R.drawable.outline_star_border_24);
             isFavourite = false;
+            UserData.getInstance().removeFromFavouriteGyms(mViewModel.getGym().getGymId());
             Toast.makeText(this.getBaseContext(), "Removed from favourite!", Toast.LENGTH_SHORT).show();
         } else {
-            item.setIcon(android.R.drawable.btn_star_big_on);
+//            item.setIcon(android.R.drawable.btn_star_big_on);
+            item.setIcon(R.drawable.outline_star_24);
             isFavourite = true;
+            UserData.getInstance().addToFavouriteGyms(mViewModel.getGym().getGymId());
             Toast.makeText(this.getBaseContext(), "Added to favourite!", Toast.LENGTH_SHORT).show();
         }
 
     }
 
+    private void onDateSelectedListener(DatePickerDialog view,
+                                        int year, int monthOfYear, int dayOfMonth) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.clear();
+        calendar.set(year, monthOfYear, dayOfMonth);
+        mViewModel.getTrainerListAdapter().setSelectedDate(calendar);
+        mViewModel.getTrainerListAdapter().refresh();
+    }
+
+    public void onDatePickerClicked(View view) {
+        DatePickerDialog pickerDialog = DatePickerDialog.newInstance(
+                this::onDateSelectedListener,
+                mViewModel.getToday().get(Calendar.YEAR),
+                mViewModel.getToday().get(Calendar.MONTH),
+                mViewModel.getToday().get(Calendar.DAY_OF_MONTH)
+        );
+        pickerDialog.setSelectableDays(mViewModel.getTrainerListAdapter().getSelectableDays());
+        pickerDialog.setHighlightedDays(
+                new Calendar[]{mViewModel.getTrainerListAdapter().getSelectedDate()});
+        pickerDialog.show(getSupportFragmentManager(), TAG);
+    }
+
+    /**
+     * Click handler of "RESERVE" button in reservation page.
+     */
     public void onConfirmReservationClicked(View view) {
         Reservation reservation = mViewModel.getReservation();
         if (reservation != null) {

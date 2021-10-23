@@ -8,18 +8,17 @@ import android.se.omapi.Session;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
+import com.firebase.ui.auth.data.model.User;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.StorageReference;
 
-import java.io.IOException;
-import java.net.URL;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
+import java.util.List;
 
-import comp5216.sydney.edu.au.findmygym.MainActivity;
 import comp5216.sydney.edu.au.findmygym.R;
 
 public class UserData extends LiveData<UserData>
@@ -33,10 +32,14 @@ public class UserData extends LiveData<UserData>
 	private String userName;
 	private String userMail;
 	private Bitmap userAvatar;
-	private ArrayList<Integer> userFavGym;
+	private ArrayList<Integer> favouriteGyms;
+	private ArrayList<Reservation> reservations;
 	private Session userSession;
 	private StorageReference userStorageRef;
 	private Context mContext;
+
+	// todo: mock的list
+	public List<Gym> allGyms;
 	
 	private volatile static UserData UserData;
 	
@@ -47,7 +50,7 @@ public class UserData extends LiveData<UserData>
 	{
 		this.purchaseRecords = new ArrayList<>(1);
 	}
-	
+
 	/**
 	 * DCL
 	 */
@@ -60,12 +63,62 @@ public class UserData extends LiveData<UserData>
 				if (UserData == null)
 				{
 					UserData = new UserData();
+					UserData.addMockGym();
+					UserData.addMockReservations();
 				}
 			}
 		}
 		return UserData;
 	}
-	
+
+	public void addMockGym() {
+		allGyms = new ArrayList<>();
+		Gym gym0 = new Gym(
+				0,
+				"Gym A",
+				null,
+				null,
+				null,
+				"GymA-Address",
+				"123-4567",
+				-33.887713,
+				151.224663,
+				null,
+				null
+		);
+		Gym gym1 = new Gym(
+				1,
+				"GymB",
+				null,
+				null,
+				null,
+				"GymAddress",
+				"123-4567",
+				-33.887713,
+				151.224663,
+				null,
+				null
+		);
+		allGyms.add(gym0);
+		allGyms.add(gym1);
+	}
+
+	public void addMockReservations()
+	{
+		reservations = new ArrayList<Reservation>();
+		Reservation rev1 = new Reservation(
+				null,
+				new Timeslot(CalendarUtil.stringToCalendar("2021-10-23 09:00"), 60)
+		);
+		Reservation rev2 = new Reservation(
+				null,
+				new Timeslot(CalendarUtil.stringToCalendar("2021-10-20 09:00"), 60)
+		);
+
+		reservations.add(rev1);
+		reservations.add(rev2);
+	}
+
 	/**
 	 * PurchaseRecords
 	 */
@@ -149,9 +202,7 @@ public class UserData extends LiveData<UserData>
 		this.memberships.remove(position);
 		postValue(this);
 	}
-	
-	
-	
+
 	public FirebaseUser getFirebaseUser()
 	{
 		return firebaseUser;
@@ -242,20 +293,28 @@ public class UserData extends LiveData<UserData>
 		postValue(this);
 	}
 
-	public ArrayList<Integer> getUserFavGym() {
-		if (userFavGym != null) {
-			if (userFavGym.size() == 0) {
-				userFavGym.add(10000);
-			}
+	public ArrayList<Integer> getFavouriteGyms() {
+		if (favouriteGyms != null) {
+
 		} else {
-			userFavGym = new ArrayList<Integer>();
-			userFavGym.add(1000000);
+			favouriteGyms = new ArrayList<Integer>();
+			favouriteGyms.add(1);
 		}
-		return this.userFavGym;
+		return this.favouriteGyms;
 	}
 
-	public void setUserFavGym(ArrayList<Integer> userFavGym) {
-		this.userFavGym = userFavGym;
+	public void addToFavouriteGyms(int gymId) {
+		favouriteGyms.add(gymId);
+		// todo: 其他操作
+	}
+
+	public void removeFromFavouriteGyms(int gymId) {
+		favouriteGyms.remove(Integer.valueOf(gymId));
+		// todo: 其他操作
+	}
+
+	public void setFavouriteGyms(ArrayList<Integer> favouriteGyms) {
+		this.favouriteGyms = favouriteGyms;
 		postValue(this);
 	}
 	
@@ -263,7 +322,21 @@ public class UserData extends LiveData<UserData>
 	{
 		this.mContext = mContext;
 	}
-	
+
+	public ArrayList<Reservation> getReservations() {
+		if (reservations != null) {
+
+		} else {
+			reservations = new ArrayList<Reservation>();
+			//reservations.add(null, new Timeslot("",60 ));
+		}
+		return reservations;
+	}
+
+	public void setReservations(ArrayList<Reservation> reservations) {
+		this.reservations = reservations;
+	}
+
 	@Override
 	protected void onActive()
 	{

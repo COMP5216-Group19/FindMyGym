@@ -3,6 +3,7 @@ package comp5216.sydney.edu.au.findmygym.model;
 import android.graphics.Bitmap;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -20,89 +21,79 @@ public class Gym {
     /**
      * List of personal trainers
      */
-    private List<PersonalTrainer> personalTrainers;
+    private List<Integer> personalTrainerIds;
+
+    /**
+     * List of user reviews
+     */
+    private List<Review> reviews;
 
     /**
      * The following two attributes represents the opening hours
      */
-    private String openTime;
-    private String closeTime;
-
-    /**
-     * Average rating
-     */
-    private double avgRating;
+    private Calendar openTime;
+    private Calendar closeTime;
 
     private String address;
     private String contact;
 
     private List<String> equipments;
+    private double longitude;
+    private double latitude;
 
-    private boolean favourite;
     private Bitmap gymPhoto;
 
     public Gym(int gymId,
                String gymName,
-               List<PersonalTrainer> personalTrainers,
-               String openTime,
-               String closeTime,
-               double avgRating,
+               List<Integer> personalTrainerIds,
+               Calendar openTime,
+               Calendar closeTime,
                String address,
                String contact,
-               boolean favourite,
-               List<String> equipments) {
+               double longitude,
+               double latitude,
+               List<String> equipments,
+               List<Review> reviews) {
         this.gymId = gymId;
         this.gymName = gymName;
-        this.personalTrainers = personalTrainers;
+        this.personalTrainerIds = personalTrainerIds;
         this.openTime = openTime;
         this.closeTime = closeTime;
-        this.avgRating = avgRating;
         this.address = address;
         this.contact = contact;
-        this.favourite = favourite;
         this.equipments = equipments;
+        this.reviews = reviews;
+        this.longitude = longitude;
+        this.latitude = latitude;
     }
 
     public Gym(int gymId,
                String gymName,
-               String openTime,
-               String closeTime,
-               double avgRating,
+               Calendar openTime,
+               Calendar closeTime,
                String address,
                String contact,
-               boolean favourite) {
+               double longitude,
+               double latitude) {
         this(gymId,
                 gymName,
                 new ArrayList<>(),
                 openTime,
                 closeTime,
-                avgRating,
                 address,
                 contact,
-                favourite,
+                longitude,
+                latitude,
+                new ArrayList<>(),
                 new ArrayList<>());
     }
 
-    /**
-     * Adds a personal trainer to the list.
-     * <p>
-     * Utility method
-     *
-     * @param trainer the trainer to be added
-     */
-    public void addTrainer(PersonalTrainer trainer) {
-        personalTrainers.add(trainer);
+    public double getLatitude() {
+        return latitude;
     }
 
-    /**
-     * Adds a equipment to the list.
-     * <p>
-     * Utility method
-     *
-     * @param equipment the equipment to be added
-     */
-    public void addEquipment(String equipment) {
-        equipments.add(equipment);
+    public double getLongitude() {
+        return longitude;
     }
 
     /**
@@ -139,36 +130,31 @@ public class Gym {
      * @return whether this gym is marked as "favourite"
      */
     public boolean isFavourite() {
-        return favourite;
-    }
-
-    /**
-     * Sets the "favourite" attribute
-     *
-     * @param favourite whether this gym will be marked as "favourite"
-     */
-    public void setFavourite(boolean favourite) {
-        this.favourite = favourite;
+        List<Integer> favouriteGyms = UserData.getInstance().getFavouriteGyms();
+        for (int gid : favouriteGyms) {
+            if (gid == gymId) return true;
+        }
+        return false;
     }
 
     /**
      * @return a list of current available personal trainers
      */
-    public List<PersonalTrainer> getPersonalTrainers() {
-        return personalTrainers;
+    public List<Integer> getPersonalTrainerIds() {
+        return personalTrainerIds;
     }
 
     /**
      * @return string representation of open time, e.g. 9AM
      */
-    public String getOpenTime() {
+    public Calendar getOpenTime() {
         return openTime;
     }
 
     /**
      * @return string representation of close time, e.g. 6PM
      */
-    public String getCloseTime() {
+    public Calendar getCloseTime() {
         return closeTime;
     }
 
@@ -176,7 +162,11 @@ public class Gym {
      * @return average user rating of this gym
      */
     public double getAvgRating() {
-        return avgRating;
+        double total = 0.0;
+        for (Review review : reviews) {
+            total += review.getRating();
+        }
+        return total / reviews.size();
     }
 
     /**
@@ -198,5 +188,12 @@ public class Gym {
      */
     public List<String> getEquipments() {
         return equipments;
+    }
+
+    /**
+     * @return list of users' reviews
+     */
+    public List<Review> getReviews() {
+        return reviews;
     }
 }
