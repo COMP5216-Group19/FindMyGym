@@ -1,50 +1,40 @@
 package comp5216.sydney.edu.au.findmygym.ui.profile;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.firebase.ui.auth.data.model.User;
-import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
-
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
 import comp5216.sydney.edu.au.findmygym.R;
-import comp5216.sydney.edu.au.findmygym.model.Gym;
-import comp5216.sydney.edu.au.findmygym.model.PersonalTrainer;
-import comp5216.sydney.edu.au.findmygym.model.Timeslot;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
-import comp5216.sydney.edu.au.findmygym.ui.gym.TrainerListAdapter;
 
 public class FavGymAdapter extends RecyclerView.Adapter<FavGymAdapter.ViewHolder> {
-    private UserData userData = UserData.getInstance();
+    private final UserData userData = UserData.getInstance();
 
     public FavGymAdapter() {
 
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private final TextView textView;
+        private final TextView favGymItem;
+        private final TextView favGymAddress;
 
         public ViewHolder(View view) {
             super(view);
-            // Define click listener for the ViewHolder's View
-
-            textView = (TextView) view.findViewById(R.id.favGymItem);
+            favGymItem = view.findViewById(R.id.favGymItem);
+            favGymAddress = view.findViewById(R.id.favGymAddress);
         }
 
-        public TextView getTextView() {
-            return textView;
+        public TextView getFavGymItem() {
+            return favGymItem;
         }
+
+        public TextView getFavGymAddress() {
+            return favGymAddress;
+        }
+
     }
 
     @NonNull
@@ -58,7 +48,8 @@ public class FavGymAdapter extends RecyclerView.Adapter<FavGymAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull FavGymAdapter.ViewHolder viewHolder, int position) {
-        viewHolder.getTextView().setText(findGymById(userData.getFavouriteGyms(), position));
+        viewHolder.getFavGymItem().setText(findGymById(userData.getFavouriteGyms(), position));
+        viewHolder.getFavGymAddress().setText(findGymAddressById(userData.getFavouriteGyms(), position));
     }
 
     public String findGymById(ArrayList<Integer> favGymList, int position) {
@@ -71,6 +62,18 @@ public class FavGymAdapter extends RecyclerView.Adapter<FavGymAdapter.ViewHolder
             }
         }
         return name;
+    }
+
+    public String findGymAddressById(ArrayList<Integer> favGymList, int position) {
+        int id = favGymList.get(position);
+        String address = "";
+
+        for (int i = 0; i < userData.allGyms.size(); i++) {
+            if (userData.allGyms.get(i).getGymId() == id) {
+                address = userData.allGyms.get(i).getAddress();
+            }
+        }
+        return address;
     }
 
     @Override
