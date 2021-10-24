@@ -213,13 +213,61 @@
                 android:background="?android:attr/listDivider"
                 app:layout_constraintTop_toBottomOf="@id/gym_reviews_label" />
 
-
             <LinearLayout
                 android:id="@+id/gym_reviews_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintTop_toBottomOf="@id/gym_reviews_divider" />
+                app:layout_constraintTop_toBottomOf="@id/gym_reviews_divider">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="15dp">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/gym_review_input_layout"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/gym_write_review_hint"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/gym_review_input"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <Button
+                        android:id="@+id/gym_post_review_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:enabled="false"
+                        android:onClick="onPostReviewClicked"
+                        android:text="@string/gym_post_review"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/gym_review_input_layout" />
+
+                    <RatingBar
+                        android:id="@+id/gym_review_rating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:rating="5"
+                        android:stepSize="1"
+                        app:layout_constraintBottom_toBottomOf="@id/gym_post_review_button"
+                        app:layout_constraintLeft_toRightOf="@id/gym_post_review_button"
+                        app:layout_constraintTop_toTopOf="@id/gym_post_review_button" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
