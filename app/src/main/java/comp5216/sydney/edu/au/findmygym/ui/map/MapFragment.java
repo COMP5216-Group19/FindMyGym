@@ -35,6 +35,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -174,12 +175,85 @@ public class MapFragment extends Fragment implements OnMapReadyCallback
 		mMap.setMyLocationEnabled(true);
 
 		// Add a marker in Sydney and move the camera
-		LatLng gym1 = new LatLng(-33.79911, 151.1792);
-		mMap.addMarker(new MarkerOptions()
-				.position(gym1)
-				.title("Gym1")
-				.snippet("Minus Fitness Gym Chatswood")
+		LatLng gym0coord = new LatLng(-33.79911, 151.1792);
+		Marker gym0 = mMap.addMarker(new MarkerOptions()
+				.position(gym0coord)
+				.title("Minus Fitness Gym Chatswood")
+				.snippet("763 Pacific Hwy, Chatswood NSW 2067")
 				.icon(BitmapFromVector(getActivity().getApplicationContext(),R.drawable.ic_baseline_fitness_center_24)));
+
+
+		LatLng gym1coord = new LatLng(-33.82581, 151.19854);
+		Marker gym1 = mMap.addMarker(new MarkerOptions()
+				.position(gym1coord)
+				.title("Minus Fitness Crows Nest")
+				.snippet("400 Pacific Hwy, Crows Nest NSW 2065")
+				.icon(BitmapFromVector(getActivity().getApplicationContext(),R.drawable.ic_baseline_fitness_center_24)));
+
+
+		LatLng gym2coord = new LatLng(-33.82445, 151.19584);
+		Marker gym2 = mMap.addMarker(new MarkerOptions()
+				.position(gym2coord)
+				.title("Fitness Second St Leonards")
+				.snippet("55 Christie St, St Leonards NSW 2065")
+				.icon(BitmapFromVector(getActivity().getApplicationContext(),R.drawable.ic_baseline_fitness_center_24)));
+
+
+		LatLng gym3coord = new LatLng(-33.83945, 151.20809);
+		Marker gym3 = mMap.addMarker(new MarkerOptions()
+				.position(gym3coord)
+				.title("Fitness Second North Sydney")
+				.snippet("1 Elizabeth Plaza, North Sydney NSW 2060")
+				.icon(BitmapFromVector(getActivity().getApplicationContext(),R.drawable.ic_baseline_fitness_center_24)));
+
+
+		LatLng gym4coord = new LatLng(-33.86441, 151.20829);
+		Marker gym4 = mMap.addMarker(new MarkerOptions()
+				.position(gym4coord)
+				.title("Fitness Second Bond St")
+				.snippet("20 Bond St, Sydney NSW 2000")
+				.icon(BitmapFromVector(getActivity().getApplicationContext(),R.drawable.ic_baseline_fitness_center_24)));
+
+
+		LatLng gym5coord = new LatLng(-33.87115, 151.20522);
+		Marker gym5 = mMap.addMarker(new MarkerOptions()
+				.position(gym5coord)
+				.title("Minus Fitness Market Street")
+				.snippet("25 Market St, Sydney NSW 2000")
+				.icon(BitmapFromVector(getActivity().getApplicationContext(),R.drawable.ic_baseline_fitness_center_24)));
+
+
+		LatLng gym6coord = new LatLng(-33.90103, 151.21178);
+		Marker gym6 = mMap.addMarker(new MarkerOptions()
+				.position(gym6coord)
+				.title("Minus Fitness Waterloo")
+				.snippet("11A Lachlan St, Waterloo NSW 2017")
+				.icon(BitmapFromVector(getActivity().getApplicationContext(),R.drawable.ic_baseline_fitness_center_24)));
+
+
+		LatLng gym7coord = new LatLng(-33.837711, 151.208801);
+		Marker gym7 = mMap.addMarker(new MarkerOptions()
+				.position(gym7coord)
+				.title("Notime Fitness North Sydney")
+				.snippet("118 Walker St, North Sydney NSW 2060")
+				.icon(BitmapFromVector(getActivity().getApplicationContext(),R.drawable.ic_baseline_fitness_center_24)));
+
+
+		LatLng gym8coord = new LatLng(-33.8706586, 151.2102227);
+		Marker gym8 = mMap.addMarker(new MarkerOptions()
+				.position(gym8coord)
+				.title("Notime Fitness City")
+				.snippet("227 Elizabeth St, Sydney NSW 2000")
+				.icon(BitmapFromVector(getActivity().getApplicationContext(),R.drawable.ic_baseline_fitness_center_24)));
+
+		LatLng gym9coord = new LatLng(-33.8334692, 151.2052855);
+		Marker gym9 = mMap.addMarker(new MarkerOptions()
+				.position(gym9coord)
+				.title("Sliver's Gym")
+				.snippet("7-9 West St, North Sydney NSW 2060")
+				.icon(BitmapFromVector(getActivity().getApplicationContext(),R.drawable.ic_baseline_fitness_center_24)));
+
+
 //		mMap.moveCamera(CameraUpdateFactory.newLatLng(gym1));
 //		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(gym1, DEFAULT_ZOOM));
 

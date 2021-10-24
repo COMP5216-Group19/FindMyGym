@@ -166,7 +166,7 @@ public class UserData extends LiveData<UserData>
 		);
 		Gym gym7 = new Gym(
 				7,
-				"Notime Fitness North Sydey",
+				"Notime Fitness North Sydney",
 				null,
 				null,
 				null,
