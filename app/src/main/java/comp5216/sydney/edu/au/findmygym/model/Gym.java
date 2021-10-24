@@ -41,6 +41,8 @@ public class Gym {
     private double longitude;
     private double latitude;
 
+    private double price;
+
     private Bitmap gymPhoto;
 
     public Gym(int gymId,
@@ -48,6 +50,7 @@ public class Gym {
                List<Integer> personalTrainerIds,
                Calendar openTime,
                Calendar closeTime,
+               double price,
                String address,
                String contact,
                double longitude,
@@ -65,12 +68,14 @@ public class Gym {
         this.reviews = reviews;
         this.longitude = longitude;
         this.latitude = latitude;
+        this.price = price;
     }
 
     public Gym(int gymId,
                String gymName,
                Calendar openTime,
                Calendar closeTime,
+               double price,
                String address,
                String contact,
                double longitude,
@@ -80,12 +85,21 @@ public class Gym {
                 new ArrayList<>(),
                 openTime,
                 closeTime,
+                price,
                 address,
                 contact,
                 longitude,
                 latitude,
                 new ArrayList<>(),
                 new ArrayList<>());
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public double getPrice() {
+        return price;
     }
 
     public double getLatitude() {

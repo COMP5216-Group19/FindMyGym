@@ -17,7 +17,6 @@ import java.util.List;
 import comp5216.sydney.edu.au.findmygym.model.CalendarUtil;
 import comp5216.sydney.edu.au.findmygym.model.Gym;
 import comp5216.sydney.edu.au.findmygym.model.PersonalTrainer;
-import comp5216.sydney.edu.au.findmygym.model.Reservation;
 import comp5216.sydney.edu.au.findmygym.model.Review;
 import comp5216.sydney.edu.au.findmygym.model.Timeslot;
 
@@ -51,10 +50,11 @@ public class GymViewModel extends ViewModel {
 
     private void addTestGym() {
         allPersonalTrainers = new ArrayList<>();
-        Gym gym = new Gym(0,
+        Gym gym = new Gym(111,
                 "Gym A",
-                CalendarUtil.stringToCalendar("1970-01-01 09:00"),
-                CalendarUtil.stringToCalendar("1970-01-01 18:00"),
+                CalendarUtil.stringToCalendarNoDate("09:00"),
+                CalendarUtil.stringToCalendarNoDate("18:00"),
+                20,
                 "Blah Ave. Blah Unit",
                 "12345678",
                 123.45,
@@ -83,7 +83,7 @@ public class GymViewModel extends ViewModel {
 
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mma");
         try {
-            PersonalTrainer pt1 = new PersonalTrainer(1, "Mark");
+            PersonalTrainer pt1 = new PersonalTrainer(1, "Mark", 40);
             pt1.addTimeSlot(Timeslot.timeSlotOnToday("10AM", "11:30AM"));
             pt1.addTimeSlot(Timeslot.timeSlotOnToday("1:00PM", "2:30PM"));
             pt1.addTimeSlot(Timeslot.timeSlotOnToday("3PM", "4:30PM"));
@@ -93,7 +93,7 @@ public class GymViewModel extends ViewModel {
             pt1.addTimeSlot(Timeslot.fromDate(df.parse("2021-10-23 9:30AM"), 90));
             gym.getPersonalTrainerIds().add(1);
 
-            PersonalTrainer pt2 = new PersonalTrainer(2, "Ada");
+            PersonalTrainer pt2 = new PersonalTrainer(2, "Ada", 50);
             pt2.addTimeSlot(Timeslot.timeSlotOnToday("9AM", "11AM"));
             pt2.addTimeSlot(Timeslot.timeSlotOnToday("1:00 PM", "3 PM"));
             gym.getPersonalTrainerIds().add(2);
@@ -168,12 +168,16 @@ public class GymViewModel extends ViewModel {
     /**
      * @return the selected reservation, or null if nothing selected
      */
-    public Reservation getReservation() {
+    public TrainerReservation getReservation() {
         if (trainerListAdapter == null) {
             Log.e(TAG, "Recycler view adapter is null");
             return null;
         }
         return trainerListAdapter.getSelection();
+    }
+
+    public Timeslot getSelectedGymTimeslot() {
+        return null;
     }
 
     @NotNull

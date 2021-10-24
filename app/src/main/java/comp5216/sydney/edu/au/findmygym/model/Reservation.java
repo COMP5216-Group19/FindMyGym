@@ -15,38 +15,49 @@ public class Reservation {
     private int gymId;
     private int userId;
 
-    private Timeslot openingTimeslot;
+    private Timeslot timeslot;
 
     // deprecated variables
 
-    private final PersonalTrainer trainer;
-    private final Timeslot selectedTimeslot;
+//    private final PersonalTrainer trainer;
+//    private final Timeslot selectedTimeslot;
 
-    public Reservation(PersonalTrainer trainer, Timeslot selectedTimeslot) {
-        this.trainer = trainer;
-        this.selectedTimeslot = selectedTimeslot;
+    public Reservation(int userId, int gymId, Integer trainerId, Timeslot timeslot) {
+        this.userId = userId;
+        this.gymId = gymId;
+        this.trainerId = trainerId;
+        this.timeslot = timeslot;
     }
+
+    public PersonalTrainer getTrainer() {
+        // todo: 这里有点强行
+        return UserData.getInstance().findTrainerById(trainerId);
+    }
+
+    public int getGymId() {
+        return gymId;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    //    public Reservation(PersonalTrainer trainer, Timeslot selectedTimeslot) {
+//        this.trainer = trainer;
+//        this.selectedTimeslot = selectedTimeslot;
+//    }
 
     /**
      * @return the personal trainer to reserve
      */
-    public PersonalTrainer getTrainer() {
-        return trainer;
+    public Integer getTrainerId() {
+        return trainerId;
     }
 
     /**
      * @return the timeslot of this reservation
      */
     public Timeslot getSelectedTimeSlot() {
-        return selectedTimeslot;
-    }
-
-    @NonNull
-    @Override
-    public String toString() {
-        return "Reservation{" +
-                "trainer=" + trainer +
-                ", selectedTimeSlot=" + selectedTimeslot +
-                '}';
+        return timeslot;
     }
 }
