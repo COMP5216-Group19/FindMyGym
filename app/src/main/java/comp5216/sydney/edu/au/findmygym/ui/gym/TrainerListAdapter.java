@@ -19,88 +19,82 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.model.PersonalTrainer;
-import comp5216.sydney.edu.au.findmygym.model.Reservation;
 import comp5216.sydney.edu.au.findmygym.model.Timeslot;
-import comp5216.sydney.edu.au.findmygym.model.UserData;
 
 public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.TrainerViewHolder> {
 
     private final List<Integer> trainersList;
     private final GymViewModel mViewModel;
-    /**
-     * Date selected of reservation maker
-     */
-    Calendar selectedDate;
-    Timepoint selectedTime;
-    RecyclerView recyclerView;
-    Button reserveButton;
-    TextView dateText;
-    TextView timeText;
 
-    private Set<Calendar> availableDays = new TreeSet<>();
+    RecyclerView recyclerView;
+//    Button reserveButton;
+    Button dateButton;
+    Button beginTimeButton;
+    Button endTimeButton;
+    TextView noTrainerAvailText;
+    TextView gymPriceText;
+    TextView trainerPriceText;
+    TextView totalPriceText;
+
+//    private Set<Calendar> availableDays = new TreeSet<>();
     private List<PersonalTrainer> trainersOfSelectedDate;
     private TrainerReservation reservation;
 
     TrainerListAdapter(List<Integer> trainersList,
                        RecyclerView recyclerView,
                        GymViewModel viewModel,
-                       Button reserveButton,
-                       TextView dateText,
-                       TextView timeText) {
+                       View parentView) {
         this.mViewModel = viewModel;
         this.trainersList = trainersList;
         this.recyclerView = recyclerView;
-        this.reserveButton = reserveButton;
-        this.dateText = dateText;
-        this.timeText = timeText;
-        makeAvailableDays(trainersList);
+//        this.reserveButton = parentView.findViewById(R.id.gym_reserve_button);
+        reload(parentView);
 
         setSelectedDate(mViewModel.getToday());
+        setBeginTime(mViewModel.getBeginTime());
+        setEndTime(mViewModel.getEndTime());
+
+        updatePrices();
     }
 
-    private void makeAvailableDays(List<Integer> personalTrainers) {
-        for (Integer trainerIds : personalTrainers) {
-            PersonalTrainer trainer = mViewModel.findTrainerById(trainerIds);
-            for (Timeslot timeslot : trainer.getAvailableTimes()) {
-                Calendar beginTime = timeslot.getBeginTime();
-                Calendar thatDay = GymViewModel.beginOfADay(beginTime);
+    void reload(View parentView) {
+        this.dateButton = parentView.findViewById(R.id.gym_date_picker_button);
+        this.beginTimeButton = parentView.findViewById(R.id.gym_begin_time_button);
+        this.endTimeButton = parentView.findViewById(R.id.gym_end_time_button);
+        this.noTrainerAvailText = parentView.findViewById(R.id.gym_no_trainer_text);
 
-                availableDays.add(thatDay);
-            }
-        }
+        this.gymPriceText = parentView.findViewById(R.id.gym_self_price);
+        this.trainerPriceText = parentView.findViewById(R.id.gym_trainer_price);
+        this.totalPriceText = parentView.findViewById(R.id.gym_total_price);
     }
 
-    public void setSelectedTime(Timepoint time) {
-        this.selectedTime = time;
+    public void setBeginTime(Timepoint begin) {
+        mViewModel.beginTime = begin;
 
-        timeText.setText(Timeslot.hourMinutesToString(recyclerView.getContext(),
-                time.getHour(), time.getMinute(), false));
+        beginTimeButton.setText(Timeslot.hourMinutesToString(recyclerView.getContext(),
+                                begin.getHour(), begin.getMinute(), false));
+    }
+
+    public void setEndTime(Timepoint end) {
+        mViewModel.endTime = end;
+
+        endTimeButton.setText(Timeslot.hourMinutesToString(recyclerView.getContext(),
+                end.getHour(), end.getMinute(), false));
     }
 
     public void setSelectedDate(Calendar selectedDate) {
-        this.selectedDate = selectedDate;
-
-        trainersOfSelectedDate = new ArrayList<>();
-        for (Integer trainerIds : trainersList) {
-            PersonalTrainer trainer = mViewModel.findTrainerById(trainerIds);
-            for (Timeslot timeslot : trainer.getAvailableTimes()) {
-                if (GymViewModel.isSameDate(timeslot.getBeginTime(), selectedDate)) {
-                    trainersOfSelectedDate.add(trainer);
-                    break;
-                }
-            }
-        }
+        mViewModel.selectedDate = selectedDate;
+        mViewModel.updateDefaultTimePeriod();
+        filterTrainers();
 
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT);
         String dateStr = dateFormat.format(selectedDate.getTime());
         String fullStr;
-        if (GymViewModel.isSameDate(selectedDate, mViewModel.getToday())) {
+        if (GymViewModel.isSameDate(mViewModel.getToday(), selectedDate)) {
             fullStr = recyclerView.getContext().getString(R.string.gym_today, dateStr);
         } else if (GymViewModel.isNextDayOf(mViewModel.getToday(), selectedDate)) {
             fullStr = recyclerView.getContext().getString(R.string.gym_tomorrow, dateStr);
@@ -108,19 +102,62 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
             fullStr = dateStr;
         }
 
-        dateText.setText(fullStr);
+        dateButton.setText(fullStr);
     }
 
-    public Calendar getSelectedDate() {
-        return selectedDate;
+    private void filterTrainers() {
+        trainersOfSelectedDate = new ArrayList<>();
+        Calendar beginDateTime = mViewModel.getBeginDateTime();
+        Calendar endDateTime = mViewModel.getEndDateTime();
+        boolean found = false;
+        for (Integer trainerIds : trainersList) {
+            PersonalTrainer trainer = mViewModel.findTrainerById(trainerIds);
+            for (Timeslot timeslot : trainer.getAvailableTimes()) {
+                if (containedInSelectedPeriod(beginDateTime, endDateTime, timeslot)) {
+                    trainersOfSelectedDate.add(trainer);
+                    found = true;
+                    break;
+                }
+            }
+        }
+
+        if (found) {
+            noTrainerAvailText.setVisibility(View.GONE);
+        } else {
+            noTrainerAvailText.setVisibility(View.VISIBLE);
+        }
     }
 
-    public Timepoint getSelectedTime() {
-        return selectedTime;
+    private boolean containedInSelectedPeriod(Calendar beginDateTime,
+                                              Calendar endDateTime,
+                                              Timeslot timeslot) {
+        return (beginDateTime.before(timeslot.getBeginTime()) ||
+                beginDateTime.equals(timeslot.getBeginTime())) &&
+                (endDateTime.after(timeslot.getEndTime()) ||
+                        endDateTime.equals(timeslot.getEndTime()));
     }
 
-    public Calendar[] getSelectableDays() {
-        return availableDays.toArray(new Calendar[0]);
+    void updateSelection(TrainerReservation trainerReservation) {
+        reservation = trainerReservation;
+        System.out.println("Updated " + reservation);
+        if (reservation == null) {
+//            reserveButton.setEnabled(false);
+            mViewModel.trainerPrice = 0.0;
+        } else {
+//            reserveButton.setEnabled(true);
+            mViewModel.trainerPrice = trainerReservation.trainer.getPrice();
+        }
+        updatePrices();
+    }
+
+    private void updatePrices() {
+        gymPriceText.setText(recyclerView.getContext()
+                .getString(R.string.gym_money_fmt, mViewModel.gymPrice));
+        trainerPriceText.setText(recyclerView.getContext()
+                .getString(R.string.gym_money_fmt, mViewModel.trainerPrice));
+        totalPriceText.setText(recyclerView.getContext()
+                .getString(R.string.gym_money_fmt,
+                        mViewModel.gymPrice + mViewModel.trainerPrice));
     }
 
     @NonNull
@@ -134,7 +171,7 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
     @Override
     public void onBindViewHolder(@NonNull TrainerViewHolder holder, int position) {
         PersonalTrainer trainer = trainersOfSelectedDate.get(position);
-        holder.bind(trainer, selectedDate);
+        holder.bind(trainer);
     }
 
     @Override
@@ -150,8 +187,9 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
     }
 
     public void refresh() {
+        System.out.println("Refreshed!");
         notifyDataSetChanged();
-        reserveButton.setEnabled(false);
+//        reserveButton.setEnabled(false);
         reservation = null;
     }
 
@@ -172,8 +210,8 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
 
             trainerTimesGroup.setOnCheckedChangeListener((group, checkedId) -> {
                 if (checkedId != View.NO_ID) {
-                    adapter.reservation = new TrainerReservation(trainer,
-                            chipTimeslotMap.get(checkedId));
+                    adapter.updateSelection(new TrainerReservation(trainer,
+                            chipTimeslotMap.get(checkedId)));
                     // A chip is selected in this group, clear all selections in other groups
                     for (int i = 0; i < adapter.getItemCount(); ++i) {
                         View view = adapter.recyclerView.getChildAt(i);
@@ -183,14 +221,22 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
                             trainerViewHolder.trainerTimesGroup.clearCheck();
                         }
                     }
-                    adapter.reserveButton.setEnabled(true);
                 } else {
-                    adapter.reserveButton.setEnabled(false);
+                    // Check all chip groups, if none is selected, clear trainer
+                    for (int index = 0; index < adapter.getItemCount(); index++) {
+                        TrainerViewHolder vh =
+                                (TrainerViewHolder) adapter.recyclerView.getChildViewHolder(
+                                        adapter.recyclerView.getChildAt(index));
+                        if (vh.trainerTimesGroup.getCheckedChipId() != View.NO_ID) {
+                            return;
+                        }
+                    }
+                    adapter.updateSelection(null);
                 }
             });
         }
 
-        void bind(PersonalTrainer trainer, Calendar date) {
+        void bind(PersonalTrainer trainer) {
             this.trainer = trainer;
 
             trainerNameText.setText(trainer.getName());
@@ -198,26 +244,18 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
             trainerTimesGroup.removeAllViews();
             chipTimeslotMap.clear();
 
-//            int checkId = View.NO_ID;
+            Calendar beginDateTime = adapter.mViewModel.getBeginDateTime();
+            Calendar endDateTime = adapter.mViewModel.getEndDateTime();
+
             for (Timeslot timeSlot : trainer.getAvailableTimes()) {
-                if (GymViewModel.isSameDate(timeSlot.getBeginTime(), date)) {
+                if (adapter.containedInSelectedPeriod(beginDateTime, endDateTime, timeSlot)) {
                     Chip chip = (Chip) LayoutInflater.from(context)
                             .inflate(R.layout.trainer_timeslot_chip, trainerTimesGroup, false);
                     chip.setText(timeSlot.toStringWithoutDate(context));
                     trainerTimesGroup.addView(chip);
                     chipTimeslotMap.put(chip.getId(), timeSlot);
-
-//                    if (adapter.reservation != null &&
-//                            adapter.reservation.getTrainer() == trainer &&
-//                            adapter.reservation.getSelectedTimeSlot() == timeSlot) {
-//                        checkId = chip.getId();
-//                    }
                 }
             }
-
-//            if (checkId != View.NO_ID) {
-//                trainerTimesGroup.check(checkId);
-//            }
         }
 
         @NonNull

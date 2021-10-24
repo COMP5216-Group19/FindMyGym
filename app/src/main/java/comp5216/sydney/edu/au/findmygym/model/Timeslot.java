@@ -78,6 +78,12 @@ public class Timeslot {
         return beginTime;
     }
 
+    public Calendar getEndTime() {
+        Calendar calendar = (Calendar) beginTime.clone();
+        calendar.add(Calendar.MINUTE, lengthMinutes);
+        return calendar;
+    }
+
     /**
      * @return the length of this timeslot, in minutes
      */
@@ -88,7 +94,7 @@ public class Timeslot {
     public static String hourMinutesToString(Context context, int hourOfDay, int minutes,
                                              boolean noMinutesIfZero) {
         boolean isAm = hourOfDay < 12;
-        int hour = isAm ? hourOfDay : hourOfDay - 12;
+        int hour = isAm ? hourOfDay : (hourOfDay == 12 ? 12 : hourOfDay - 12);
         int fmtStrId;
         if (minutes == 0 && noMinutesIfZero) {
             fmtStrId = isAm ?
