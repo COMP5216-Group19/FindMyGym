@@ -201,4 +201,8 @@ public class GymActivity extends AppCompatActivity {
                 });
         builder.create().show();
     }
+
+    public void onPostReviewClicked(View view) {
+        mViewModel.postReview();
+    }
 }

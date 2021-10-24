@@ -8,9 +8,7 @@ import com.wdullaer.materialdatetimepicker.time.Timepoint;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -22,6 +20,7 @@ import comp5216.sydney.edu.au.findmygym.model.PersonalTrainer;
 import comp5216.sydney.edu.au.findmygym.model.Reservation;
 import comp5216.sydney.edu.au.findmygym.model.Review;
 import comp5216.sydney.edu.au.findmygym.model.Timeslot;
+import comp5216.sydney.edu.au.findmygym.model.UserData;
 
 public class GymViewModel extends ViewModel {
     private static final String TAG = "[GymViewModel]";
@@ -31,19 +30,20 @@ public class GymViewModel extends ViewModel {
      * Store it here for simplifying the accessing from GymActivity
      */
     TrainerListAdapter trainerListAdapter;
-
-    private Calendar now = Calendar.getInstance();
-    private final Calendar today = beginOfADay(now);
-
     Calendar selectedDate;
     Timepoint beginTime;
     Timepoint endTime;
-
     double gymPrice;
     double trainerPrice;
-
-    private Gym gym;
     List<PersonalTrainer> allPersonalTrainers;
+    private Calendar now = Calendar.getInstance();
+    private final Calendar today = beginOfADay(now);
+    /**
+     * Whether the current user has came to this gym.
+     */
+    boolean arrivedByThisUser;
+    private Gym gym;
+    private GymInfoFragment infoFragment;
 
     public GymViewModel() {
         // TODO: get data
@@ -51,6 +51,45 @@ public class GymViewModel extends ViewModel {
 
         // after set gym
         generateValuesByGym();
+    }
+
+    /**
+     * Returns a calendar object that stores the 00:00:000 of the day, which has the same
+     * date as {@code time}.
+     *
+     * @param time the time to be calculated
+     * @return Returns a calendar object that stores the 00:00:000 of the day, which has the same
+     * date as {@code time}.
+     */
+    public static Calendar beginOfADay(Calendar time) {
+        Calendar day = Calendar.getInstance();
+        day.clear();
+        day.set(time.get(Calendar.YEAR),
+                time.get(Calendar.MONTH),
+                time.get(Calendar.DAY_OF_MONTH));
+
+        // This just forces calendar to compute fields
+        day.set(Calendar.MILLISECOND, 0);
+        return day;
+    }
+
+    public static boolean isSameDate(Calendar date1, Calendar date2) {
+        return date1.get(Calendar.YEAR) == date2.get(Calendar.YEAR) &&
+                date1.get(Calendar.MONTH) == date2.get(Calendar.MONTH) &&
+                date1.get(Calendar.DAY_OF_MONTH) == date2.get(Calendar.DAY_OF_MONTH);
+    }
+
+    /**
+     * Return whether {@code probableTomorrow} is the next day of {@code date}.
+     *
+     * @param date             the date
+     * @param probableTomorrow another date
+     * @return whether {@code probableTomorrow} is the next day of {@code date}
+     */
+    public static boolean isNextDayOf(Calendar date, Calendar probableTomorrow) {
+        Calendar tom = (Calendar) probableTomorrow.clone();
+        tom.add(Calendar.DATE, -1);
+        return isSameDate(date, tom);
     }
 
     public PersonalTrainer findTrainerById(int trainerId) {
@@ -71,8 +110,18 @@ public class GymViewModel extends ViewModel {
         // TODO: 预约
     }
 
+    /**
+     * Post a review.
+     */
+    public void postReview() {
+        String text = infoFragment.getReview();
+        int rating = infoFragment.getRating();
+        // TODO: 评论
+    }
+
     private void generateValuesByGym() {
         gymPrice = gym.getPrice();
+        arrivedByThisUser = UserData.getInstance().hasBeenToGym(gym.getGymId());
 
         Calendar oneHourLater = (Calendar) now.clone();
         oneHourLater.add(Calendar.HOUR_OF_DAY, 1);
@@ -199,45 +248,6 @@ public class GymViewModel extends ViewModel {
         return dateTime;
     }
 
-    /**
-     * Returns a calendar object that stores the 00:00:000 of the day, which has the same
-     * date as {@code time}.
-     *
-     * @param time the time to be calculated
-     * @return Returns a calendar object that stores the 00:00:000 of the day, which has the same
-     * date as {@code time}.
-     */
-    public static Calendar beginOfADay(Calendar time) {
-        Calendar day = Calendar.getInstance();
-        day.clear();
-        day.set(time.get(Calendar.YEAR),
-                time.get(Calendar.MONTH),
-                time.get(Calendar.DAY_OF_MONTH));
-
-        // This just forces calendar to compute fields
-        day.set(Calendar.MILLISECOND, 0);
-        return day;
-    }
-
-    public static boolean isSameDate(Calendar date1, Calendar date2) {
-        return date1.get(Calendar.YEAR) == date2.get(Calendar.YEAR) &&
-                date1.get(Calendar.MONTH) == date2.get(Calendar.MONTH) &&
-                date1.get(Calendar.DAY_OF_MONTH) == date2.get(Calendar.DAY_OF_MONTH);
-    }
-
-    /**
-     * Return whether {@code probableTomorrow} is the next day of {@code date}.
-     *
-     * @param date the date
-     * @param probableTomorrow another date
-     * @return whether {@code probableTomorrow} is the next day of {@code date}
-     */
-    public static boolean isNextDayOf(Calendar date, Calendar probableTomorrow) {
-        Calendar tom = (Calendar) probableTomorrow.clone();
-        tom.add(Calendar.DATE, -1);
-        return isSameDate(date, tom);
-    }
-
     public Calendar getToday() {
         return today;
     }
@@ -256,6 +266,8 @@ public class GymViewModel extends ViewModel {
      */
     public void setGym(Gym gym) {
         this.gym = gym;
+
+        generateValuesByGym();
     }
 
     /**
@@ -283,6 +295,10 @@ public class GymViewModel extends ViewModel {
         int length = end.getHour() * 60 + end.getMinute() -
                 begin.getHour() * 60 - begin.getMinute();
         return new Timeslot(dateTime, length);
+    }
+
+    void setInfoFragment(GymInfoFragment infoFragment) {
+        this.infoFragment = infoFragment;
     }
 
     @NotNull
