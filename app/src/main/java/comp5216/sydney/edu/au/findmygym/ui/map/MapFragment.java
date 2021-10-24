@@ -2,6 +2,7 @@ package comp5216.sydney.edu.au.findmygym.ui.map;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -10,11 +11,14 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -44,11 +48,13 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Executor;
 
+import comp5216.sydney.edu.au.findmygym.GymActivity;
 import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.databinding.FragmentMapBinding;
+import comp5216.sydney.edu.au.findmygym.model.UserData;
 
 
-public class MapFragment extends Fragment implements OnMapReadyCallback
+public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnInfoWindowLongClickListener
 {
 	private final String TAG = "[MapFragment]";
 	private GoogleMap mMap;
@@ -58,6 +64,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback
 	private SearchView mSearchView;
 
 	private FusedLocationProviderClient mFusedLocationProviderClient;
+	private UserData userData = UserData.getInstance();
+
 
 	// The geographical location where the device is currently located. That is, the last-known location retrieved by the Fused Location Provider.
 	private Location mLastKnownLocation = new Location("");
@@ -164,6 +172,44 @@ public class MapFragment extends Fragment implements OnMapReadyCallback
 		});
 		mMapFragment.getMapAsync(this);
 	}
+	public String findGymName(int id){
+		String name = "";
+		for (int i = 0; i < userData.allGyms.size(); i++) {
+			if (userData.allGyms.get(i).getGymId() == id) {
+				name = userData.allGyms.get(i).getGymName();
+			}
+		}
+		return name;
+	}
+
+	public String findGymAddress(int id){
+		String address = "";
+		for (int i = 0; i < userData.allGyms.size(); i++) {
+			if (userData.allGyms.get(i).getGymId() == id) {
+				address = userData.allGyms.get(i).getAddress();
+			}
+		}
+		return address;
+	}
+	public double findGymlat(int id){
+		double latitude = 0;
+		for (int i = 0; i < userData.allGyms.size(); i++) {
+			if (userData.allGyms.get(i).getGymId() == id) {
+				latitude = userData.allGyms.get(i).getLatitude();
+			}
+		}
+		return latitude;
+	}
+	public double findGymlong(int id){
+		double longitude = 0;
+		for (int i = 0; i < userData.allGyms.size(); i++) {
+			if (userData.allGyms.get(i).getGymId() == id) {
+				longitude = userData.allGyms.get(i).getLongitude();
+			}
+		}
+		return longitude;
+	}
+
 
 	@Override
 	public void onMapReady(GoogleMap googleMap)
@@ -173,91 +219,36 @@ public class MapFragment extends Fragment implements OnMapReadyCallback
 		updateLocationUI();
 		getDeviceLocation();
 		mMap.setMyLocationEnabled(true);
+		mMap.setOnInfoWindowLongClickListener(this);
 
-		// Add a marker in Sydney and move the camera
-		LatLng gym0coord = new LatLng(-33.79911, 151.1792);
-		Marker gym0 = mMap.addMarker(new MarkerOptions()
-				.position(gym0coord)
-				.title("Minus Fitness Gym Chatswood")
-				.snippet("763 Pacific Hwy, Chatswood NSW 2067")
-				.icon(BitmapFromVector(getActivity().getApplicationContext(),R.drawable.ic_baseline_fitness_center_24)));
+		for(int i=0; i<10; i++){
+			Marker gym0 = mMap.addMarker(new MarkerOptions()
+					.position(new LatLng(findGymlat(i), findGymlong(i)))
+					.title(findGymName(i))
+					.snippet(findGymAddress(i))
+					.icon(BitmapFromVector(getActivity().getApplicationContext(),R.drawable.ic_baseline_fitness_center_24)));
 
+		};
 
-		LatLng gym1coord = new LatLng(-33.82581, 151.19854);
-		Marker gym1 = mMap.addMarker(new MarkerOptions()
-				.position(gym1coord)
-				.title("Minus Fitness Crows Nest")
-				.snippet("400 Pacific Hwy, Crows Nest NSW 2065")
-				.icon(BitmapFromVector(getActivity().getApplicationContext(),R.drawable.ic_baseline_fitness_center_24)));
-
-
-		LatLng gym2coord = new LatLng(-33.82445, 151.19584);
-		Marker gym2 = mMap.addMarker(new MarkerOptions()
-				.position(gym2coord)
-				.title("Fitness Second St Leonards")
-				.snippet("55 Christie St, St Leonards NSW 2065")
-				.icon(BitmapFromVector(getActivity().getApplicationContext(),R.drawable.ic_baseline_fitness_center_24)));
-
-
-		LatLng gym3coord = new LatLng(-33.83945, 151.20809);
-		Marker gym3 = mMap.addMarker(new MarkerOptions()
-				.position(gym3coord)
-				.title("Fitness Second North Sydney")
-				.snippet("1 Elizabeth Plaza, North Sydney NSW 2060")
-				.icon(BitmapFromVector(getActivity().getApplicationContext(),R.drawable.ic_baseline_fitness_center_24)));
-
-
-		LatLng gym4coord = new LatLng(-33.86441, 151.20829);
-		Marker gym4 = mMap.addMarker(new MarkerOptions()
-				.position(gym4coord)
-				.title("Fitness Second Bond St")
-				.snippet("20 Bond St, Sydney NSW 2000")
-				.icon(BitmapFromVector(getActivity().getApplicationContext(),R.drawable.ic_baseline_fitness_center_24)));
-
-
-		LatLng gym5coord = new LatLng(-33.87115, 151.20522);
-		Marker gym5 = mMap.addMarker(new MarkerOptions()
-				.position(gym5coord)
-				.title("Minus Fitness Market Street")
-				.snippet("25 Market St, Sydney NSW 2000")
-				.icon(BitmapFromVector(getActivity().getApplicationContext(),R.drawable.ic_baseline_fitness_center_24)));
-
-
-		LatLng gym6coord = new LatLng(-33.90103, 151.21178);
-		Marker gym6 = mMap.addMarker(new MarkerOptions()
-				.position(gym6coord)
-				.title("Minus Fitness Waterloo")
-				.snippet("11A Lachlan St, Waterloo NSW 2017")
-				.icon(BitmapFromVector(getActivity().getApplicationContext(),R.drawable.ic_baseline_fitness_center_24)));
-
-
-		LatLng gym7coord = new LatLng(-33.837711, 151.208801);
-		Marker gym7 = mMap.addMarker(new MarkerOptions()
-				.position(gym7coord)
-				.title("Notime Fitness North Sydney")
-				.snippet("118 Walker St, North Sydney NSW 2060")
-				.icon(BitmapFromVector(getActivity().getApplicationContext(),R.drawable.ic_baseline_fitness_center_24)));
-
-
-		LatLng gym8coord = new LatLng(-33.8706586, 151.2102227);
-		Marker gym8 = mMap.addMarker(new MarkerOptions()
-				.position(gym8coord)
-				.title("Notime Fitness City")
-				.snippet("227 Elizabeth St, Sydney NSW 2000")
-				.icon(BitmapFromVector(getActivity().getApplicationContext(),R.drawable.ic_baseline_fitness_center_24)));
-
-		LatLng gym9coord = new LatLng(-33.8334692, 151.2052855);
-		Marker gym9 = mMap.addMarker(new MarkerOptions()
-				.position(gym9coord)
-				.title("Sliver's Gym")
-				.snippet("7-9 West St, North Sydney NSW 2060")
-				.icon(BitmapFromVector(getActivity().getApplicationContext(),R.drawable.ic_baseline_fitness_center_24)));
-
-
-//		mMap.moveCamera(CameraUpdateFactory.newLatLng(gym1));
-//		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(gym1, DEFAULT_ZOOM));
+//		mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+//			@Override
+//			public boolean onMarkerClick(Marker marker) {
+//				Intent intent = new Intent(getActivity(), GymActivity.class);
+//				startActivity(intent);
+//				return false;
+//			}
+//		});
 
 	}
+
+	public void onMarkerClick(MenuItem item)
+	{
+		Intent intent = new Intent(getActivity(), GymActivity.class);
+		startActivity(intent);
+	}
+
+
+
 	private void getLocationPermission() {
 		/*
 		 * Request location permission, so that we can get the location of the
@@ -373,4 +364,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback
 	}
 
 
+	@Override
+	public void onInfoWindowLongClick(Marker marker) {
+		Intent intent = new Intent(getActivity(), GymActivity.class);
+		startActivity(intent);
+	}
 }

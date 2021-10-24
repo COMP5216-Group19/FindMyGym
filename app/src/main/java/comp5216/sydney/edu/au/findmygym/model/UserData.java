@@ -81,8 +81,8 @@ public class UserData extends LiveData<UserData>
 				null,
 				"763 Pacific Hwy, Chatswood NSW 2067",
 				"123-4567",
-				-33.79911,
 				151.1792,
+				-33.79911,
 				null,
 				null
 		);
@@ -94,8 +94,8 @@ public class UserData extends LiveData<UserData>
 				null,
 				"400 Pacific Hwy, Crows Nest NSW 2065",
 				"123-4567",
-				-33.82581,
 				151.19854,
+				-33.82581,
 				null,
 				null
 		);
@@ -107,8 +107,8 @@ public class UserData extends LiveData<UserData>
 				null,
 				"55 Christie St, St Leonards NSW 2065",
 				"123-4567",
-				-33.82445,
 				151.19584,
+				-33.82445,
 				null,
 				null
 		);
@@ -120,8 +120,8 @@ public class UserData extends LiveData<UserData>
 				null,
 				"1 Elizabeth Plaza, North Sydney NSW 2060",
 				"123-4567",
-				-33.83945,
 				151.20809,
+				-33.83945,
 				null,
 				null
 		);
@@ -133,8 +133,8 @@ public class UserData extends LiveData<UserData>
 				null,
 				"20 Bond St, Sydney NSW 2000",
 				"123-4567",
-				-33.86441,
 				151.20829,
+				-33.86441,
 				null,
 				null
 		);
@@ -146,8 +146,8 @@ public class UserData extends LiveData<UserData>
 				null,
 				"25 Market St, Sydney NSW 2000",
 				"123-4567",
-				-33.87115,
 				151.20522,
+				-33.87115,
 				null,
 				null
 		);
@@ -159,8 +159,8 @@ public class UserData extends LiveData<UserData>
 				null,
 				"11A Lachlan St, Waterloo NSW 2017",
 				"123-4567",
-				-33.90103,
 				151.21178,
+				-33.90103,
 				null,
 				null
 		);
@@ -172,8 +172,8 @@ public class UserData extends LiveData<UserData>
 				null,
 				"118 Walker St, North Sydney NSW 2060",
 				"123-4567",
-				-33.837711,
 				151.208801,
+				-33.837711,
 				null,
 				null
 		);
@@ -185,8 +185,8 @@ public class UserData extends LiveData<UserData>
 				null,
 				"227 Elizabeth St, Sydney NSW 2000",
 				"123-4567",
-				-33.8706586,
 				151.2102227,
+				-33.8706586,
 				null,
 				null
 		);
@@ -198,8 +198,8 @@ public class UserData extends LiveData<UserData>
 				null,
 				"7-9 West St, North Sydney NSW 2060",
 				"123-4567",
-				-33.8334692,
 				151.2052855,
+				-33.8334692,
 				null,
 				null
 		);
