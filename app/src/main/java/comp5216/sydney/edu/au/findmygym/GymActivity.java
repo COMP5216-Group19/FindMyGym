@@ -3,7 +3,6 @@ package comp5216.sydney.edu.au.findmygym;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -14,6 +13,8 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
+import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
+import com.wdullaer.materialdatetimepicker.time.Timepoint;
 
 import java.util.Calendar;
 
@@ -85,13 +86,15 @@ public class GymActivity extends AppCompatActivity {
             item.setIcon(R.drawable.outline_star_border_24);
             isFavourite = false;
             UserData.getInstance().removeFromFavouriteGyms(mViewModel.getGym().getGymId());
-            Toast.makeText(this.getBaseContext(), "Removed from favourite!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this.getBaseContext(), "Removed from favourite!",
+                    Toast.LENGTH_SHORT).show();
         } else {
 //            item.setIcon(android.R.drawable.btn_star_big_on);
             item.setIcon(R.drawable.outline_star_24);
             isFavourite = true;
             UserData.getInstance().addToFavouriteGyms(mViewModel.getGym().getGymId());
-            Toast.makeText(this.getBaseContext(), "Added to favourite!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this.getBaseContext(), "Added to favourite!",
+                    Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -105,6 +108,20 @@ public class GymActivity extends AppCompatActivity {
         mViewModel.getTrainerListAdapter().refresh();
     }
 
+    private void onStartTimeSelected(TimePickerDialog view,
+                                     int hourOfDay, int minute, int second) {
+        Timepoint time = new Timepoint(hourOfDay, minute);
+        mViewModel.getTrainerListAdapter().setBeginTime(time);
+        mViewModel.getTrainerListAdapter().refresh();
+    }
+
+    private void onEndTimeSelected(TimePickerDialog view,
+                                   int hourOfDay, int minute, int second) {
+        Timepoint time = new Timepoint(hourOfDay, minute);
+        mViewModel.getTrainerListAdapter().setEndTime(time);
+        mViewModel.getTrainerListAdapter().refresh();
+    }
+
     public void onDatePickerClicked(View view) {
         DatePickerDialog pickerDialog = DatePickerDialog.newInstance(
                 this::onDateSelectedListener,
@@ -112,14 +129,54 @@ public class GymActivity extends AppCompatActivity {
                 mViewModel.getToday().get(Calendar.MONTH),
                 mViewModel.getToday().get(Calendar.DAY_OF_MONTH)
         );
-        pickerDialog.setSelectableDays(mViewModel.getTrainerListAdapter().getSelectableDays());
+        pickerDialog.setMinDate(mViewModel.getToday());
+//        pickerDialog.setSelectableDays(mViewModel.getTrainerListAdapter().getSelectableDays());
         pickerDialog.setHighlightedDays(
-                new Calendar[]{mViewModel.getTrainerListAdapter().getSelectedDate()});
+                new Calendar[]{mViewModel.getSelectedDate()});
         pickerDialog.show(getSupportFragmentManager(), TAG);
     }
 
-    public void onTimePickerClicked(View view) {
+    public void onPickStartTimeClicked(View view) {
+        TimePickerDialog pickerDialog = TimePickerDialog.newInstance(
+                this::onStartTimeSelected,
+                false
+        );
+        Calendar openTime = mViewModel.getGym().getOpenTime();
+        Timepoint beginTp = new Timepoint(openTime.get(Calendar.HOUR_OF_DAY),
+                openTime.get(Calendar.MINUTE));
 
+        Calendar date = mViewModel.getSelectedDate();
+        if (GymViewModel.isSameDate(date, mViewModel.getToday())) {
+            // Cannot select a time before now
+            Calendar now = Calendar.getInstance();
+            if (now.compareTo(openTime) > 0) {
+                beginTp = new Timepoint(now.get(Calendar.HOUR_OF_DAY),
+                        now.get(Calendar.MINUTE));
+            }
+        }
+
+        Calendar closeTime = mViewModel.getGym().getCloseTime();
+        Timepoint endTp = new Timepoint(closeTime.get(Calendar.HOUR_OF_DAY),
+                closeTime.get(Calendar.MINUTE));
+        pickerDialog.setMinTime(beginTp);
+        pickerDialog.setMaxTime(endTp);
+        pickerDialog.setTitle(getString(R.string.gym_start_time));
+        pickerDialog.show(getSupportFragmentManager(), TAG);
+    }
+
+    public void onPickEndTimeCLicked(View view) {
+        TimePickerDialog pickerDialog = TimePickerDialog.newInstance(
+                this::onEndTimeSelected,
+                false
+        );
+
+        Calendar closeTime = mViewModel.getGym().getCloseTime();
+        Timepoint endTp = new Timepoint(closeTime.get(Calendar.HOUR_OF_DAY),
+                closeTime.get(Calendar.MINUTE));
+        pickerDialog.setMinTime(mViewModel.getBeginTime());
+        pickerDialog.setMaxTime(endTp);
+        pickerDialog.setTitle(getString(R.string.gym_start_time));
+        pickerDialog.show(getSupportFragmentManager(), TAG);
     }
 
     /**
@@ -137,22 +194,11 @@ public class GymActivity extends AppCompatActivity {
                             mViewModel.getGym().getGymId(),
                             trainerRsv == null ? null : trainerRsv.trainer.getTrainerId(),
                             mViewModel.getSelectedGymTimeslot());
-                    makeReservation(reservation);
+                    mViewModel.makeReservation(reservation);
                 })
                 .setNegativeButton(R.string.cancel, (dialog, which) -> {
                     // Nothing happens
                 });
         builder.create().show();
-
-
-    }
-
-    /**
-     * Make a reservation.
-     *
-     * @param reservation the reservation to be made
-     */
-    public void makeReservation(Reservation reservation) {
-        // TODO: 预约
     }
 }

@@ -4,6 +4,8 @@ import android.util.Log;
 
 import androidx.lifecycle.ViewModel;
 
+import com.wdullaer.materialdatetimepicker.time.Timepoint;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.text.DateFormat;
@@ -17,6 +19,7 @@ import java.util.List;
 import comp5216.sydney.edu.au.findmygym.model.CalendarUtil;
 import comp5216.sydney.edu.au.findmygym.model.Gym;
 import comp5216.sydney.edu.au.findmygym.model.PersonalTrainer;
+import comp5216.sydney.edu.au.findmygym.model.Reservation;
 import comp5216.sydney.edu.au.findmygym.model.Review;
 import comp5216.sydney.edu.au.findmygym.model.Timeslot;
 
@@ -29,7 +32,15 @@ public class GymViewModel extends ViewModel {
      */
     TrainerListAdapter trainerListAdapter;
 
-    private final Calendar today = beginOfADay(Calendar.getInstance());
+    private Calendar now = Calendar.getInstance();
+    private final Calendar today = beginOfADay(now);
+
+    Calendar selectedDate;
+    Timepoint beginTime;
+    Timepoint endTime;
+
+    double gymPrice;
+    double trainerPrice;
 
     private Gym gym;
     List<PersonalTrainer> allPersonalTrainers;
@@ -37,6 +48,9 @@ public class GymViewModel extends ViewModel {
     public GymViewModel() {
         // TODO: get data
         addTestGym();
+
+        // after set gym
+        generateValuesByGym();
     }
 
     public PersonalTrainer findTrainerById(int trainerId) {
@@ -48,9 +62,54 @@ public class GymViewModel extends ViewModel {
         return null;
     }
 
+    /**
+     * Make a reservation.
+     *
+     * @param reservation the reservation to be made
+     */
+    public void makeReservation(Reservation reservation) {
+        // TODO: 预约
+    }
+
+    private void generateValuesByGym() {
+        gymPrice = gym.getPrice();
+
+        Calendar oneHourLater = (Calendar) now.clone();
+        oneHourLater.add(Calendar.HOUR_OF_DAY, 1);
+        if (oneHourLater.compareTo(gym.getCloseTime()) >= 0) {
+            // Already closed or nearly closed
+            selectedDate = (Calendar) today.clone();
+            selectedDate.add(Calendar.DAY_OF_MONTH, 1);
+            beginTime = new Timepoint(gym.getOpenTime().get(Calendar.HOUR_OF_DAY),
+                    gym.getOpenTime().get(Calendar.MINUTE));
+        } else {
+            selectedDate = (Calendar) today.clone();
+            beginTime = new Timepoint(now.get(Calendar.HOUR_OF_DAY),
+                    now.get(Calendar.MINUTE));
+        }
+        endTime = new Timepoint(gym.getCloseTime().get(Calendar.HOUR_OF_DAY),
+                gym.getCloseTime().get(Calendar.MINUTE));
+    }
+
+    /**
+     * Updates time period after change date
+     */
+    void updateDefaultTimePeriod() {
+        now = Calendar.getInstance();
+        if (isSameDate(selectedDate, now)) {
+            beginTime = new Timepoint(now.get(Calendar.HOUR_OF_DAY),
+                    now.get(Calendar.MINUTE));
+        } else {
+            beginTime = new Timepoint(gym.getOpenTime().get(Calendar.HOUR_OF_DAY),
+                    gym.getOpenTime().get(Calendar.MINUTE));
+        }
+        endTime = new Timepoint(gym.getCloseTime().get(Calendar.HOUR_OF_DAY),
+                gym.getCloseTime().get(Calendar.MINUTE));
+    }
+
     private void addTestGym() {
         allPersonalTrainers = new ArrayList<>();
-        Gym gym = new Gym(111,
+        gym = new Gym(111,
                 "Gym A",
                 CalendarUtil.stringToCalendarNoDate("09:00"),
                 CalendarUtil.stringToCalendarNoDate("18:00"),
@@ -78,32 +137,66 @@ public class GymViewModel extends ViewModel {
         gym.getReviews().add(
                 new Review("Elisabeth", null, 5,
                         "Recommended! Various kind of equipments, enough space, " +
-                                "a swimming pool inside. Will come again and advise to my friends.",
+                                "a swimming pool inside. Will come again and advise to " +
+                                "my friends.",
                         someDaysAgo));
 
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mma");
         try {
-            PersonalTrainer pt1 = new PersonalTrainer(1, "Mark", 40);
-            pt1.addTimeSlot(Timeslot.timeSlotOnToday("10AM", "11:30AM"));
-            pt1.addTimeSlot(Timeslot.timeSlotOnToday("1:00PM", "2:30PM"));
-            pt1.addTimeSlot(Timeslot.timeSlotOnToday("3PM", "4:30PM"));
-            pt1.addTimeSlot(Timeslot.timeSlotOnToday("5PM", "6PM"));
-
-            // Not on today
-            pt1.addTimeSlot(Timeslot.fromDate(df.parse("2021-10-23 9:30AM"), 90));
-            gym.getPersonalTrainerIds().add(1);
-
-            PersonalTrainer pt2 = new PersonalTrainer(2, "Ada", 50);
-            pt2.addTimeSlot(Timeslot.timeSlotOnToday("9AM", "11AM"));
-            pt2.addTimeSlot(Timeslot.timeSlotOnToday("1:00 PM", "3 PM"));
-            gym.getPersonalTrainerIds().add(2);
-
-            allPersonalTrainers.add(pt1);
-            allPersonalTrainers.add(pt2);
+            addMockTrainersInThisWeek(1, "Mark", 30);
+            addMockTrainersInThisWeek(2, "Ada", 40);
         } catch (ParseException e) {
             Log.d(TAG, Arrays.toString(e.getStackTrace()));
         }
-        this.gym = gym;
+    }
+
+    private void addMockTrainersInThisWeek(int trainerId, String trainerName, double price)
+            throws ParseException {
+        Calendar cal = (Calendar) today.clone();
+        Calendar openTime = gym.getOpenTime();
+        cal.set(Calendar.HOUR_OF_DAY, openTime.get(Calendar.HOUR_OF_DAY));
+        cal.set(Calendar.MINUTE, openTime.get(Calendar.MINUTE));
+        double openHours = (double) (gym.getCloseTime().getTimeInMillis() -
+                openTime.getTimeInMillis()) / 3_600_000;
+        int segments = (int) Math.floor(openHours);
+
+        PersonalTrainer trainer = new PersonalTrainer(trainerId, trainerName, price);
+
+        for (int day = 0; day < 7; day++) {
+            Calendar calInDay = (Calendar) cal.clone();
+            calInDay.add(Calendar.DAY_OF_MONTH, day);
+            for (int hour = 0; hour < segments; hour++) {
+                trainer.addTimeSlot(new Timeslot((Calendar) calInDay.clone(), 60));
+                calInDay.add(Calendar.HOUR_OF_DAY, 1);
+            }
+        }
+        allPersonalTrainers.add(trainer);
+        gym.getPersonalTrainerIds().add(trainerId);
+    }
+
+    public Calendar getSelectedDate() {
+        return selectedDate;
+    }
+
+    public Timepoint getBeginTime() {
+        return beginTime;
+    }
+
+    public Timepoint getEndTime() {
+        return endTime;
+    }
+
+    public Calendar getBeginDateTime() {
+        Calendar dateTime = (Calendar) getSelectedDate().clone();
+        dateTime.set(Calendar.HOUR_OF_DAY, beginTime.getHour());
+        dateTime.set(Calendar.MINUTE, beginTime.getMinute());
+        return dateTime;
+    }
+
+    public Calendar getEndDateTime() {
+        Calendar dateTime = (Calendar) getSelectedDate().clone();
+        dateTime.set(Calendar.HOUR_OF_DAY, endTime.getHour());
+        dateTime.set(Calendar.MINUTE, endTime.getMinute());
+        return dateTime;
     }
 
     /**
@@ -141,7 +234,7 @@ public class GymViewModel extends ViewModel {
      */
     public static boolean isNextDayOf(Calendar date, Calendar probableTomorrow) {
         Calendar tom = (Calendar) probableTomorrow.clone();
-        tom.add(Calendar.DATE, 1);
+        tom.add(Calendar.DATE, -1);
         return isSameDate(date, tom);
     }
 
@@ -177,7 +270,19 @@ public class GymViewModel extends ViewModel {
     }
 
     public Timeslot getSelectedGymTimeslot() {
-        return null;
+        if (trainerListAdapter == null) {
+            Log.e(TAG, "Recycler view adapter is null");
+            return null;
+        }
+        Calendar date = getSelectedDate();
+        Timepoint begin = getBeginTime();
+        Timepoint end = getEndTime();
+        Calendar dateTime = (Calendar) date.clone();
+        dateTime.set(Calendar.HOUR_OF_DAY, begin.getHour());
+        dateTime.set(Calendar.MINUTE, begin.getMinute());
+        int length = end.getHour() * 60 + end.getMinute() -
+                begin.getHour() * 60 - begin.getMinute();
+        return new Timeslot(dateTime, length);
     }
 
     @NotNull
