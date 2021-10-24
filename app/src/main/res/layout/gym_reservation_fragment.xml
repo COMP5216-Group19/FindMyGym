@@ -2,19 +2,20 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:paddingStart="15dp"
+    android:paddingEnd="15dp">
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/gym_date_picker"
         style="@style/Widget.App.Button.OutlinedButton.IconOnly"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
         android:onClick="onDatePickerClicked"
-        app:strokeWidth="0dp"
         app:icon="@drawable/outline_edit_calendar_24"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeWidth="0dp" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/gym_picked_date_text"
@@ -22,25 +23,116 @@
         android:layout_height="wrap_content"
         android:text="Today\n22/10/2021"
         android:textColor="@color/black"
-        android:layout_marginStart="15dp"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@id/gym_date_picker"
         app:layout_constraintLeft_toRightOf="@id/gym_date_picker"
         app:layout_constraintTop_toTopOf="@id/gym_date_picker" />
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/gym_time_picker"
+        style="@style/Widget.App.Button.OutlinedButton.IconOnly"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onTimePickerClicked"
+        app:icon="@drawable/outline_alarm_24"
+        app:layout_constraintLeft_toRightOf="@id/gym_picked_date_text"
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeWidth="0dp" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/gym_trainer_recycler"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="15dp"
-        android:paddingEnd="15dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/gym_self_price_label"
         app:layout_constraintTop_toBottomOf="@id/gym_date_picker" />
+
+    <TextView
+        android:id="@+id/gym_self_price_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="@string/gym_self_price"
+        app:layout_constraintBottom_toTopOf="@id/gym_trainer_price_label"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <TextView
+        android:id="@+id/gym_self_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="$15.00"
+        app:layout_constraintTop_toTopOf="@id/gym_self_price_label"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <TextView
+        android:id="@+id/gym_trainer_price_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="@string/gym_trainer_price"
+        app:layout_constraintBottom_toTopOf="@id/gym_tax_label"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <TextView
+        android:id="@+id/gym_trainer_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="$25.00"
+        app:layout_constraintTop_toTopOf="@id/gym_trainer_price_label"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <TextView
+        android:id="@+id/gym_tax_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="@string/gym_tax_price"
+        app:layout_constraintBottom_toTopOf="@id/gym_subtotal_divider"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <TextView
+        android:id="@+id/gym_tax"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="$10.00"
+        app:layout_constraintTop_toTopOf="@id/gym_tax_label"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <View
+        android:id="@+id/gym_subtotal_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="10dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintBottom_toTopOf="@id/gym_total_price_label" />
+
+    <TextView
+        android:id="@+id/gym_total_price_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/gym_total_price"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/gym_reserve_button"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <TextView
+        android:id="@+id/gym_total_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="$50.50"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/gym_total_price_label" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/gym_reserve_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
         android:layout_marginBottom="5dp"
         android:enabled="false"
         android:onClick="onConfirmReservationClicked"

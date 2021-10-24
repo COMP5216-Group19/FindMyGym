@@ -16,7 +16,6 @@ import com.google.android.material.chip.ChipGroup;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +26,7 @@ import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.model.PersonalTrainer;
 import comp5216.sydney.edu.au.findmygym.model.Reservation;
 import comp5216.sydney.edu.au.findmygym.model.Timeslot;
+import comp5216.sydney.edu.au.findmygym.model.UserData;
 
 public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.TrainerViewHolder> {
 
@@ -42,7 +42,7 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
 
     private Set<Calendar> availableDays = new TreeSet<>();
     private List<PersonalTrainer> trainersOfSelectedDate;
-    private Reservation reservation;
+    private TrainerReservation reservation;
 
     TrainerListAdapter(List<Integer> trainersList,
                        RecyclerView recyclerView,
@@ -129,19 +129,8 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
     /**
      * @return the selected trainer-timeslot, or null if not selected
      */
-    public Reservation getSelection() {
+    public TrainerReservation getSelection() {
         return reservation;
-//        for (int i = 0; i < getItemCount(); ++i) {
-//            View view = recyclerView.getChildAt(i);
-//            TrainerViewHolder trainerViewHolder =
-//                    (TrainerViewHolder) recyclerView.getChildViewHolder(view);
-//            int checkedId = trainerViewHolder.trainerTimesGroup.getCheckedChipId();
-//            if (checkedId != View.NO_ID) {
-//                return new Reservation(trainerViewHolder.trainer,
-//                        trainerViewHolder.chipTimeslotMap.get(checkedId));
-//            }
-//        }
-//        return null;
     }
 
     public void refresh() {
@@ -167,7 +156,7 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
 
             trainerTimesGroup.setOnCheckedChangeListener((group, checkedId) -> {
                 if (checkedId != View.NO_ID) {
-                    adapter.reservation = new Reservation(trainer,
+                    adapter.reservation = new TrainerReservation(trainer,
                             chipTimeslotMap.get(checkedId));
                     // A chip is selected in this group, clear all selections in other groups
                     for (int i = 0; i < adapter.getItemCount(); ++i) {

@@ -17,7 +17,6 @@ import java.util.List;
 import comp5216.sydney.edu.au.findmygym.model.CalendarUtil;
 import comp5216.sydney.edu.au.findmygym.model.Gym;
 import comp5216.sydney.edu.au.findmygym.model.PersonalTrainer;
-import comp5216.sydney.edu.au.findmygym.model.Reservation;
 import comp5216.sydney.edu.au.findmygym.model.Review;
 import comp5216.sydney.edu.au.findmygym.model.Timeslot;
 
@@ -169,12 +168,16 @@ public class GymViewModel extends ViewModel {
     /**
      * @return the selected reservation, or null if nothing selected
      */
-    public Reservation getReservation() {
+    public TrainerReservation getReservation() {
         if (trainerListAdapter == null) {
             Log.e(TAG, "Recycler view adapter is null");
             return null;
         }
         return trainerListAdapter.getSelection();
+    }
+
+    public Timeslot getSelectedGymTimeslot() {
+        return null;
     }
 
     @NotNull

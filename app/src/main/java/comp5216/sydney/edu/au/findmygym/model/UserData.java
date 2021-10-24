@@ -40,6 +40,7 @@ public class UserData extends LiveData<UserData>
 
 	// todo: mock的list
 	public List<Gym> allGyms;
+	public List<PersonalTrainer> allTrainers;
 	
 	private volatile static UserData UserData;
 	
@@ -193,27 +194,70 @@ public class UserData extends LiveData<UserData>
 		allGyms.add(gym7);
 		allGyms.add(gym8);
 		allGyms.add(gym9);
+
+		allTrainers = new ArrayList<>();
+		allTrainers.add(new PersonalTrainer(1, "Mary", 30.0));
+		allTrainers.add(new PersonalTrainer(2, "Jack", 35.0));
 	}
 
 	public void addMockReservations()
 	{
 		reservations = new ArrayList<Reservation>();
+		// todo: user id
 		Reservation rev1 = new Reservation(
-				new PersonalTrainer(1, "Marry", 30, null),
+				1,
+				1,
+				1,
 				new Timeslot(CalendarUtil.stringToCalendar("2021-10-23 09:00"), 60)
 		);
 		Reservation rev2 = new Reservation(
-				new PersonalTrainer(0, "Jack", 35, null),
+				1,
+				2,
+				0,
 				new Timeslot(CalendarUtil.stringToCalendar("2021-10-20 09:00"), 60)
 		);
 		Reservation rev3 = new Reservation(
-				new PersonalTrainer(0, "Jack", 65, null),
+				1,
+				2,
+				0,
 				new Timeslot(CalendarUtil.stringToCalendar("2021-10-23 08:00"), 120)
 		);
 
 		reservations.add(rev1);
 		reservations.add(rev2);
 		reservations.add(rev3);
+	}
+
+	public List<Gym> getAllGyms() {
+		return allGyms;
+	}
+
+	public int getUserId() {
+		// TODO:
+		return 0;
+	}
+
+	public List<PersonalTrainer> getAllTrainers() {
+		return allTrainers;
+	}
+
+	public Gym findGymById(int gymId) {
+		// TODO: firebase
+		for (Gym gym : getAllGyms()) {
+			if (gym.getGymId() == gymId) {
+				return gym;
+			}
+		}
+		return null;
+	}
+
+	public PersonalTrainer findTrainerById(int trainerId) {
+		for (PersonalTrainer trainer : getAllTrainers()) {
+			if (trainer.getTrainerId() == trainerId) {
+				return trainer;
+			}
+		}
+		return null;
 	}
 
 	/**
