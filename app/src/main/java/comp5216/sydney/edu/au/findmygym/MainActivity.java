@@ -1,6 +1,5 @@
 package comp5216.sydney.edu.au.findmygym;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -24,10 +23,8 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
 
@@ -50,8 +47,10 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import java.util.Arrays;
 import java.util.List;
-import com.algolia.instantsearch.voice.ui.Voice.*;
+
 import comp5216.sydney.edu.au.findmygym.databinding.ActivityMainBinding;
+import comp5216.sydney.edu.au.findmygym.model.Gym;
+import comp5216.sydney.edu.au.findmygym.model.callbacks.GymQueryCallback;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
 import comp5216.sydney.edu.au.findmygym.ui.map.MapFragment;
 import comp5216.sydney.edu.au.findmygym.ui.profile.ProfileFragment;
@@ -372,8 +371,19 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 	
 	public void onGymMemuClicked(MenuItem item)
 	{
-		Intent intent = new Intent(mContext, GymActivity.class);
-		startActivity(intent);
+		UserData.getInstance().findGymById(0, new GymQueryCallback() {
+			@Override
+			public void onSucceed(Gym gym) {
+				Intent intent = new Intent(mContext, GymActivity.class);
+				intent.putExtra("gym", gym);
+				startActivity(intent);
+			}
+
+			@Override
+			public void onFailed(Exception exception) {
+
+			}
+		});
 	}
 	
 //	public void onAvatarClicked(View view)

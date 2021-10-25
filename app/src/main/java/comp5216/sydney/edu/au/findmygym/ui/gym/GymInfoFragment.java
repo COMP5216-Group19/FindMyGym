@@ -2,6 +2,7 @@ package comp5216.sydney.edu.au.findmygym.ui.gym;
 
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;

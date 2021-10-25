@@ -18,6 +18,7 @@ import com.wdullaer.materialdatetimepicker.time.Timepoint;
 
 import java.util.Calendar;
 
+import comp5216.sydney.edu.au.findmygym.model.Gym;
 import comp5216.sydney.edu.au.findmygym.model.Reservation;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
 import comp5216.sydney.edu.au.findmygym.ui.gym.GymFragment;
@@ -39,6 +40,7 @@ public class GymActivity extends AppCompatActivity {
 
         mViewModel = new ViewModelProvider(this).get(GymViewModel.class);
         // todo: set gym
+        mViewModel.setGym((Gym) getIntent().getSerializableExtra("gym"));
 
         isFavourite = mViewModel.getGym().isFavourite();
 

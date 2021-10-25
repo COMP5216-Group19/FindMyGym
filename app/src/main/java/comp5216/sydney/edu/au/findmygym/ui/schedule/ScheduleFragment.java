@@ -10,88 +10,119 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTabHost;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.viewpager2.widget.ViewPager2;
+
+import com.google.android.material.tabs.TabLayout;
 
 import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.databinding.FragmentScheduleBinding;
+import comp5216.sydney.edu.au.findmygym.databinding.FragmentWalletBinding;
+import comp5216.sydney.edu.au.findmygym.ui.wallet.FragmentAdapter;
+import comp5216.sydney.edu.au.findmygym.ui.wallet.WalletViewModel;
 
 public class ScheduleFragment extends Fragment
 {
 	private final String TAG = "[ScheduleFragment]";
-	
-	private ScheduleViewModel scheduleViewModel;
-	private FragmentScheduleBinding binding;
-	private ScheduleViewModel mViewModel;
-	TextView textView_Message;
-	
-	public static ScheduleFragment newInstance()
-	{
-		return new ScheduleFragment();
+
+	private static final String ARG_COUNT = "param1";
+	private Integer counter;
+
+	private FragmentTabHost mTabHost;
+	private WalletViewModel walletViewModel;
+	private FragmentWalletBinding binding;
+	TabLayout tabLayout;
+	FragmentAdapter fragmentAdapter;
+	ViewPager2 viewPager;
+
+
+	public ScheduleFragment() {
+		// Required empty public constructor
 	}
-	
-	
+
+	public static ScheduleFragment newInstance(Integer counter) {
+		ScheduleFragment fragment = new ScheduleFragment();
+		Bundle args = new Bundle();
+		args.putInt(ARG_COUNT, counter);
+		fragment.setArguments(args);
+		return fragment;
+	}
+
 	@Override
-	public void onActivityCreated(@Nullable Bundle savedInstanceState)
-	{
-		super.onActivityCreated(savedInstanceState);
-		// TODO: Use the ViewModel
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		if (getArguments() != null) {
+			counter = getArguments().getInt(ARG_COUNT);
+		}
+
 	}
-	
-	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+
+	public View onCreateView(@NonNull LayoutInflater inflater,
+							 ViewGroup container, Bundle savedInstanceState)
 	{
-		scheduleViewModel = new ViewModelProvider(this).get(ScheduleViewModel.class);
-		
-		binding = FragmentScheduleBinding.inflate(inflater, container, false);
-		View root = binding.getRoot();
-		
-		final TextView textView = binding.textSchedule;
-		scheduleViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>()
+		return inflater.inflate(R.layout.fragment_schedule, container, false);
+	}
+
+
+	@Override
+	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+		// demoCollectionAdapter = new DemoCollectionAdapter(this);
+		// viewPager = view.findViewById(R.id.pager);
+		// viewPager.setAdapter(demoCollectionAdapter);
+		//
+		// TabLayout tabLayout = view.findViewById(R.id.tab_layout);
+		// new TabLayoutMediator(tabLayout, viewPager,
+		// 		(tab, position) -> tab.setText("OBJECT " + (position + 1))
+		// ).attach();
+		super.onViewCreated(view, savedInstanceState);
+		tabLayout = getView().findViewById(R.id.schedule_tabLayout);
+		viewPager = getView().findViewById(R.id.schedule_viewpager2);
+		ScheduleAdapter fragmentAdapter = new ScheduleAdapter(getActivity().getSupportFragmentManager(), getLifecycle());
+
+		viewPager.setAdapter(fragmentAdapter);
+
+		tabLayout.addTab(tabLayout.newTab().setText("Booking"));
+		tabLayout.addTab(tabLayout.newTab().setText("History"));
+
+
+
+		this.tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener()
 		{
 			@Override
-			public void onChanged(@Nullable String s)
+			public void onTabSelected(TabLayout.Tab tab)
 			{
-				textView.setText(s);
+				Log.e(TAG, "onTabSelected: "+tab.getTag() + "@" +tab.getPosition());
+				viewPager.setCurrentItem(tab.getPosition());
+			}
+
+			@Override
+			public void onTabUnselected(TabLayout.Tab tab)
+			{
+
+			}
+
+			@Override
+			public void onTabReselected(TabLayout.Tab tab)
+			{
+
 			}
 		});
-		return root;
-	}
-	
-	@Override
-	public void onDestroyView()
-	{
-		super.onDestroyView();
-		binding = null;
-	}
-	
-	@Override
-	public void onViewCreated(View view, @Nullable Bundle savedInstanceState)
-	{
-		mViewModel = new ViewModelProvider(this).get(ScheduleViewModel.class);
-		textView_Message = (TextView) getView().findViewById(R.id.message);
-		// Log.e(TAG, textView_Message.getText().toString());
-		
-		mViewModel.getUserTimer().observe(getViewLifecycleOwner(), new Observer<Integer>()
+
+		viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback()
 		{
 			@Override
-			public void onChanged(Integer userTimer)
+			public void onPageSelected(int position)
 			{
-				// Log.e(TAG,"userData changed");
-				// textView_Message.setText(mViewModel.getUserTimer().toString());
-				textView_Message.setText(String.valueOf(userTimer));
-				
+				Log.e(TAG, "onPageSelected at position: "+position);
+				tabLayout.selectTab(tabLayout.getTabAt(position));
 			}
 		});
-		
-		textView_Message.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				// Log.e(TAG, "textView_Message - onClick");
-				mViewModel.getUserTimer().setValue(0);
-				mViewModel.currentSecond= 0;
-			}
-		});
-		mViewModel.startTiming();
+
 	}
-	
+
+
+
+
 }

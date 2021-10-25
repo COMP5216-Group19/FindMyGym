@@ -9,34 +9,61 @@ import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 
-import com.firebase.ui.auth.data.model.User;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
-import java.sql.Time;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.List;
 
 import comp5216.sydney.edu.au.findmygym.R;
+import comp5216.sydney.edu.au.findmygym.model.callbacks.GymQueryCallback;
+import comp5216.sydney.edu.au.findmygym.model.callbacks.ReservationQueryCallback;
+import comp5216.sydney.edu.au.findmygym.model.callbacks.TrainerQueryCallback;
+import comp5216.sydney.edu.au.findmygym.ui.gym.GymViewModel;
+import io.reactivex.rxjava3.internal.operators.observable.ObservableToList;
 
 public class UserData extends LiveData<UserData>
 {
 	private final String TAG = "[UserData]";
 
 	private ArrayList<PurchaseRecord> purchaseRecords;
+	private ArrayList<ScheduleList> scheduleLists;
 	private ArrayList<CreditCard> creditCards;
 	private ArrayList<Membership> memberships;
 	private FirebaseUser firebaseUser;
+	private String userId;
 	private String userName;
 	private String userMail;
 	private Bitmap userAvatar;
-	private ArrayList<Integer> favouriteGyms;
-	private ArrayList<Reservation> reservations;
+	private List<Integer> favouriteGyms;
+	private List<Reservation> reservations;
 	private Session userSession;
 	private StorageReference userStorageRef;
+	private StorageReference gymPictureRef;
+	private StorageReference trainerAvatarRef;
+	private FirebaseDatabase database;
+	private DatabaseReference dbRef;
+	private DatabaseReference gymsRef;
+	private DatabaseReference trainersRef;
+	private DatabaseReference userRsvRef;  // reservations of this user
+	private DatabaseReference userRef;
 	private Context mContext;
+
+	// This list will load when launching this app
+	// Displays these gyms on map
+	// TODO: 让这个list在loading界面load，load完了再进map
+	// TODO: 或者观察这个list，随list更新map
+	private List<SimpleGym> allSimpleGyms;
 
 	// todo: mock的list
 	public List<Gym> allGyms;
@@ -47,9 +74,21 @@ public class UserData extends LiveData<UserData>
 	/**
 	 * Default Constructor
 	 */
-	public UserData()
+	private UserData()
 	{
-		this.purchaseRecords = new ArrayList<>(1);
+		this.purchaseRecords = new ArrayList<>();
+		this.scheduleLists = new ArrayList<>(1);
+		database = FirebaseDatabase.getInstance();
+		dbRef = database.getReference();
+		gymsRef = dbRef.child("gyms");
+		trainersRef = dbRef.child("trainers");
+		userRef = dbRef.child("users").child(getUserName());
+		userRsvRef = userRef.child("reservations");
+		FirebaseStorage storage = FirebaseStorage.getInstance();
+		gymPictureRef = storage.getReference("gymPictures");
+		trainerAvatarRef = storage.getReference("trainerAvatars");
+
+		loadGymsInfo();
 	}
 
 	/**
@@ -64,15 +103,116 @@ public class UserData extends LiveData<UserData>
 				if (UserData == null)
 				{
 					UserData = new UserData();
-					UserData.addMockGym();
+//					UserData.addMockGym();
 					UserData.addMockReservations();
+
 				}
 			}
 		}
 		return UserData;
 	}
 
+	private void loadGymsInfo() {
+		allSimpleGyms = new ArrayList<>();
+		gymsRef.get().addOnSuccessListener(dataSnapshot -> {
+			for (DataSnapshot ds : dataSnapshot.getChildren()) {
+				Gym.GymData gd = ds.getValue(Gym.GymData.class);
+				if (gd != null) {
+					allSimpleGyms.add(SimpleGym.fromData(gd));
+				}
+			}
+			// TODO: load finished
+			System.out.println(allSimpleGyms);
+		}).addOnFailureListener(e -> {
+			Log.e(TAG, Arrays.toString(e.getStackTrace()));
+		});
+	}
+
+	/*
+	Methods for mock database
+	 */
+
+	private void addGymToDatabase(Gym gym) {
+		// Name of gym picture
+		StorageReference pictureRef = gymPictureRef.child(gym.getGymId() + ".jpg");
+
+		// upload gym picture
+		if (gym.getGymPhoto() != null) {
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			gym.getGymPhoto().compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+			byte[] data = outputStream.toByteArray();
+			UploadTask task = pictureRef.putBytes(data);
+			task.addOnFailureListener(e -> {
+				Log.e(TAG, Arrays.toString(e.getStackTrace()));
+			}).addOnSuccessListener(taskSnapshot -> {
+				gymsRef.child(String.valueOf(gym.getGymId()))
+						.setValue(gym.toData(pictureRef.getDownloadUrl().getResult().toString()));
+			});
+		} else {
+			gymsRef.child(String.valueOf(gym.getGymId()))
+					.setValue(gym.toData(null));
+		}
+	}
+
+	private void addTrainerToDatabase(PersonalTrainer trainer) {
+		// Name of gym picture
+		StorageReference pictureRef = trainerAvatarRef.child(trainer.getTrainerId() + ".jpg");
+
+		// upload gym picture
+		if (trainer.getAvatar() != null) {
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			trainer.getAvatar().compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+			byte[] data = outputStream.toByteArray();
+			UploadTask task = pictureRef.putBytes(data);
+			task.addOnFailureListener(e -> {
+				Log.e(TAG, Arrays.toString(e.getStackTrace()));
+			}).addOnSuccessListener(taskSnapshot -> {
+				trainersRef.child(String.valueOf(trainer.getTrainerId()))
+						.setValue(trainer.toData(
+								pictureRef.getDownloadUrl().getResult().toString()));
+			});
+		} else {
+			trainersRef.child(String.valueOf(trainer.getTrainerId()))
+					.setValue(trainer.toData(null));
+		}
+	}
+
+	private void addMockTrainersInThisWeek(Gym gym, int trainerId,
+										   String trainerName, double price) {
+
+		Calendar cal = GymViewModel.beginOfADay(Calendar.getInstance());
+		Calendar openTime = gym.getOpenTime();
+		cal.set(Calendar.HOUR_OF_DAY, openTime.get(Calendar.HOUR_OF_DAY));
+		cal.set(Calendar.MINUTE, openTime.get(Calendar.MINUTE));
+		double openHours = (double) (gym.getCloseTime().getTimeInMillis() -
+				openTime.getTimeInMillis()) / 3_600_000;
+		int segments = (int) Math.floor(openHours);
+
+		PersonalTrainer trainer = new PersonalTrainer(trainerId, trainerName, price);
+
+		for (int day = 0; day < 7; day++) {
+			Calendar calInDay = (Calendar) cal.clone();
+			calInDay.add(Calendar.DAY_OF_MONTH, day);
+			for (int hour = 0; hour < segments; hour++) {
+				trainer.addTimeSlot(new Timeslot((Calendar) calInDay.clone(), 60));
+				calInDay.add(Calendar.HOUR_OF_DAY, 1);
+			}
+		}
+		allTrainers.add(trainer);
+		gym.getPersonalTrainers().add(trainer);
+	}
+
+	private void addReviewToDatabase(Review review) {
+
+	}
+
+	private void addReservationToDatabase(Reservation reservation) {
+
+	}
+
 	public void addMockGym() {
+		allTrainers = new ArrayList<>();
+
 		allGyms = new ArrayList<>();
 		Gym gym0 = new Gym(
 				0,
@@ -85,6 +225,9 @@ public class UserData extends LiveData<UserData>
 				151.1792,
 				-33.79911
 		);
+		addMockTrainersInThisWeek(gym0, 0, "Otto",40.0);
+		addMockTrainersInThisWeek(gym0, 1, "Mary", 30.0);
+
 		Gym gym1 = new Gym(
 				1,
 				"Minus Fitness Crows Nest",
@@ -96,6 +239,8 @@ public class UserData extends LiveData<UserData>
 				151.19854,
 				-33.82581
 		);
+		addMockTrainersInThisWeek(gym1, 2, "Jack", 35.0);
+
 		Gym gym2 = new Gym(
 				2,
 				"Fitness Second St Leonards",
@@ -107,6 +252,9 @@ public class UserData extends LiveData<UserData>
 				151.19584,
 				-33.82445
 		);
+		addMockTrainersInThisWeek(gym2, 3, "Tom", 32.0);
+		addMockTrainersInThisWeek(gym2, 4, "Jerry", 36.0);
+
 		Gym gym3 = new Gym(
 				3,
 				"Fitness Second North Sydney",
@@ -118,6 +266,8 @@ public class UserData extends LiveData<UserData>
 				-33.83945,
 				151.20809
 		);
+		addMockTrainersInThisWeek(gym3, 5, "Aaron", 20.0);
+
 		Gym gym4 = new Gym(
 				4,
 				"Fitness Second Bond St",
@@ -126,9 +276,13 @@ public class UserData extends LiveData<UserData>
 				20,
 				"20 Bond St, Sydney NSW 2000",
 				"123-4567",
-				-33.86441,
-				151.20829
+				151.20829,
+				-33.86441
 		);
+		addMockTrainersInThisWeek(gym4, 6, "Subaru", 30.0);
+		addMockTrainersInThisWeek(gym4, 7, "Emilia", 40.0);
+		addMockTrainersInThisWeek(gym4, 8, "Rem", 40.0);
+
 		Gym gym5 = new Gym(
 				5,
 				"Minus Fitness Market Street",
@@ -137,9 +291,11 @@ public class UserData extends LiveData<UserData>
 				16,
 				"25 Market St, Sydney NSW 2000",
 				"123-4567",
-				-33.87115,
-				151.20522
+				151.20522,
+				-33.87115
 		);
+		addMockTrainersInThisWeek(gym5, 9, "Peter", 22.0);
+
 		Gym gym6 = new Gym(
 				6,
 				"Minus Fitness Waterloo",
@@ -148,9 +304,11 @@ public class UserData extends LiveData<UserData>
 				15,
 				"11A Lachlan St, Waterloo NSW 2017",
 				"123-4567",
-				-33.90103,
-				151.21178
+				151.21178,
+				-33.90103
 		);
+		addMockTrainersInThisWeek(gym6, 10, "Larry", 28.0);
+
 		Gym gym7 = new Gym(
 				7,
 				"Notime Fitness North Sydey",
@@ -159,9 +317,11 @@ public class UserData extends LiveData<UserData>
 				20,
 				"118 Walker St, North Sydney NSW 2060",
 				"123-4567",
-				-33.837711,
-				151.208801
+				151.208801,
+				-33.837711
 		);
+		addMockTrainersInThisWeek(gym7, 11, "Harry", 30.0);
+
 		Gym gym8 = new Gym(
 				8,
 				"Notime Fitness City",
@@ -170,8 +330,8 @@ public class UserData extends LiveData<UserData>
 				20,
 				"227 Elizabeth St, Sydney NSW 2000",
 				"123-4567",
-				-33.8706586,
-				151.2102227
+				151.2102227,
+				-33.8706586
 		);
 		Gym gym9 = new Gym(
 				9,
@@ -181,8 +341,8 @@ public class UserData extends LiveData<UserData>
 				20,
 				"7-9 West St, North Sydney NSW 2060",
 				"123-4567",
-				-33.8334692,
-				151.2052855
+				151.2052855,
+				-33.8334692
 		);
 		allGyms.add(gym0);
 		allGyms.add(gym1);
@@ -195,9 +355,12 @@ public class UserData extends LiveData<UserData>
 		allGyms.add(gym8);
 		allGyms.add(gym9);
 
-		allTrainers = new ArrayList<>();
-		allTrainers.add(new PersonalTrainer(1, "Mary", 30.0));
-		allTrainers.add(new PersonalTrainer(2, "Jack", 35.0));
+		for (Gym gym : allGyms) {
+			addGymToDatabase(gym);
+		}
+		for (PersonalTrainer personalTrainer : allTrainers) {
+			addTrainerToDatabase(personalTrainer);
+		}
 	}
 
 	public void addMockReservations()
@@ -205,19 +368,19 @@ public class UserData extends LiveData<UserData>
 		reservations = new ArrayList<Reservation>();
 		// todo: user id
 		Reservation rev1 = new Reservation(
-				1,
+				getUserId(),
 				1,
 				1,
 				new Timeslot(CalendarUtil.stringToCalendar("2021-10-23 09:00"), 60)
 		);
 		Reservation rev2 = new Reservation(
-				1,
+				getUserId(),
 				2,
 				0,
 				new Timeslot(CalendarUtil.stringToCalendar("2021-10-20 09:00"), 60)
 		);
 		Reservation rev3 = new Reservation(
-				1,
+				getUserId(),
 				2,
 				0,
 				new Timeslot(CalendarUtil.stringToCalendar("2021-10-23 08:00"), 120)
@@ -228,19 +391,83 @@ public class UserData extends LiveData<UserData>
 		reservations.add(rev3);
 	}
 
+	/**
+	 * Returns a list of all simple gym info.
+	 *
+	 * @return a list of all simple gym info
+	 */
+	public List<SimpleGym> getAllSimpleGyms() {
+		return allSimpleGyms;
+	}
+
+	public void loadAllReservationsOfThisUser() {
+		// todo: 需要登录，直接全部读到本地的list里
+		userRsvRef.get().addOnSuccessListener(dataSnapshot -> {
+
+		}).addOnFailureListener(e -> {
+			Log.e(TAG, Arrays.toString(e.getStackTrace()));
+		});
+	}
+
+	/**
+	 * Use getAllSimpleGyms() instead
+	 */
+	@Deprecated
 	public List<Gym> getAllGyms() {
 		return allGyms;
 	}
 
-	public int getUserId() {
-		// TODO:
-		return 0;
-	}
-
+	@Deprecated
 	public List<PersonalTrainer> getAllTrainers() {
 		return allTrainers;
 	}
 
+	public void findGymById(int gymId, GymQueryCallback callback) {
+		gymsRef.child(String.valueOf(gymId)).get().addOnCompleteListener(task -> {
+			if (task.isSuccessful()) {
+				Gym.GymData gymData = task.getResult().getValue(Gym.GymData.class);
+				if (gymData == null) {
+					callback.onFailed(new NullPointerException(
+							"Query result of gym " + gymId + " is null"));
+					return;
+				}
+
+				// Then query trainers of this gym
+				populateTrainersOfGym(gymData, callback);
+			} else {
+				Log.e(TAG, Arrays.toString(task.getException().getStackTrace()));
+				callback.onFailed(task.getException());
+			}
+		});
+	}
+
+	private void populateTrainersOfGym(Gym.GymData gymData, GymQueryCallback callback) {
+		List<PersonalTrainer> trainers = new ArrayList<>();
+		for (String tid : gymData.trainerIds) {
+			findTrainerById(Integer.parseInt(tid), new TrainerQueryCallback() {
+				@Override
+				public void onSucceed(PersonalTrainer trainer) {
+					trainers.add(trainer);
+					if (trainers.size() == gymData.trainerIds.size()) {
+						// Last trainer has been added, ready to open
+						if (gymData.picturePath == null) {
+							Gym gym = Gym.fromGymData(gymData, trainers, null);
+							callback.onSucceed(gym);
+						} else {
+							// todo
+						}
+					}
+				}
+
+				@Override
+				public void onFailed(Exception exception) {
+					Log.e(TAG, Arrays.toString(exception.getStackTrace()));
+				}
+			});
+		}
+	}
+
+	@Deprecated
 	public Gym findGymById(int gymId) {
 		// TODO: firebase
 		for (Gym gym : getAllGyms()) {
@@ -251,6 +478,25 @@ public class UserData extends LiveData<UserData>
 		return null;
 	}
 
+	public void findTrainerById(int trainerId, TrainerQueryCallback callback) {
+		trainersRef.child(String.valueOf(trainerId)).get().addOnSuccessListener(dataSnapshot -> {
+			PersonalTrainer.TrainerData td =
+					dataSnapshot.getValue(PersonalTrainer.TrainerData.class);
+			if (td == null) {
+				callback.onFailed(new NullPointerException(
+						"Query result of trainer " + trainerId + " is null"));
+				return;
+			}
+			if (td.avatarPath == null) {
+				PersonalTrainer trainer = PersonalTrainer.fromData(td, null);
+				callback.onSucceed(trainer);
+			} else {
+				// todo
+			}
+		}).addOnFailureListener(callback::onFailed);
+	}
+
+	@Deprecated
 	public PersonalTrainer findTrainerById(int trainerId) {
 		for (PersonalTrainer trainer : getAllTrainers()) {
 			if (trainer.getTrainerId() == trainerId) {
@@ -258,6 +504,81 @@ public class UserData extends LiveData<UserData>
 			}
 		}
 		return null;
+	}
+
+//	public void findReservationById(String rsvId, ReservationQueryCallback callback) {
+//		userRsvRef.child(rsvId).get().addOnSuccessListener(dataSnapshot -> {
+//			Reservation.ReservationData data =
+//					dataSnapshot.getValue(Reservation.ReservationData.class);
+//			if (data == null) {
+//				callback.onFailed(new NullPointerException(
+//						"Query result of reservation " + rsvId + " is null"));
+//				return;
+//			}
+//			callback.onSucceed(Reservation.fromData(data));
+//		}).addOnFailureListener(callback::onFailed);
+//	}
+
+	public void postNewReservation(Reservation reservation) {
+		userRsvRef.child(reservation.getRsvId()).setValue(reservation.toData())
+				.addOnSuccessListener(unused -> {
+
+				}).addOnFailureListener(e -> {
+
+		});
+	}
+
+	/**
+	 * ScheduleLists
+	 */
+
+	public ArrayList<ScheduleList> getScheduleLists()
+	{
+		return scheduleLists;
+	}
+
+	public void addScheduleList(ScheduleList scheduleList)
+	{
+		this.scheduleLists.add(scheduleList);
+		sortScheduleLists();
+		postValue(this);
+	}
+
+	public void sortScheduleLists(){
+		Log.e(TAG,"---------------------"+this.getScheduleLists().size());
+		this.scheduleLists.sort(new Comparator<ScheduleList>()
+		{
+			@Override
+			public int compare(ScheduleList t1, ScheduleList t2)
+			{
+				Calendar c1 = t1.getTime();
+				Calendar c2 = t2.getTime();
+				if (c1.after(c2))
+				{
+					return 1;
+				}
+				if (c1.before(c2))
+				{
+					return -1;
+				}
+				return 0;
+			}
+		});
+	}
+
+
+
+	public void setScheduleLists(ArrayList<ScheduleList> scheduleLists)
+	{
+		this.scheduleLists = scheduleLists;
+		sortScheduleLists();
+		postValue(this);
+	}
+
+	public void removePurchaseRecord(int position)
+	{
+		this.purchaseRecords.remove(position);
+		postValue(this);
 	}
 
 	/**
@@ -276,6 +597,8 @@ public class UserData extends LiveData<UserData>
 		postValue(this);
 	}
 
+
+
 	public void setPurchaseRecords(ArrayList<PurchaseRecord> purchaseRecords)
 	{
 		this.purchaseRecords = purchaseRecords;
@@ -283,9 +606,9 @@ public class UserData extends LiveData<UserData>
 		postValue(this);
 	}
 
-	public void removePurchaseRecord(int position)
+	public void removeScheduleList(int position)
 	{
-		this.purchaseRecords.remove(position);
+		this.scheduleLists.remove(position);
 		postValue(this);
 	}
 
@@ -373,6 +696,15 @@ public class UserData extends LiveData<UserData>
 		postValue(this);
 	}
 
+	public String getUserId() {
+		if (userId != null) {
+			return userId;
+		} else if (firebaseUser != null) {
+			return firebaseUser.getUid();
+		}
+		return "";
+	}
+
 	public String getUserMail()
 	{
 		if (userMail != null)
@@ -434,7 +766,7 @@ public class UserData extends LiveData<UserData>
 		postValue(this);
 	}
 
-	public ArrayList<Integer> getFavouriteGyms() {
+	public List<Integer> getFavouriteGyms() {
 		if (favouriteGyms != null) {
 
 		} else {
@@ -464,7 +796,7 @@ public class UserData extends LiveData<UserData>
 		this.mContext = mContext;
 	}
 
-	public ArrayList<Reservation> getReservations() {
+	public List<Reservation> getReservations() {
 		if (reservations != null) {
 
 		} else {
@@ -542,4 +874,6 @@ public class UserData extends LiveData<UserData>
 			}
 		});
 	}
+
+
 }
