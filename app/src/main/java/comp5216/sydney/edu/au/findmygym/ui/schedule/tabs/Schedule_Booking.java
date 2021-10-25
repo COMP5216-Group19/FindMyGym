@@ -17,14 +17,20 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
 import comp5216.sydney.edu.au.findmygym.R;
+import comp5216.sydney.edu.au.findmygym.model.Gym;
+import comp5216.sydney.edu.au.findmygym.model.PersonalTrainer;
 import comp5216.sydney.edu.au.findmygym.model.PurchaseRecord;
+import comp5216.sydney.edu.au.findmygym.model.ScheduleList;
+import comp5216.sydney.edu.au.findmygym.model.Timeslot;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
 import comp5216.sydney.edu.au.findmygym.ui.schedule.tabs.BookingAdapter;
 
@@ -34,7 +40,7 @@ public class Schedule_Booking extends Fragment
     Context mContext;
     RecyclerView recyclerView;
     BookingAdapter historyAdapter;
-    ArrayList<PurchaseRecord> historyList = new ArrayList<>();
+    ArrayList<ScheduleList> bookList = new ArrayList<>();
     UserData userData;
 
     @Override
@@ -52,26 +58,44 @@ public class Schedule_Booking extends Fragment
         mContext = getContext();
         userData = UserData.getInstance();
 
-        Bitmap bitmap1 = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.diana);
-        Bitmap bitmap2 = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ybb);
-        Bitmap bitmap3 = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.azi);
-        Bitmap bitmap4 = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.onion);
-        Bitmap bitmap5 = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.mea);
+        Bitmap bitmap1 = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.fitness_gym_example_1484x983);
+        Bitmap bitmap2 = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.fitness_gym_example_1484x983);
+        Bitmap bitmap3 = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.fitness_gym_example_1484x983);
+        Bitmap bitmap4 = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.fitness_gym_example_1484x983);
+        Bitmap bitmap5 = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.fitness_gym_example_1484x983);
         List<Bitmap> bitmapList = Arrays.asList(bitmap1,bitmap2,bitmap3,bitmap4,bitmap5);
 
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < userData.getReservations().size(); i++)
         {
-            Calendar cal =  Calendar.getInstance();
-            Random random = new Random();
-            cal.set(Calendar.HOUR_OF_DAY,random.nextInt(23 - 0 + 1) + 0);
-            historyList.add(new PurchaseRecord(111,"Gym "+i,  cal, getRandomItem(bitmapList)));
+            Calendar now =  Calendar.getInstance();
+
+            //get Gym name by id
+            int gymId = userData.getReservations().get(i).getGymId();
+            Gym gym = userData.findGymById(gymId);
+            String gymName = gym.getGymName();
+
+            //get Trainer name by id
+            int trainerId = userData.getReservations().get(i).getTrainerId();
+            PersonalTrainer tra = userData.findTrainerById(trainerId);
+            String trainerName = tra.getName();
+
+            // get reservation start time
+            Timeslot reservationDate = userData.getReservations().get(i).getSelectedTimeSlot();
+            Calendar reservationDateT = reservationDate.getBeginTime();
+
+
+            if (reservationDateT.after(now)) {
+                bookList.add(new ScheduleList(gymName,trainerName, reservationDateT, getRandomItem(bitmapList)));
+            }
         }
 
-        userData.setPurchaseRecords(historyList);
+
+
+        userData.setScheduleLists(bookList);
 
         recyclerView = getView().findViewById(R.id.booking_recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-        historyAdapter = new BookingAdapter(mContext,historyList);
+        historyAdapter = new BookingAdapter(mContext,bookList);
         recyclerView.setAdapter(historyAdapter);
 
         TextView textView = getView().findViewById(R.id.booking_textview_title);
