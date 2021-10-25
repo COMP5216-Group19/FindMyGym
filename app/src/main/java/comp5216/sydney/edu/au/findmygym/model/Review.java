@@ -2,6 +2,7 @@ package comp5216.sydney.edu.au.findmygym.model;
 
 import android.graphics.Bitmap;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
 import javax.annotation.Nullable;
@@ -9,21 +10,27 @@ import javax.annotation.Nullable;
 /**
  * A class that represents a review item.
  */
-public class Review {
+public class Review implements Serializable {
 
-    private int rating;
+    private int reviewId;
+    public int rating;
     private String userName;
     private Bitmap userAvatar;
     private String comments;
     private Calendar dateTime;
 
-    public Review(String userName, Bitmap userAvatar, int rating, String comments,
+    public Review(int reviewId, String userName, Bitmap userAvatar, int rating, String comments,
                   Calendar dateTime) {
+        this.reviewId = reviewId;
         this.userName = userName;
         this.userAvatar = userAvatar;
         this.rating = rating;
         this.comments = comments;
         this.dateTime = dateTime;
+    }
+
+    public int getReviewId() {
+        return reviewId;
     }
 
     /**

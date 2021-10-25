@@ -1,32 +1,37 @@
 package comp5216.sydney.edu.au.findmygym.model;
 
+import androidx.annotation.NonNull;
+
 public class SimpleGym {
 
-    private int gymId;
-    private String name;
-    private double longitude;
-    private double latitude;
+    public final int gymId;
+    public final String gymName;
+    public final double longitude;
+    public final double latitude;
 
-    public SimpleGym(int gymId, String name, double longitude, double latitude) {
+    private SimpleGym(int gymId, String gymName, double longitude, double latitude) {
         this.gymId = gymId;
-        this.name = name;
+        this.gymName = gymName;
         this.longitude = longitude;
         this.latitude = latitude;
     }
 
-    public int getGymId() {
-        return gymId;
+    public static SimpleGym fromData(Gym.GymData data) {
+        return new SimpleGym(
+                Integer.parseInt(data.gymId),
+                data.name,
+                data.longitude,
+                data.latitude);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public double getLatitude() {
-        return latitude;
+    @NonNull
+    @Override
+    public String toString() {
+        return "SimpleGym{" +
+                "gymId=" + gymId +
+                ", gymName='" + gymName + '\'' +
+                ", longitude=" + longitude +
+                ", latitude=" + latitude +
+                '}';
     }
 }

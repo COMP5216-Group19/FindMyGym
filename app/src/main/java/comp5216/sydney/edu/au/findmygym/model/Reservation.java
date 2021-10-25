@@ -2,12 +2,13 @@ package comp5216.sydney.edu.au.findmygym.model;
 
 import androidx.annotation.NonNull;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
 /**
  * A class that records a personal trainer reservation.
  */
-public class Reservation {
+public class Reservation implements Serializable {
 
     // null if no trainer reserved
     private Integer trainerId;
@@ -16,11 +17,6 @@ public class Reservation {
     private int userId;
 
     private Timeslot timeslot;
-
-    // deprecated variables
-
-//    private final PersonalTrainer trainer;
-//    private final Timeslot selectedTimeslot;
 
     public Reservation(int userId, int gymId, Integer trainerId, Timeslot timeslot) {
         this.userId = userId;
