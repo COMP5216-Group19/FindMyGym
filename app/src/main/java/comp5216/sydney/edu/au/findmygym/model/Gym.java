@@ -94,6 +94,10 @@ public class Gym {
                 new ArrayList<>());
     }
 
+    public SimpleGym getSimpleGym() {
+        return new SimpleGym(gymId, gymName, longitude, latitude);
+    }
+
     public void setPrice(double price) {
         this.price = price;
     }

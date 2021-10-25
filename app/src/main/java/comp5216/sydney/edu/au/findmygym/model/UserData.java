@@ -11,6 +11,8 @@ import androidx.lifecycle.LiveData;
 
 import com.firebase.ui.auth.data.model.User;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.StorageReference;
 
 import java.sql.Time;
@@ -36,7 +38,12 @@ public class UserData extends LiveData<UserData>
 	private ArrayList<Reservation> reservations;
 	private Session userSession;
 	private StorageReference userStorageRef;
+	private FirebaseDatabase database;
+	private DatabaseReference dbRef;
 	private Context mContext;
+
+	// List of all gym info, load before the map shows
+	private List<SimpleGym> allSimpleGyms;
 
 	// todo: mock的list
 	public List<Gym> allGyms;
@@ -47,9 +54,23 @@ public class UserData extends LiveData<UserData>
 	/**
 	 * Default Constructor
 	 */
-	public UserData()
+	private UserData()
 	{
-		this.purchaseRecords = new ArrayList<>(1);
+		this.purchaseRecords = new ArrayList<>();
+		database = FirebaseDatabase.getInstance();
+
+		loadGymsInfo();
+	}
+
+	private void loadGymsInfo() {
+		allSimpleGyms = new ArrayList<>();
+		DatabaseReference infoRef = database.getReference("simpleGyms");
+//		infoRef.addValueEventListener()
+	}
+
+	private void addGymToDatabase(Gym gym) {
+		DatabaseReference ref = database.getReference();
+		ref.child("gyms").child(String.valueOf(gym.getGymId())).setValue(gym);
 	}
 
 	/**
