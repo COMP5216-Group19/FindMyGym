@@ -27,7 +27,7 @@ import comp5216.sydney.edu.au.findmygym.model.Timeslot;
 
 public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.TrainerViewHolder> {
 
-    private final List<Integer> trainersList;
+    private final List<PersonalTrainer> trainersList;
     private final GymViewModel mViewModel;
 
     RecyclerView recyclerView;
@@ -44,7 +44,7 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
     private List<PersonalTrainer> trainersOfSelectedDate;
     private TrainerReservation reservation;
 
-    TrainerListAdapter(List<Integer> trainersList,
+    TrainerListAdapter(List<PersonalTrainer> trainersList,
                        RecyclerView recyclerView,
                        GymViewModel viewModel,
                        View parentView) {
@@ -110,8 +110,7 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
         Calendar beginDateTime = mViewModel.getBeginDateTime();
         Calendar endDateTime = mViewModel.getEndDateTime();
         boolean found = false;
-        for (Integer trainerIds : trainersList) {
-            PersonalTrainer trainer = mViewModel.findTrainerById(trainerIds);
+        for (PersonalTrainer trainer : trainersList) {
             for (Timeslot timeslot : trainer.getAvailableTimes()) {
                 if (containedInSelectedPeriod(beginDateTime, endDateTime, timeslot)) {
                     trainersOfSelectedDate.add(trainer);

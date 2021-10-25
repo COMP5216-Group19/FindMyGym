@@ -47,10 +47,10 @@ public class GymViewModel extends ViewModel {
 
     public GymViewModel() {
         // TODO: get data
-        addTestGym();
+//        addTestGym();
 
         // after set gym
-        generateValuesByGym();
+//        generateValuesByGym();
     }
 
     /**
@@ -219,7 +219,7 @@ public class GymViewModel extends ViewModel {
             }
         }
         allPersonalTrainers.add(trainer);
-        gym.getPersonalTrainerIds().add(trainerId);
+        gym.getPersonalTrainers().add(trainer);
     }
 
     public Calendar getSelectedDate() {

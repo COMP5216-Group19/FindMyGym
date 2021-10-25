@@ -7,6 +7,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
+import java.util.List;
+
 import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
 
@@ -52,7 +54,7 @@ public class FavGymAdapter extends RecyclerView.Adapter<FavGymAdapter.ViewHolder
         viewHolder.getFavGymAddress().setText(findGymAddressById(userData.getFavouriteGyms(), position));
     }
 
-    public String findGymById(ArrayList<Integer> favGymList, int position) {
+    public String findGymById(List<Integer> favGymList, int position) {
         int id = favGymList.get(position);
         String name = "";
 
@@ -64,7 +66,7 @@ public class FavGymAdapter extends RecyclerView.Adapter<FavGymAdapter.ViewHolder
         return name;
     }
 
-    public String findGymAddressById(ArrayList<Integer> favGymList, int position) {
+    public String findGymAddressById(List<Integer> favGymList, int position) {
         int id = favGymList.get(position);
         String address = "";
 

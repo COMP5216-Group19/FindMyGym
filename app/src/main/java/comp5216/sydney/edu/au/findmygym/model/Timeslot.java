@@ -4,6 +4,7 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -16,7 +17,7 @@ import comp5216.sydney.edu.au.findmygym.R;
 /**
  * This class represents a segment of time.
  */
-public class Timeslot {
+public class Timeslot implements Serializable {
 
     private final Calendar beginTime;
     private final int lengthMinutes;
@@ -30,6 +31,15 @@ public class Timeslot {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(beginDate);
         return new Timeslot(calendar, lengthMinutes);
+    }
+
+    public static Timeslot fromDatabaseString(String dbString) {
+        String[] parts = dbString.split("/");
+        return new Timeslot(CalendarUtil.stringToCalendar(parts[0]), Integer.parseInt(parts[1]));
+    }
+
+    public String toDatabaseString() {
+        return CalendarUtil.calendarToString(beginTime) + "/" + lengthMinutes;
     }
 
     /**

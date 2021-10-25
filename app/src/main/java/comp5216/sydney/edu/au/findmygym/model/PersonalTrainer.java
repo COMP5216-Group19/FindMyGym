@@ -1,14 +1,16 @@
 package comp5216.sydney.edu.au.findmygym.model;
 
 import android.graphics.Bitmap;
+import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class PersonalTrainer {
+public class PersonalTrainer implements Serializable {
 
     /**
      * Name of this trainer
@@ -33,6 +35,37 @@ public class PersonalTrainer {
 
     public PersonalTrainer(int trainerId, String name, double price) {
         this(trainerId, name, price, new ArrayList<>());
+    }
+
+    public static PersonalTrainer fromData(TrainerData data, Bitmap avatar) {
+        List<Timeslot> times = new ArrayList<>();
+        if (data.availableTimes != null) {
+            for (String s : data.availableTimes) {
+                times.add(Timeslot.fromDatabaseString(s));
+            }
+        }
+
+        PersonalTrainer pt = new PersonalTrainer(
+                Integer.parseInt(data.trainerId),
+                data.name,
+                data.price,
+                times
+        );
+        pt.setAvatar(avatar);
+        return pt;
+    }
+
+    public TrainerData toData(String avatarPath) {
+        TrainerData data = new TrainerData();
+        data.trainerId = String.valueOf(trainerId);
+        data.name = name;
+        data.price = price;
+        data.avatarPath = avatarPath;
+        data.availableTimes = new ArrayList<>();
+        for (Timeslot ts : availableTimes) {
+            data.availableTimes.add(ts.toDatabaseString());
+        }
+        return data;
     }
 
     public double getPrice() {
@@ -101,5 +134,13 @@ public class PersonalTrainer {
                 "name='" + name + '\'' +
                 ", availableTimes=" + availableTimes +
                 '}';
+    }
+
+    public static class TrainerData {
+        public String name;
+        public String trainerId;
+        public double price;
+        public String avatarPath;
+        public List<String> availableTimes;
     }
 }
