@@ -82,8 +82,8 @@ public class UserData extends LiveData<UserData>
 				19.9,
 				"763 Pacific Hwy, Chatswood NSW 2067",
 				"123-4567",
-				-33.79911,
-				151.1792
+				151.1792,
+				-33.79911
 		);
 		Gym gym1 = new Gym(
 				1,
@@ -93,8 +93,8 @@ public class UserData extends LiveData<UserData>
 				20,
 				"400 Pacific Hwy, Crows Nest NSW 2065",
 				"123-4567",
-				-33.82581,
-				151.19854
+				151.19854,
+				-33.82581
 		);
 		Gym gym2 = new Gym(
 				2,
