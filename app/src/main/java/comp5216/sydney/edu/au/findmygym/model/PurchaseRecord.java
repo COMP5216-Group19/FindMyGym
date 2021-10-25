@@ -14,6 +14,7 @@ public class PurchaseRecord
 	private String title;
 	private Calendar time;
 	private Bitmap image;
+
 	
 	public PurchaseRecord(int cost, String title, Calendar time, Bitmap image)
 	{
@@ -42,6 +43,7 @@ public class PurchaseRecord
 	{
 		this.title = title;
 	}
+
 	
 	public Calendar getTime()
 	{

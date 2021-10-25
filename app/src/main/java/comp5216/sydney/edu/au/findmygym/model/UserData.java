@@ -19,6 +19,7 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import comp5216.sydney.edu.au.findmygym.R;
@@ -28,6 +29,7 @@ public class UserData extends LiveData<UserData>
 	private final String TAG = "[UserData]";
 	
 	private ArrayList<PurchaseRecord> purchaseRecords;
+	private ArrayList<ScheduleList> scheduleLists;
 	private ArrayList<CreditCard> creditCards;
 	private ArrayList<Membership> memberships;
 	private FirebaseUser firebaseUser;
@@ -71,6 +73,8 @@ public class UserData extends LiveData<UserData>
 	private void addGymToDatabase(Gym gym) {
 		DatabaseReference ref = database.getReference();
 		ref.child("gyms").child(String.valueOf(gym.getGymId())).setValue(gym);
+		this.purchaseRecords = new ArrayList<>(1);
+		this.scheduleLists = new ArrayList<>(1);
 	}
 
 	/**
@@ -87,6 +91,7 @@ public class UserData extends LiveData<UserData>
 					UserData = new UserData();
 					UserData.addMockGym();
 					UserData.addMockReservations();
+
 				}
 			}
 		}
@@ -217,6 +222,7 @@ public class UserData extends LiveData<UserData>
 		allGyms.add(gym9);
 
 		allTrainers = new ArrayList<>();
+		allTrainers.add(new PersonalTrainer(0,"Otto",40.0));
 		allTrainers.add(new PersonalTrainer(1, "Mary", 30.0));
 		allTrainers.add(new PersonalTrainer(2, "Jack", 35.0));
 	}
@@ -282,6 +288,59 @@ public class UserData extends LiveData<UserData>
 	}
 
 	/**
+	 * ScheduleLists
+	 */
+
+	public ArrayList<ScheduleList> getScheduleLists()
+	{
+		return scheduleLists;
+	}
+
+	public void addScheduleList(ScheduleList scheduleList)
+	{
+		this.scheduleLists.add(scheduleList);
+		sortScheduleLists();
+		postValue(this);
+	}
+
+	public void sortScheduleLists(){
+		Log.e(TAG,"---------------------"+this.getScheduleLists().size());
+		this.scheduleLists.sort(new Comparator<ScheduleList>()
+		{
+			@Override
+			public int compare(ScheduleList t1, ScheduleList t2)
+			{
+				Calendar c1 = t1.getTime();
+				Calendar c2 = t2.getTime();
+				if (c1.after(c2))
+				{
+					return 1;
+				}
+				if (c1.before(c2))
+				{
+					return -1;
+				}
+				return 0;
+			}
+		});
+	}
+
+
+
+	public void setScheduleLists(ArrayList<ScheduleList> scheduleLists)
+	{
+		this.scheduleLists = scheduleLists;
+		sortScheduleLists();
+		postValue(this);
+	}
+
+	public void removePurchaseRecord(int position)
+	{
+		this.purchaseRecords.remove(position);
+		postValue(this);
+	}
+
+	/**
 	 * PurchaseRecords
 	 */
 	
@@ -296,6 +355,8 @@ public class UserData extends LiveData<UserData>
 		sortPurchaseRecords();
 		postValue(this);
 	}
+
+
 	
 	public void setPurchaseRecords(ArrayList<PurchaseRecord> purchaseRecords)
 	{
@@ -304,9 +365,9 @@ public class UserData extends LiveData<UserData>
 		postValue(this);
 	}
 	
-	public void removePurchaseRecord(int position)
+	public void removeScheduleList(int position)
 	{
-		this.purchaseRecords.remove(position);
+		this.scheduleLists.remove(position);
 		postValue(this);
 	}
 	
@@ -563,4 +624,6 @@ public class UserData extends LiveData<UserData>
 			}
 		});
 	}
+
+
 }
