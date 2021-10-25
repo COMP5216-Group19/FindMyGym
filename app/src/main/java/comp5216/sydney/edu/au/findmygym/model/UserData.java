@@ -401,7 +401,7 @@ public class UserData extends LiveData<UserData>
 	}
 
 	public void loadAllReservationsOfThisUser() {
-		// todo: 需要登录
+		// todo: 需要登录，直接全部读到本地的list里
 		userRsvRef.get().addOnSuccessListener(dataSnapshot -> {
 
 		}).addOnFailureListener(e -> {
@@ -506,18 +506,18 @@ public class UserData extends LiveData<UserData>
 		return null;
 	}
 
-	public void findReservationById(String rsvId, ReservationQueryCallback callback) {
-		userRsvRef.child(rsvId).get().addOnSuccessListener(dataSnapshot -> {
-			Reservation.ReservationData data =
-					dataSnapshot.getValue(Reservation.ReservationData.class);
-			if (data == null) {
-				callback.onFailed(new NullPointerException(
-						"Query result of reservation " + rsvId + " is null"));
-				return;
-			}
-			callback.onSucceed(Reservation.fromData(data));
-		}).addOnFailureListener(callback::onFailed);
-	}
+//	public void findReservationById(String rsvId, ReservationQueryCallback callback) {
+//		userRsvRef.child(rsvId).get().addOnSuccessListener(dataSnapshot -> {
+//			Reservation.ReservationData data =
+//					dataSnapshot.getValue(Reservation.ReservationData.class);
+//			if (data == null) {
+//				callback.onFailed(new NullPointerException(
+//						"Query result of reservation " + rsvId + " is null"));
+//				return;
+//			}
+//			callback.onSucceed(Reservation.fromData(data));
+//		}).addOnFailureListener(callback::onFailed);
+//	}
 
 	public void postNewReservation(Reservation reservation) {
 		userRsvRef.child(reservation.getRsvId()).setValue(reservation.toData())
