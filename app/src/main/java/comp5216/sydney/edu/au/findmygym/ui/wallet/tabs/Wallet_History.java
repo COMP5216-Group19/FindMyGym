@@ -70,9 +70,10 @@ public class Wallet_History extends Fragment implements SwipeRefreshLayout.OnRef
 		for (int i = 0; i < 3; i++)
 		{
 			Calendar cal =  Calendar.getInstance();
+			System.out.println(cal);
 			Random random = new Random();
 			cal.set(Calendar.HOUR_OF_DAY,random.nextInt(23 - 0 + 1) + 0);
-			historyList.add(new PurchaseRecord(111,"Gym "+i,  cal, getRandomItem(bitmapList)));
+			historyList.add(new PurchaseRecord(111,"Gym "+i, cal, getRandomItem(bitmapList)));
 		}
 		
 		userData.setPurchaseRecords(historyList);
