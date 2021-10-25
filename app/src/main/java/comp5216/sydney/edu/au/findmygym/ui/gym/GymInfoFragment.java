@@ -4,9 +4,12 @@ import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
@@ -22,6 +25,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.text.DateFormat;
 
@@ -35,6 +40,9 @@ public class GymInfoFragment extends Fragment {
     private GymViewModel mViewModel;
     private DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT);
 
+    TextInputEditText reviewText;
+    RatingBar reviewRatingBar;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -42,6 +50,7 @@ public class GymInfoFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
 
         mViewModel = new ViewModelProvider(requireActivity()).get(GymViewModel.class);
+        mViewModel.setInfoFragment(this);
 
         return inflater.inflate(R.layout.gym_info_fragment, container, false);
     }
@@ -59,7 +68,36 @@ public class GymInfoFragment extends Fragment {
         ImageView gymImageView = view.findViewById(R.id.gym_image_view);
         LinearLayout reviewsList = view.findViewById(R.id.gym_reviews_list);
 
+        reviewText = view.findViewById(R.id.gym_review_input);
+        reviewRatingBar = view.findViewById(R.id.gym_review_rating);
+        Button postReviewButton = view.findViewById(R.id.gym_post_review_button);
+        TextInputLayout inputLayout = view.findViewById(R.id.gym_review_input_layout);
+
+        if (!mViewModel.arrivedByThisUser) {
+            inputLayout.setHint(R.string.gym_go_first_then_comment);
+            inputLayout.setEnabled(false);
+            postReviewButton.setEnabled(false);
+            reviewRatingBar.setEnabled(false);
+        }
+
         Gym gym = mViewModel.getGym();
+
+        reviewText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                postReviewButton.setEnabled(s.length() > 0);
+            }
+        });
 
         gymNameSmall.setText(gym.getGymName());
         gymOpenHrs.setText(
@@ -98,7 +136,7 @@ public class GymInfoFragment extends Fragment {
 
         for (Review review : gym.getReviews()) {
             View itemView = makeReviewView(review, reviewsList);
-            reviewsList.addView(itemView);
+            reviewsList.addView(itemView, 0);
         }
     }
 
@@ -120,5 +158,13 @@ public class GymInfoFragment extends Fragment {
         timeText.setText(dateFormat.format(review.getDateTime().getTime()));
         commentText.setText(review.getComments());
         return itemView;
+    }
+
+    String getReview() {
+        return reviewText.getText().toString();
+    }
+
+    int getRating() {
+        return (int) reviewRatingBar.getRating();
     }
 }

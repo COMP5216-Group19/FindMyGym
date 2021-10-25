@@ -6,45 +6,97 @@
     android:paddingStart="15dp"
     android:paddingEnd="15dp">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/gym_date_picker"
-        style="@style/Widget.App.Button.OutlinedButton.IconOnly"
+    <ImageView
+        android:id="@+id/gym_date_picker_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="onDatePickerClicked"
-        app:icon="@drawable/outline_edit_calendar_24"
+        android:layout_marginTop="10dp"
+        android:contentDescription="@string/gym_date_time_picker_icon_description"
+        android:src="@drawable/outline_edit_calendar_24"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/gym_date_picker_button"
+        style="@style/Widget.App.Button.OutlinedButton.TextOnly"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:onClick="onDatePickerClicked"
+        android:text="Today\n22/10/2021"
+        android:textAllCaps="false"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="@id/gym_date_picker_icon"
+        app:layout_constraintLeft_toRightOf="@id/gym_date_picker_icon"
+        app:layout_constraintTop_toTopOf="@id/gym_date_picker_icon"
         app:strokeWidth="0dp" />
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/gym_picked_date_text"
+    <ImageView
+        android:id="@+id/gym_time_picker_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Today\n22/10/2021"
+        android:contentDescription="@string/gym_date_time_picker_icon_description"
+        android:src="@drawable/outline_alarm_24"
+        app:layout_constraintBottom_toBottomOf="@id/gym_date_picker_button"
+        app:layout_constraintLeft_toRightOf="@id/gym_date_picker_button"
+        app:layout_constraintTop_toTopOf="@id/gym_date_picker_button"
+        app:strokeWidth="0dp" />
+
+    <Button
+        android:id="@+id/gym_begin_time_button"
+        style="@style/Widget.App.Button.OutlinedButton.TextOnly"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onPickStartTimeClicked"
+        android:text="2:00 PM"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="@id/gym_date_picker_button"
+        app:layout_constraintLeft_toRightOf="@+id/gym_time_picker_icon"
+        app:layout_constraintTop_toTopOf="@id/gym_date_picker_button"
+        app:strokeWidth="0dp" />
+
+    <TextView
+        android:id="@+id/gym_time_separator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/gym_time_from_to"
         android:textColor="@color/black"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@id/gym_date_picker"
-        app:layout_constraintLeft_toRightOf="@id/gym_date_picker"
-        app:layout_constraintTop_toTopOf="@id/gym_date_picker" />
+        app:layout_constraintBottom_toBottomOf="@id/gym_date_picker_button"
+        app:layout_constraintLeft_toRightOf="@+id/gym_begin_time_button"
+        app:layout_constraintTop_toTopOf="@id/gym_date_picker_button" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/gym_time_picker"
-        style="@style/Widget.App.Button.OutlinedButton.IconOnly"
+    <Button
+        android:id="@+id/gym_end_time_button"
+        style="@style/Widget.App.Button.OutlinedButton.TextOnly"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="onTimePickerClicked"
-        app:icon="@drawable/outline_alarm_24"
-        app:layout_constraintLeft_toRightOf="@id/gym_picked_date_text"
-        app:layout_constraintTop_toTopOf="parent"
+        android:onClick="onPickEndTimeCLicked"
+        android:text="6:00 PM"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="@id/gym_date_picker_button"
+        app:layout_constraintLeft_toRightOf="@+id/gym_time_separator"
+        app:layout_constraintTop_toTopOf="@id/gym_date_picker_button"
         app:strokeWidth="0dp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/gym_trainer_recycler"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="15dp"
         app:layout_constraintBottom_toTopOf="@id/gym_self_price_label"
-        app:layout_constraintTop_toBottomOf="@id/gym_date_picker" />
+        app:layout_constraintTop_toBottomOf="@id/gym_date_picker_icon" />
+
+    <TextView
+        android:id="@+id/gym_no_trainer_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/gym_no_trainer_avail"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/gym_trainer_recycler"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/gym_trainer_recycler" />
 
     <TextView
         android:id="@+id/gym_self_price_label"
@@ -61,8 +113,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:text="$15.00"
-        app:layout_constraintTop_toTopOf="@id/gym_self_price_label"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/gym_self_price_label" />
 
     <TextView
         android:id="@+id/gym_trainer_price_label"
@@ -70,7 +122,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:text="@string/gym_trainer_price"
-        app:layout_constraintBottom_toTopOf="@id/gym_tax_label"
+        app:layout_constraintBottom_toTopOf="@id/gym_subtotal_divider"
         app:layout_constraintLeft_toLeftOf="parent" />
 
     <TextView
@@ -79,26 +131,26 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:text="$25.00"
-        app:layout_constraintTop_toTopOf="@id/gym_trainer_price_label"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/gym_trainer_price_label" />
 
-    <TextView
-        android:id="@+id/gym_tax_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:text="@string/gym_tax_price"
-        app:layout_constraintBottom_toTopOf="@id/gym_subtotal_divider"
-        app:layout_constraintLeft_toLeftOf="parent" />
+    <!--    <TextView-->
+    <!--        android:id="@+id/gym_tax_label"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginBottom="10dp"-->
+    <!--        android:text="@string/gym_tax_price"-->
+    <!--        app:layout_constraintBottom_toTopOf="@id/gym_subtotal_divider"-->
+    <!--        app:layout_constraintLeft_toLeftOf="parent" />-->
 
-    <TextView
-        android:id="@+id/gym_tax"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:text="$10.00"
-        app:layout_constraintTop_toTopOf="@id/gym_tax_label"
-        app:layout_constraintRight_toRightOf="parent" />
+    <!--    <TextView-->
+    <!--        android:id="@+id/gym_tax"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginBottom="10dp"-->
+    <!--        android:text="$10.00"-->
+    <!--        app:layout_constraintRight_toRightOf="parent"-->
+    <!--        app:layout_constraintTop_toTopOf="@id/gym_tax_label" />-->
 
     <View
         android:id="@+id/gym_subtotal_divider"
@@ -112,10 +164,10 @@
         android:id="@+id/gym_total_price_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:text="@string/gym_total_price"
         android:textColor="@color/black"
         android:textSize="18sp"
-        android:layout_marginBottom="10dp"
         app:layout_constraintBottom_toTopOf="@+id/gym_reserve_button"
         app:layout_constraintLeft_toLeftOf="parent" />
 
@@ -134,7 +186,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
-        android:enabled="false"
         android:onClick="onConfirmReservationClicked"
         android:text="@string/gym_rsv"
         app:layout_constraintBottom_toBottomOf="parent"

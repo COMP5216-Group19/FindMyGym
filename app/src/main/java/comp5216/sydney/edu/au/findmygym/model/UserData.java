@@ -454,6 +454,24 @@ public class UserData extends LiveData<UserData>
 		this.reservations = reservations;
 	}
 
+	/**
+	 * Return whether this user has been to the given gym at least once.
+	 *
+	 * @param gymId id of the given gym
+	 * @return whether this user has been to the given gym at least once
+	 */
+	public boolean hasBeenToGym(int gymId) {
+		List<Reservation> rsvList = getReservations();
+		Calendar now = Calendar.getInstance();
+		for (Reservation rsv : rsvList) {
+			if (rsv.getGymId() == gymId && now.after(rsv.getSelectedTimeSlot().getBeginTime())) {
+				// Only past reservation counts
+				return true;
+			}
+		}
+		return false;
+	}
+
 	@Override
 	protected void onActive()
 	{
