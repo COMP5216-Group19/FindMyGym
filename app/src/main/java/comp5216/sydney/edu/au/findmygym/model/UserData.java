@@ -9,6 +9,7 @@ import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
@@ -26,23 +27,26 @@ import java.util.List;
 
 import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.GymQueryCallback;
+import comp5216.sydney.edu.au.findmygym.model.callbacks.ReservationQueryCallback;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.TrainerQueryCallback;
 import comp5216.sydney.edu.au.findmygym.ui.gym.GymViewModel;
+import io.reactivex.rxjava3.internal.operators.observable.ObservableToList;
 
 public class UserData extends LiveData<UserData>
 {
 	private final String TAG = "[UserData]";
-	
+
 	private ArrayList<PurchaseRecord> purchaseRecords;
 	private ArrayList<ScheduleList> scheduleLists;
 	private ArrayList<CreditCard> creditCards;
 	private ArrayList<Membership> memberships;
 	private FirebaseUser firebaseUser;
+	private String userId;
 	private String userName;
 	private String userMail;
 	private Bitmap userAvatar;
-	private ArrayList<Integer> favouriteGyms;
-	private ArrayList<Reservation> reservations;
+	private List<Integer> favouriteGyms;
+	private List<Reservation> reservations;
 	private Session userSession;
 	private StorageReference userStorageRef;
 	private StorageReference gymPictureRef;
@@ -51,6 +55,8 @@ public class UserData extends LiveData<UserData>
 	private DatabaseReference dbRef;
 	private DatabaseReference gymsRef;
 	private DatabaseReference trainersRef;
+	private DatabaseReference userRsvRef;  // reservations of this user
+	private DatabaseReference userRef;
 	private Context mContext;
 
 	// This list will load when launching this app
@@ -62,9 +68,9 @@ public class UserData extends LiveData<UserData>
 	// todo: mock的list
 	public List<Gym> allGyms;
 	public List<PersonalTrainer> allTrainers;
-	
+
 	private volatile static UserData UserData;
-	
+
 	/**
 	 * Default Constructor
 	 */
@@ -76,6 +82,8 @@ public class UserData extends LiveData<UserData>
 		dbRef = database.getReference();
 		gymsRef = dbRef.child("gyms");
 		trainersRef = dbRef.child("trainers");
+		userRef = dbRef.child("users").child(getUserName());
+		userRsvRef = userRef.child("reservations");
 		FirebaseStorage storage = FirebaseStorage.getInstance();
 		gymPictureRef = storage.getReference("gymPictures");
 		trainerAvatarRef = storage.getReference("trainerAvatars");
@@ -195,6 +203,10 @@ public class UserData extends LiveData<UserData>
 	}
 
 	private void addReviewToDatabase(Review review) {
+
+	}
+
+	private void addReservationToDatabase(Reservation reservation) {
 
 	}
 
@@ -356,19 +368,19 @@ public class UserData extends LiveData<UserData>
 		reservations = new ArrayList<Reservation>();
 		// todo: user id
 		Reservation rev1 = new Reservation(
-				1,
+				getUserId(),
 				1,
 				1,
 				new Timeslot(CalendarUtil.stringToCalendar("2021-10-23 09:00"), 60)
 		);
 		Reservation rev2 = new Reservation(
-				1,
+				getUserId(),
 				2,
 				0,
 				new Timeslot(CalendarUtil.stringToCalendar("2021-10-20 09:00"), 60)
 		);
 		Reservation rev3 = new Reservation(
-				1,
+				getUserId(),
 				2,
 				0,
 				new Timeslot(CalendarUtil.stringToCalendar("2021-10-23 08:00"), 120)
@@ -379,19 +391,33 @@ public class UserData extends LiveData<UserData>
 		reservations.add(rev3);
 	}
 
+	/**
+	 * Returns a list of all simple gym info.
+	 *
+	 * @return a list of all simple gym info
+	 */
 	public List<SimpleGym> getAllSimpleGyms() {
 		return allSimpleGyms;
 	}
 
+	public void loadAllReservationsOfThisUser() {
+		// todo: 需要登录
+		userRsvRef.get().addOnSuccessListener(dataSnapshot -> {
+
+		}).addOnFailureListener(e -> {
+			Log.e(TAG, Arrays.toString(e.getStackTrace()));
+		});
+	}
+
+	/**
+	 * Use getAllSimpleGyms() instead
+	 */
+	@Deprecated
 	public List<Gym> getAllGyms() {
 		return allGyms;
 	}
 
-	public int getUserId() {
-		// TODO:
-		return 0;
-	}
-
+	@Deprecated
 	public List<PersonalTrainer> getAllTrainers() {
 		return allTrainers;
 	}
@@ -441,6 +467,7 @@ public class UserData extends LiveData<UserData>
 		}
 	}
 
+	@Deprecated
 	public Gym findGymById(int gymId) {
 		// TODO: firebase
 		for (Gym gym : getAllGyms()) {
@@ -469,6 +496,7 @@ public class UserData extends LiveData<UserData>
 		}).addOnFailureListener(callback::onFailed);
 	}
 
+	@Deprecated
 	public PersonalTrainer findTrainerById(int trainerId) {
 		for (PersonalTrainer trainer : getAllTrainers()) {
 			if (trainer.getTrainerId() == trainerId) {
@@ -476,6 +504,28 @@ public class UserData extends LiveData<UserData>
 			}
 		}
 		return null;
+	}
+
+	public void findReservationById(String rsvId, ReservationQueryCallback callback) {
+		userRsvRef.child(rsvId).get().addOnSuccessListener(dataSnapshot -> {
+			Reservation.ReservationData data =
+					dataSnapshot.getValue(Reservation.ReservationData.class);
+			if (data == null) {
+				callback.onFailed(new NullPointerException(
+						"Query result of reservation " + rsvId + " is null"));
+				return;
+			}
+			callback.onSucceed(Reservation.fromData(data));
+		}).addOnFailureListener(callback::onFailed);
+	}
+
+	public void postNewReservation(Reservation reservation) {
+		userRsvRef.child(reservation.getRsvId()).setValue(reservation.toData())
+				.addOnSuccessListener(unused -> {
+
+				}).addOnFailureListener(e -> {
+
+		});
 	}
 
 	/**
@@ -534,12 +584,12 @@ public class UserData extends LiveData<UserData>
 	/**
 	 * PurchaseRecords
 	 */
-	
+
 	public ArrayList<PurchaseRecord> getPurchaseRecords()
 	{
 		return purchaseRecords;
 	}
-	
+
 	public void addPurchaseRecord(PurchaseRecord purchaseRecord)
 	{
 		this.purchaseRecords.add(purchaseRecord);
@@ -548,69 +598,69 @@ public class UserData extends LiveData<UserData>
 	}
 
 
-	
+
 	public void setPurchaseRecords(ArrayList<PurchaseRecord> purchaseRecords)
 	{
 		this.purchaseRecords = purchaseRecords;
 		sortPurchaseRecords();
 		postValue(this);
 	}
-	
+
 	public void removeScheduleList(int position)
 	{
 		this.scheduleLists.remove(position);
 		postValue(this);
 	}
-	
+
 	/**
 	 * CreditCards
 	 */
-	
+
 	public ArrayList<CreditCard> getCreditCards()
 	{
 		return creditCards;
 	}
-	
+
 	public void addCreditCard(CreditCard creditCard)
 	{
 		this.creditCards.add(0,creditCard);
 		postValue(this);
 	}
-	
+
 	public void setCreditCards(ArrayList<CreditCard> creditCards)
 	{
 		this.creditCards = creditCards;
 		postValue(this);
 	}
-	
+
 	public void removeCreditCard(int position)
 	{
 		this.creditCards.remove(position);
 		Log.e(TAG, "removeCreditCard: "+this.getCreditCards() );
 		postValue(this);
 	}
-	
+
 	/**
 	 * Memberships
 	 */
-	
+
 	public ArrayList<Membership> getMemberships()
 	{
 		return memberships;
 	}
-	
+
 	public void addMembership(Membership membership)
 	{
 		this.memberships.add(0,membership);
 		postValue(this);
 	}
-	
+
 	public void setMemberships(ArrayList<Membership> memberships)
 	{
 		this.memberships = memberships;
 		postValue(this);
 	}
-	
+
 	public void removeMembership(int position)
 	{
 		this.memberships.remove(position);
@@ -621,13 +671,13 @@ public class UserData extends LiveData<UserData>
 	{
 		return firebaseUser;
 	}
-	
+
 	public void setFirebaseUser(FirebaseUser firebaseUser)
 	{
 		this.firebaseUser = firebaseUser;
 		postValue(this);
 	}
-	
+
 	public String getUserName()
 	{
 		if (userName != null)
@@ -639,13 +689,22 @@ public class UserData extends LiveData<UserData>
 		}
 		return "GUEST: JOHN DOE";
 	}
-	
+
 	public void setUserName(String userName)
 	{
 		this.userName = userName;
 		postValue(this);
 	}
-	
+
+	public String getUserId() {
+		if (userId != null) {
+			return userId;
+		} else if (firebaseUser != null) {
+			return firebaseUser.getUid();
+		}
+		return "";
+	}
+
 	public String getUserMail()
 	{
 		if (userMail != null)
@@ -657,13 +716,13 @@ public class UserData extends LiveData<UserData>
 		}
 		return "Go sign in, NOW!";
 	}
-	
+
 	public void setUserMail(String userMail)
 	{
 		this.userMail = userMail;
 		postValue(this);
 	}
-	
+
 	public Bitmap getUserAvatar()
 	{
 		if (userAvatar != null)
@@ -695,7 +754,7 @@ public class UserData extends LiveData<UserData>
 	// 	}
 	// 	return avatar;
 	// }
-	
+
 	public Uri getUserAvatarUri()
 	{
 		return this.firebaseUser.getPhotoUrl();
@@ -707,7 +766,7 @@ public class UserData extends LiveData<UserData>
 		postValue(this);
 	}
 
-	public ArrayList<Integer> getFavouriteGyms() {
+	public List<Integer> getFavouriteGyms() {
 		if (favouriteGyms != null) {
 
 		} else {
@@ -731,13 +790,13 @@ public class UserData extends LiveData<UserData>
 		this.favouriteGyms = favouriteGyms;
 		postValue(this);
 	}
-	
+
 	public void setContext(Context mContext)
 	{
 		this.mContext = mContext;
 	}
 
-	public ArrayList<Reservation> getReservations() {
+	public List<Reservation> getReservations() {
 		if (reservations != null) {
 
 		} else {
@@ -775,14 +834,14 @@ public class UserData extends LiveData<UserData>
 		// 具有活跃的观察者时调用
 		Log.d(TAG, "Get an observer!");
 	}
-	
+
 	@Override
 	protected void onInactive()
 	{
 		// 没有任何活跃的观察者时调用
 		Log.d(TAG, "Get no observer!");
 	}
-	
+
 	public void logout()
 	{
 		firebaseUser = null;
@@ -793,7 +852,7 @@ public class UserData extends LiveData<UserData>
 		userStorageRef = null;
 		mContext = null;
 	}
-	
+
 	public void sortPurchaseRecords(){
 		Log.e(TAG,"---------------------"+this.getPurchaseRecords().size());
 		this.purchaseRecords.sort(new Comparator<PurchaseRecord>()

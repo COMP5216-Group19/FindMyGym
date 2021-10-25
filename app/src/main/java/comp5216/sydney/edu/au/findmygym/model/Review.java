@@ -12,24 +12,26 @@ import javax.annotation.Nullable;
  */
 public class Review implements Serializable {
 
-    private int reviewId;
+    private String reviewId;
     public int rating;
     private String userName;
     private Bitmap userAvatar;
     private String comments;
     private Calendar dateTime;
 
-    public Review(int reviewId, String userName, Bitmap userAvatar, int rating, String comments,
+    public Review(String userName, Bitmap userAvatar, int rating, String comments,
                   Calendar dateTime) {
-        this.reviewId = reviewId;
         this.userName = userName;
         this.userAvatar = userAvatar;
         this.rating = rating;
         this.comments = comments;
         this.dateTime = dateTime;
+
+        // Potential bug: two users with same name post reviews at a same millisecond
+        this.reviewId = String.format("%s+%s", userName, CalendarUtil.calendarToString(dateTime));
     }
 
-    public int getReviewId() {
+    public String getReviewId() {
         return reviewId;
     }
 

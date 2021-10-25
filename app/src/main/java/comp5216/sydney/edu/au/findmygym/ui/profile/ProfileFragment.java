@@ -45,7 +45,7 @@ public class ProfileFragment extends Fragment
 	private ProfileViewModel profileViewModel;
 	private FragmentProfileBinding binding;
 	private UserData userData;
-	private ArrayList<Reservation> reservations;
+	private List<Reservation> reservations;
 	public Map<Integer, Integer> exerciseLog = new HashMap<>();
 	public Map<String, Integer> trainerLog = new HashMap<>();
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
@@ -200,7 +200,7 @@ public class ProfileFragment extends Fragment
 		return sdf2.format(calendar.getTime());
 	}
 
-	public Map<Integer, Integer> getExLogFromReservations(ArrayList<Reservation> reservations) {
+	public Map<Integer, Integer> getExLogFromReservations(List<Reservation> reservations) {
 		Map<Integer, Integer> exLog = new HashMap<>();
 
 		for (Reservation rev: reservations) {
@@ -216,7 +216,7 @@ public class ProfileFragment extends Fragment
 		return exLog;
 	}
 
-	public Map<String, Integer> getTrainerLogFromReservations(ArrayList<Reservation> reservations) {
+	public Map<String, Integer> getTrainerLogFromReservations(List<Reservation> reservations) {
 		Map<String, Integer> trainerLog = new HashMap<>();
 		for (Reservation rev: reservations) {
 			String trainerName = findTrainerNameById(rev.getTrainerId());

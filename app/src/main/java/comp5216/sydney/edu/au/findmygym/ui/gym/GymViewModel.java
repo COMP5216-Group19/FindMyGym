@@ -178,13 +178,13 @@ public class GymViewModel extends ViewModel {
         Calendar yesterday = Calendar.getInstance();
         yesterday.add(Calendar.DATE, -1);
         gym.getReviews().add(
-                new Review(1, "Steven", null, 2,
+                new Review("Steven", null, 2,
                         "What a terrible place!", yesterday));
 
         Calendar someDaysAgo = Calendar.getInstance();
         yesterday.add(Calendar.DATE, -8);
         gym.getReviews().add(
-                new Review(2, "Elisabeth", null, 5,
+                new Review("Elisabeth", null, 5,
                         "Recommended! Various kind of equipments, enough space, " +
                                 "a swimming pool inside. Will come again and advise to " +
                                 "my friends.",
