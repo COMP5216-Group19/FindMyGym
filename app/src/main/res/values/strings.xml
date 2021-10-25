@@ -48,6 +48,9 @@
     <string name="gym_equipments"><b>Equipments</b></string>
     <string name="gym_personal_trainers"><b>Personal Trainers</b></string>
     <string name="gym_reviews"><b>Reviews</b></string>
+    <string name="gym_write_review_hint">Leave a comment</string>
+    <string name="gym_go_first_then_comment">滚，只有去过的人才能评论</string>
+    <string name="gym_post_review">Post</string>
 
     <string name="gym_info_tab">Info</string>
     <string name="gym_reservation_tab">Reservation</string>
@@ -56,20 +59,27 @@
     <string name="gym_tomorrow">Tomorrow\n%s</string>
     <string name="gym_select_day">Select a day</string>
     <string name="gym_timeslot">%s - %s</string>
+    <string name="gym_time_from_to">-</string>
     <string name="gym_time_format_am">%d:%02d AM</string>
     <string name="gym_time_format_am_short">%d AM</string>
-    <string name="gym_time_format_pm">%d:%02d AM</string>
+    <string name="gym_time_format_pm">%d:%02d PM</string>
     <string name="gym_time_format_pm_short">%d PM</string>
     <string name="gym_rate_format">%.1f</string>
     <string name="gym_date_format">dd/MM/yyyy</string>
 
-    <string name="gym_rsv">Reserve</string>
+    <string name="gym_rsv">Checkout</string>
     <string name="gym_confirm_rsv">Confirm reservation</string>
     <string name="gym_confirm_rsv_msg">%s, %s</string>
     <string name="gym_rsv_null_error">Error: reservation is null</string>
+    <string name="gym_no_trainer_avail">No coach available in given time period</string>
+
+    <string name="gym_start_time">Pick a start time</string>
+    <string name="gym_end_time">Pick an end time</string>
 
     <string name="gym_image_description">Photo of this gym</string>
     <string name="gym_review_item_description">Avatar of the user who wrote this review</string>
+    <string name="gym_trainer_image_description">Avatar of this personal trainer</string>
+    <string name="gym_date_time_picker_icon_description">Date and time picker icon</string>
 
     <string name="gym_self_price">Gym price</string>
     <string name="gym_trainer_price">Coach Price</string>
