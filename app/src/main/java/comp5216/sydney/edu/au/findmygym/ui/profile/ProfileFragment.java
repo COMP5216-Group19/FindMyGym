@@ -232,6 +232,7 @@ public class ProfileFragment extends Fragment
 
 	public String findTrainerNameById(Integer id) {
 		String name = "";
+		if(userData.allGyms == null) { return name; }
 		for (int i = 0; i < userData.allTrainers.size(); i++) {
 			if (userData.allTrainers.get(i).getTrainerId() == id) {
 				name = userData.allTrainers.get(i).getName();
