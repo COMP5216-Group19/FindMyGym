@@ -58,6 +58,10 @@ public class FavGymAdapter extends RecyclerView.Adapter<FavGymAdapter.ViewHolder
         int id = favGymList.get(position);
         String name = "";
 
+        if (userData.allGyms == null) {
+            return name;
+        }
+
         for (int i = 0; i < userData.allGyms.size(); i++) {
             if (userData.allGyms.get(i).getGymId() == id) {
                 name = userData.allGyms.get(i).getGymName();
@@ -69,6 +73,10 @@ public class FavGymAdapter extends RecyclerView.Adapter<FavGymAdapter.ViewHolder
     public String findGymAddressById(List<Integer> favGymList, int position) {
         int id = favGymList.get(position);
         String address = "";
+
+        if (userData.allGyms == null) {
+            return address;
+        }
 
         for (int i = 0; i < userData.allGyms.size(); i++) {
             if (userData.allGyms.get(i).getGymId() == id) {
