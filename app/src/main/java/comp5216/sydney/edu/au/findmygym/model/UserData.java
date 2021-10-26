@@ -37,6 +37,7 @@ import java.util.Map;
 import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.GymQueryCallback;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.ReservationQueryCallback;
+import comp5216.sydney.edu.au.findmygym.model.callbacks.ReviewQueryCallback;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.TrainerQueryCallback;
 import comp5216.sydney.edu.au.findmygym.ui.gym.GymViewModel;
 import io.reactivex.rxjava3.internal.operators.observable.ObservableToList;
@@ -109,7 +110,7 @@ public class UserData extends LiveData<UserData>
 				if (UserData == null)
 				{
 					UserData = new UserData();
-					UserData.addMockGym();
+//					UserData.addMockGym();
 
 				}
 			}
@@ -515,6 +516,7 @@ public class UserData extends LiveData<UserData>
 
 	private void populateTrainersOfGym(Gym.GymData gymData, GymQueryCallback callback) {
 		List<PersonalTrainer> trainers = new ArrayList<>();
+		List<Review> reviews = new ArrayList<>();
 		for (String tid : gymData.trainerIds) {
 			findTrainerById(tid, new TrainerQueryCallback() {
 				@Override
@@ -522,8 +524,12 @@ public class UserData extends LiveData<UserData>
 					trainers.add(trainer);
 					if (trainers.size() == gymData.trainerIds.size()) {
 						// Last trainer has been added, ready to open
+						for (String rid : gymData.reviewIds) {
+							// todo
+						}
+
 						if (gymData.picturePath == null) {
-							Gym gym = Gym.fromGymData(gymData, trainers, null);
+							Gym gym = Gym.fromGymData(gymData, trainers, reviews, null);
 							callback.onSucceed(gym);
 						} else {
 							// todo
@@ -560,6 +566,10 @@ public class UserData extends LiveData<UserData>
 				// todo
 			}
 		}).addOnFailureListener(callback::onFailed);
+	}
+
+	public void findReviewById(String reviewId, ReviewQueryCallback callback) {
+
 	}
 
 	@Deprecated

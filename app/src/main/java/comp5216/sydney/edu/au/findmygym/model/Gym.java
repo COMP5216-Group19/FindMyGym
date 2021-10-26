@@ -97,13 +97,8 @@ public class Gym implements Serializable {
 
     public static Gym fromGymData(GymData gymData,
                                   List<PersonalTrainer> trainers,
+                                  List<Review> reviews,
                                   Bitmap gymPicture) {
-        List<Integer> reviewIds = new ArrayList<>();
-        if (gymData.reviewIds != null) {
-            for (String id : gymData.reviewIds) {
-                reviewIds.add(Integer.parseInt(id));
-            }
-        }
         List<String> equipments;
         if (gymData.equipments == null) {
             equipments = new ArrayList<>();
@@ -123,7 +118,7 @@ public class Gym implements Serializable {
                 gymData.longitude,
                 gymData.latitude,
                 equipments,
-                new ArrayList<>()  // todo
+                reviews
         );
         gym.setGymPhoto(gymPicture);
         return gym;
@@ -144,11 +139,11 @@ public class Gym implements Serializable {
         data.equipments = new ArrayList<>(equipments);
         data.trainerIds = new ArrayList<>();
         for (PersonalTrainer trainer : personalTrainers) {
-            data.trainerIds.add(String.valueOf(trainer.getTrainerId()));
+            data.trainerIds.add(trainer.getTrainerId());
         }
         data.reviewIds = new ArrayList<>();
         for (Review review : reviews) {
-            data.trainerIds.add(String.valueOf(review.getReviewId()));
+            data.reviewIds.add(review.getReviewId());
         }
         return data;
     }
