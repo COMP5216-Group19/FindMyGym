@@ -462,7 +462,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		}
 		dialog.show();
 	}
-//
+
 //	public void displaySelectedMarkers(View view) {
 //
 //		dialog.dismiss();
