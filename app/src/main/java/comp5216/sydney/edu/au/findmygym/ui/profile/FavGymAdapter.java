@@ -54,35 +54,36 @@ public class FavGymAdapter extends RecyclerView.Adapter<FavGymAdapter.ViewHolder
         viewHolder.getFavGymAddress().setText(findGymAddressById(userData.getFavouriteGyms(), position));
     }
 
-    public String findGymById(List<Integer> favGymList, int position) {
-        int id = favGymList.get(position);
+    public String findGymById(List<String> favGymList, int position) {
+        String id = favGymList.get(position);
         String name = "";
 
-        if (userData.allGyms == null) {
-            return name;
-        }
-
-        for (int i = 0; i < userData.allGyms.size(); i++) {
-            if (userData.allGyms.get(i).getGymId() == id) {
-                name = userData.allGyms.get(i).getGymName();
-            }
-        }
+        // todo
+//        if (userData.allGyms == null) {
+//            return name;
+//        }
+//
+//        for (int i = 0; i < userData.allGyms.size(); i++) {
+//            if (userData.allGyms.get(i).getGymId().equals(id)) {
+//                name = userData.allGyms.get(i).getGymName();
+//            }
+//        }
         return name;
     }
 
-    public String findGymAddressById(List<Integer> favGymList, int position) {
-        int id = favGymList.get(position);
+    public String findGymAddressById(List<String> favGymList, int position) {
+        String id = favGymList.get(position);
         String address = "";
 
-        if (userData.allGyms == null) {
-            return address;
-        }
-
-        for (int i = 0; i < userData.allGyms.size(); i++) {
-            if (userData.allGyms.get(i).getGymId() == id) {
-                address = userData.allGyms.get(i).getAddress();
-            }
-        }
+//        if (userData.allGyms == null) {
+//            return address;
+//        }
+//
+//        for (int i = 0; i < userData.allGyms.size(); i++) {
+//            if (userData.allGyms.get(i).getGymId().equals(id)) {
+//                address = userData.allGyms.get(i).getAddress();
+//            }
+//        }
         return address;
     }
 
