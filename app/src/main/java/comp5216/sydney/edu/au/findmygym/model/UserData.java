@@ -5,11 +5,15 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.se.omapi.Session;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
@@ -82,8 +86,6 @@ public class UserData extends LiveData<UserData>
 		dbRef = database.getReference();
 		gymsRef = dbRef.child("gyms");
 		trainersRef = dbRef.child("trainers");
-		userRef = dbRef.child("users").child(getUserName());
-		userRsvRef = userRef.child("reservations");
 		FirebaseStorage storage = FirebaseStorage.getInstance();
 		gymPictureRef = storage.getReference("gymPictures");
 		trainerAvatarRef = storage.getReference("trainerAvatars");
@@ -362,6 +364,8 @@ public class UserData extends LiveData<UserData>
 			addTrainerToDatabase(personalTrainer);
 		}
 	}
+
+//	private void signupUser
 
 	public void addMockReservations()
 	{
@@ -675,7 +679,20 @@ public class UserData extends LiveData<UserData>
 	public void setFirebaseUser(FirebaseUser firebaseUser)
 	{
 		this.firebaseUser = firebaseUser;
+
+		userSignIn();
+
+//		userRsvRef = userRef.child("reservations");
+
 		postValue(this);
+	}
+
+	private void userSignIn() {
+		userRef = dbRef.child("users").child(getUserName());
+		// Check if the user's info is in firebase
+		userRef.get().addOnCompleteListener(task -> {
+			String weired = null;
+		});
 	}
 
 	public String getUserName()
@@ -687,6 +704,7 @@ public class UserData extends LiveData<UserData>
 		else if(firebaseUser != null){
 			return firebaseUser.getDisplayName();
 		}
+		Log.w(TAG, "Not logged in!");
 		return "GUEST: JOHN DOE";
 	}
 
@@ -702,6 +720,7 @@ public class UserData extends LiveData<UserData>
 		} else if (firebaseUser != null) {
 			return firebaseUser.getUid();
 		}
+		Log.w(TAG, "Not logged in!");
 		return "";
 	}
 
@@ -714,6 +733,7 @@ public class UserData extends LiveData<UserData>
 		else if(firebaseUser != null){
 			return firebaseUser.getEmail();
 		}
+		Log.w(TAG, "Not logged in!");
 		return "Go sign in, NOW!";
 	}
 
