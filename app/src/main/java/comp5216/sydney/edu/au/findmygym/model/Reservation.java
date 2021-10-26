@@ -27,7 +27,7 @@ public class Reservation implements Serializable {
         this.trainerId = trainerId;
         this.timeslot = timeslot;
 
-        this.rsvId = String.format("%d+%d+%s", userId, gymId, timeslot.toDatabaseString());
+        this.rsvId = String.format("%s+%d+%s", userId, gymId, timeslot.toDatabaseString());
     }
 
     public static Reservation fromData(ReservationData data) {
