@@ -74,12 +74,12 @@ public class Schedule_History extends Fragment
             Calendar now =  Calendar.getInstance();
 
             //get Gym name by id
-            String gymId = userData.getReservations().get(i).getGymId();
+            int gymId = userData.getReservations().get(i).getGymId();
             Gym gym = userData.findGymById(gymId);
             String gymName = gym.getGymName();
 
             //get Trainer name by id
-            String trainerId = userData.getReservations().get(i).getTrainerId();
+            int trainerId = userData.getReservations().get(i).getTrainerId();
             PersonalTrainer trainer = userData.findTrainerById(trainerId);
             String trainerName = trainer.getName();
 

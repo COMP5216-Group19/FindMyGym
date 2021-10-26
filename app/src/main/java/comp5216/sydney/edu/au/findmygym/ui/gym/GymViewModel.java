@@ -92,9 +92,9 @@ public class GymViewModel extends ViewModel {
         return isSameDate(date, tom);
     }
 
-    public PersonalTrainer findTrainerById(String trainerId) {
+    public PersonalTrainer findTrainerById(int trainerId) {
         for (PersonalTrainer pt : allPersonalTrainers) {
-            if (pt.getTrainerId().equals(trainerId)) {
+            if (pt.getTrainerId() == trainerId) {
                 return pt;
             }
         }
@@ -158,7 +158,7 @@ public class GymViewModel extends ViewModel {
 
     private void addTestGym() {
         allPersonalTrainers = new ArrayList<>();
-        gym = new Gym("Gym A",
+        gym = new Gym(111,
                 "Gym A",
                 CalendarUtil.stringToCalendarNoDate("09:00"),
                 CalendarUtil.stringToCalendarNoDate("18:00"),
@@ -191,14 +191,14 @@ public class GymViewModel extends ViewModel {
                         someDaysAgo));
 
         try {
-            addMockTrainersInThisWeek("Mark", "Mark", 30);
-            addMockTrainersInThisWeek("Ada", "Ada", 40);
+            addMockTrainersInThisWeek(1, "Mark", 30);
+            addMockTrainersInThisWeek(2, "Ada", 40);
         } catch (ParseException e) {
             Log.d(TAG, Arrays.toString(e.getStackTrace()));
         }
     }
 
-    private void addMockTrainersInThisWeek(String trainerId, String trainerName, double price)
+    private void addMockTrainersInThisWeek(int trainerId, String trainerName, double price)
             throws ParseException {
         Calendar cal = (Calendar) today.clone();
         Calendar openTime = gym.getOpenTime();

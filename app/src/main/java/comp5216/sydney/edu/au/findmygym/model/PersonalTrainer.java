@@ -17,7 +17,7 @@ public class PersonalTrainer implements Serializable {
      */
     private final String name;
 
-    private final String trainerId;
+    private final int trainerId;
     private double price;
     private Bitmap avatar;
 
@@ -26,14 +26,14 @@ public class PersonalTrainer implements Serializable {
      */
     private final List<Timeslot> availableTimes;
 
-    public PersonalTrainer(String trainerId, String name, double price, List<Timeslot> availableTimes) {
+    public PersonalTrainer(int trainerId, String name, double price, List<Timeslot> availableTimes) {
         this.trainerId = trainerId;
         this.name = name;
         this.availableTimes = availableTimes;
         this.price = price;
     }
 
-    public PersonalTrainer(String trainerId, String name, double price) {
+    public PersonalTrainer(int trainerId, String name, double price) {
         this(trainerId, name, price, new ArrayList<>());
     }
 
@@ -46,7 +46,7 @@ public class PersonalTrainer implements Serializable {
         }
 
         PersonalTrainer pt = new PersonalTrainer(
-                data.trainerId,
+                Integer.parseInt(data.trainerId),
                 data.name,
                 data.price,
                 times
@@ -96,7 +96,7 @@ public class PersonalTrainer implements Serializable {
     /**
      * @return id of this trainer
      */
-    public String getTrainerId() {
+    public int getTrainerId() {
         return trainerId;
     }
 

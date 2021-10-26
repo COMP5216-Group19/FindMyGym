@@ -56,46 +56,46 @@ public class LoginFragment extends Fragment
 	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState)
 	{
 		super.onViewCreated(view, savedInstanceState);
-//		mActivity = (LoginActivity) getActivity();
-//		mActivity.findViewById(R.id.login_button_google).setOnClickListener(new View.OnClickListener()
-//		{
-//			@Override
-//			public void onClick(View view)
-//			{
-//				mActivity.signIn();
-//			}
-//		});
-//		TransitionButton transitionButton;
-//		transitionButton = getView().findViewById(R.id.login_button_google);
-//		transitionButton.setOnClickListener(new View.OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				// Start the loading animation when the user tap the button
-//				transitionButton.startAnimation();
-//				((LoginActivity) getActivity()).onGoogleClicked();
-//				// Do your networking task or background work here.
-//				final Handler handler = new Handler();
-//				handler.postDelayed(new Runnable() {
-//					@Override
-//					public void run() {
-//						boolean isSuccessful = true;
-//
-//						// Choose a stop animation if your call was succesful or not
-//						if (isSuccessful) {
-//							transitionButton.stopAnimation(TransitionButton.StopAnimationStyle.EXPAND, new TransitionButton.OnAnimationStopEndListener() {
-//								@Override
-//								public void onAnimationStopEnd() {
-//									Intent intent = new Intent(getContext(), MainActivity.class);
-//									intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-//									startActivity(intent);
-//								}
-//							});
-//						} else {
-//							transitionButton.stopAnimation(TransitionButton.StopAnimationStyle.SHAKE, null);
-//						}
-//					}
-//				}, 2000);
-//			}
-//		});
+		mActivity = (LoginActivity) getActivity();
+		mActivity.findViewById(R.id.login_button_google).setOnClickListener(new View.OnClickListener()
+		{
+			@Override
+			public void onClick(View view)
+			{
+				mActivity.signIn();
+			}
+		});
+		TransitionButton transitionButton;
+		transitionButton = getView().findViewById(R.id.login_button_google);
+		transitionButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// Start the loading animation when the user tap the button
+				transitionButton.startAnimation();
+				((LoginActivity) getActivity()).onGoogleClicked();
+				// Do your networking task or background work here.
+				final Handler handler = new Handler();
+				handler.postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						boolean isSuccessful = true;
+						
+						// Choose a stop animation if your call was succesful or not
+						if (isSuccessful) {
+							transitionButton.stopAnimation(TransitionButton.StopAnimationStyle.EXPAND, new TransitionButton.OnAnimationStopEndListener() {
+								@Override
+								public void onAnimationStopEnd() {
+									Intent intent = new Intent(getContext(), MainActivity.class);
+									intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+									startActivity(intent);
+								}
+							});
+						} else {
+							transitionButton.stopAnimation(TransitionButton.StopAnimationStyle.SHAKE, null);
+						}
+					}
+				}, 2000);
+			}
+		});
 	}
 }
