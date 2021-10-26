@@ -232,7 +232,6 @@ public class ProfileFragment extends Fragment
 
 	public String findTrainerNameById(String id) {
 		String name = "";
-		// todo: 你们为什么都喜欢直接访问object的attribute
 //		if(userData.allGyms == null) { return name; }
 //		for (int i = 0; i < userData.allTrainers.size(); i++) {
 //			if (userData.allTrainers.get(i).getTrainerId() == id) {
