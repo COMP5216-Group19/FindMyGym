@@ -103,7 +103,7 @@ public class UserData extends LiveData<UserData>
 				if (UserData == null)
 				{
 					UserData = new UserData();
-//					UserData.addMockGym();
+					UserData.addMockGym();
 					UserData.addMockReservations();
 
 				}

@@ -1,5 +1,6 @@
 package comp5216.sydney.edu.au.findmygym;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -8,12 +9,14 @@ import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +27,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.navigation.NavigationView;
 
@@ -45,6 +49,7 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager2.widget.ViewPager2;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -74,7 +79,8 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 	private FragmentManager fragmentManager;
 
 	ViewPager2 viewPager;
-	
+
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -91,9 +97,10 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 
 
 
+
 		Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
-		
+
 		drawer = binding.drawerLayout;
 		ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 		drawer.addDrawerListener(toggle);
@@ -128,7 +135,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		GifImageView navAvatar = (GifImageView) headerView.findViewById(R.id.header_avatar);
 		navAvatar.setImageBitmap(ybb);
 	}
-	
+
 
 	@Override
 	public boolean onNavigationItemSelected(@NonNull MenuItem item)
@@ -138,7 +145,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		item.setChecked(true);
 		drawer.closeDrawers();
 		Log.e(TAG, "onNavigationItemSelected: " + id);
-		
+
 		switch (id)
 		{
 			case R.id.nav_map:
@@ -182,13 +189,13 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		}
 		return false;
 	}
-	
+
 	@Override
 	public void onOptionsMenuClosed(Menu menu)
 	{
 		Toast.makeText(this, "选项菜单关闭了", Toast.LENGTH_SHORT).show();
 	}
-	
+
 	// event before the menu is displayed
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu)
@@ -196,9 +203,9 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		Toast.makeText(this, "选项菜单显示之前onPrepareOptionsMenu方法会被调用，你可以用此方法来根据打当时的情况调整菜单", Toast.LENGTH_SHORT).show();
 		return true;
 	}
-	
-	
-	
+
+
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
@@ -206,7 +213,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-	
+
 	@Override
 	public boolean onSupportNavigateUp()
 	{
@@ -214,7 +221,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		return NavigationUI.navigateUp(navController, mAppBarConfiguration)
 				|| super.onSupportNavigateUp();
 	}
-	
+
 	private void setObserver()
 	{
 		userData.observe(this, new Observer<UserData>()
@@ -437,4 +444,47 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
         }
         return super.dispatchTouchEvent(event);
     }
+	AlertDialog dialog;
+	RadioButton closest, trains;
+
+	public void filterTheMarkers(View view) {
+		if (dialog == null) {
+			AlertDialog.Builder builder;
+			builder = new AlertDialog.Builder(this);
+			LayoutInflater inflater = this.getLayoutInflater();
+			View checkBoxView = inflater.inflate(R.layout.marker_select, null);
+			builder.setView(checkBoxView);
+			closest = (RadioButton) findViewById(R.id.radioButton1);
+			trains = (RadioButton) findViewById(R.id.radioButton2);
+			//Button okButton = (Button) checkBoxView.findViewById(R.id.okButton);
+			//Button cancelButton = (Button) checkBoxView.findViewById(R.id.cancelButton);
+			dialog = builder.create();
+		}
+		dialog.show();
+	}
+//
+//	public void displaySelectedMarkers(View view) {
+//
+//		dialog.dismiss();
+//		Log.i("TAG", "Trains Status " + trains.isChecked() + " Bus Status  " + closest.isChecked());
+//		//according these check boxes status execute your code to show/hide markers
+////		if (trains.isChecked() && !closest.isChecked()) {
+////			//show trains and hide buses markers
+////			//if (view.getId() == R.id.checkBox1){
+////			for (Marker marker : busesList){
+////				marker.setVisible(false);
+////			}
+////			//}
+//		if (closest.isChecked()) {
+//			//hide trains and show buses markers
+//			//if (view.getId() == R.id.checkBox2){
+//			for (Marker marker : markers){
+//				marker.setVisible(false);
+//
+//		}
+//	}
+
+	public void doNothing(View view)
+		{ dialog.dismiss(); }
+
 }

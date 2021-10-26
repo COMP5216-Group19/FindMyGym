@@ -11,14 +11,12 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -45,13 +43,16 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Executor;
 
 import comp5216.sydney.edu.au.findmygym.GymActivity;
 import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.databinding.FragmentMapBinding;
+import comp5216.sydney.edu.au.findmygym.model.Gym;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
+import comp5216.sydney.edu.au.findmygym.model.callbacks.GymQueryCallback;
 
 
 public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnInfoWindowLongClickListener
@@ -65,7 +66,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
 	private FusedLocationProviderClient mFusedLocationProviderClient;
 	private UserData userData = UserData.getInstance();
-
+	public List<Double> distancelist=new ArrayList<Double>();
+	public List<Marker> markers = new ArrayList<>();
 
 	// The geographical location where the device is currently located. That is, the last-known location retrieved by the Fused Location Provider.
 	private Location mLastKnownLocation = new Location("");
@@ -222,11 +224,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 		mMap.setOnInfoWindowLongClickListener(this);
 
 		for(int i=0; i<10; i++){
-			Marker gym0 = mMap.addMarker(new MarkerOptions()
+			markers.add(mMap.addMarker(new MarkerOptions()
 					.position(new LatLng(findGymlat(i), findGymlong(i)))
 					.title(findGymName(i))
 					.snippet(findGymAddress(i))
-					.icon(BitmapFromVector(getActivity().getApplicationContext(),R.drawable.ic_baseline_fitness_center_24)));
+					.icon(BitmapFromVector(getActivity().getApplicationContext(),R.drawable.ic_baseline_fitness_center_24))));
 
 		};
 
@@ -238,7 +240,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 //				return false;
 //			}
 //		});
+		calculatedistance();
+	}
 
+	public List<Marker> getList() {
+		return markers;
 	}
 
 	public void onMarkerClick(MenuItem item)
@@ -320,11 +326,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 									Double.toString(mLastKnownLocation.getLongitude());
 							locationTextView.setText(msg);
 
-							// Add a marker for my current location on the map
-//							MarkerOptions marker = new MarkerOptions().position(
-//									new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()))
-//									.title("I am here");
-//							mMap.addMarker(marker);
+
 						} else {
 							Log.d(TAG, "Current location is null. Using defaults.");
 							Log.e(TAG, "Exception: %s", task.getException());
@@ -366,7 +368,46 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
 	@Override
 	public void onInfoWindowLongClick(Marker marker) {
-		Intent intent = new Intent(getActivity(), GymActivity.class);
-		startActivity(intent);
+		String title = marker.getTitle();
+		int j = 2;
+		for(int i=0; i<10; i++){
+			if (title.equals(findGymName(i))) {
+				j=i;
+			}
+		}
+//		Intent intent = new Intent(getActivity(), GymActivity.class);
+//		startActivity(intent);
+		UserData.getInstance().findGymById(j, new GymQueryCallback() {
+			@Override
+			public void onSucceed(Gym gym) {
+				Intent intent = new Intent(getActivity(), GymActivity.class);
+				intent.putExtra("gym", gym);
+				startActivity(intent);
+			}
+
+			@Override
+			public void onFailed(Exception exception) {
+
+			}
+		});
 	}
+
+	public Integer calculatedistance() {
+		getDeviceLocation();
+
+		for(int i=0; i<10; i++){
+//			LatLng markerLatLng = new LatLng(findGymlat(i), findGymlong(i));
+			Location markerLocation = new Location("");
+			markerLocation.setLatitude(findGymlat(i));
+			markerLocation.setLongitude(findGymlong(i));
+			double distance = mLastKnownLocation.distanceTo(markerLocation);
+			distancelist.add(distance);
+
+		};
+
+		return distancelist.indexOf(Collections.min(distancelist));
+	}
+
+
+
 }
