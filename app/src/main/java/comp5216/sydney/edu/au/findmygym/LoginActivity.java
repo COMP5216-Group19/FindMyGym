@@ -48,7 +48,7 @@ public class LoginActivity extends BaseActivity {
     private StorageReference mStorageRef;
     private GoogleSignInClient mGoogleSignInClient;
     private UserData userData;
-    //	private void registerSignInLauncher() {
+
     ActivityResultLauncher<Intent> googleSignInLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -71,7 +71,6 @@ public class LoginActivity extends BaseActivity {
             }
     );
 
-    //	ActivityResultLauncher<Intent> googleSignInLauncher;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,8 +86,6 @@ public class LoginActivity extends BaseActivity {
         // } else {
         // 	getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         // }
-
-//        registerSignInLauncher();
 
         //Hide menu bar
         ActionBar actionBar = getSupportActionBar();
