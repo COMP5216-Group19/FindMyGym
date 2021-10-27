@@ -369,14 +369,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 	@Override
 	public void onInfoWindowLongClick(Marker marker) {
 		String title = marker.getTitle();
-		int j = 2;
+		int j = 0;
 		for(int i=0; i<10; i++){
 			if (title.equals(findGymName(i))) {
 				j=i;
 			}
 		}
-//		Intent intent = new Intent(getActivity(), GymActivity.class);
-//		startActivity(intent);
+
 		UserData.getInstance().findGymById(j, new GymQueryCallback() {
 			@Override
 			public void onSucceed(Gym gym) {
