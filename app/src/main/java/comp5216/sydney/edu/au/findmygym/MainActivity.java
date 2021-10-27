@@ -444,47 +444,6 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
         }
         return super.dispatchTouchEvent(event);
     }
-	AlertDialog dialog;
-	RadioButton closest, member;
 
-	public void filterTheMarkers(View view) {
-		if (dialog == null) {
-			AlertDialog.Builder builder;
-			builder = new AlertDialog.Builder(this);
-			LayoutInflater inflater = this.getLayoutInflater();
-			View checkBoxView = inflater.inflate(R.layout.marker_select, null);
-			builder.setView(checkBoxView);
-			closest = (RadioButton) findViewById(R.id.radioButton1);
-			member = (RadioButton) findViewById(R.id.radioButton2);
-			//Button okButton = (Button) checkBoxView.findViewById(R.id.okButton);
-			//Button cancelButton = (Button) checkBoxView.findViewById(R.id.cancelButton);
-			dialog = builder.create();
-		}
-		dialog.show();
-	}
-
-//	public void displaySelectedMarkers(View view) {
-//
-//		dialog.dismiss();
-//		Log.i("TAG", "member Status " + member.isChecked() + " cloest Status  " + closest.isChecked());
-//		//according these check boxes status execute your code to show/hide markers
-////		if (member.isChecked() && !closest.isChecked()) {
-////			//show member and hide cloest markers
-////			//if (view.getId() == R.id.checkBox1){
-////			for (Marker marker : memberlist){
-////				marker.setVisible(false);
-////			}
-////			//}
-//		if (closest.isChecked()) {
-//			//hide trains and show buses markers
-//			//if (view.getId() == R.id.checkBox2){
-//			for (Marker marker : markers){
-//				marker.setVisible(false);
-//
-//		}
-//	}
-
-	public void doNothing(View view)
-		{ dialog.dismiss(); }
 
 }
