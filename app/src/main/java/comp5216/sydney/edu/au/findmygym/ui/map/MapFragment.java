@@ -233,7 +233,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 		}
 
 
-		for(int i=0; i<10; i++){
+		for(int i=0; i<userData.getAllGyms().size(); i++){
 			markers.add(mMap.addMarker(new MarkerOptions()
 					.position(new LatLng(findGymlat(list.get(i)), findGymlong(list.get(i))))
 					.title(findGymName(list.get(i)))
@@ -380,7 +380,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 	public void onInfoWindowLongClick(Marker marker) {
 		String title = marker.getTitle();
 		int j = 0;
-		for(int i=0; i<10; i++){
+		for(int i=0; i<userData.getAllGyms().size(); i++){
 			if (title.equals(findGymName(list.get(i)))) {
 				j=i;
 			}
