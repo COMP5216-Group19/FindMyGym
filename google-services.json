@@ -1,0 +1,64 @@
+{
+  "project_info": {
+    "project_number": "1074471638844",
+    "firebase_url": "https://findmygym-e9f2e-default-rtdb.firebaseio.com",
+    "project_id": "findmygym-e9f2e",
+    "storage_bucket": "findmygym-e9f2e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1074471638844:android:116eb98094eab8645df039",
+        "android_client_info": {
+          "package_name": "comp5216.sydney.edu.au.findmygym"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1074471638844-3o8q0ct0rgh1d35rlvs7hg5j3h9031ts.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "comp5216.sydney.edu.au.findmygym",
+            "certificate_hash": "f64c01bcef6901d317107638b1f33d17b2580cb1"
+          }
+        },
+        {
+          "client_id": "1074471638844-9581hp07im73qrj5s86h2jp83j4ue9ac.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "comp5216.sydney.edu.au.findmygym",
+            "certificate_hash": "efc93efc186e074772b6be1ae3dd68a05a46b8a6"
+          }
+        },
+        {
+          "client_id": "1074471638844-o9sggtdpf2btd7e8j0utkp017dt30ifl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "comp5216.sydney.edu.au.findmygym",
+            "certificate_hash": "a44578f1900560661e8614d4e65a3c24e7b1b7b3"
+          }
+        },
+        {
+          "client_id": "1074471638844-ir79an2gb9fo1vajp76s3qjgqkvcvnq8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3bH-vtw97o1sm7qfsE73bAbZAg1kAaQA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1074471638844-ir79an2gb9fo1vajp76s3qjgqkvcvnq8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
