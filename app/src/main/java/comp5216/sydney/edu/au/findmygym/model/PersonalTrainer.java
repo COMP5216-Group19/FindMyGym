@@ -17,7 +17,7 @@ public class PersonalTrainer implements Serializable {
      */
     private final String name;
 
-    private final int trainerId;
+    private final String trainerId;
     private double price;
     private Bitmap avatar;
 
@@ -26,14 +26,14 @@ public class PersonalTrainer implements Serializable {
      */
     private final List<Timeslot> availableTimes;
 
-    public PersonalTrainer(int trainerId, String name, double price, List<Timeslot> availableTimes) {
+    public PersonalTrainer(String trainerId, String name, double price, List<Timeslot> availableTimes) {
         this.trainerId = trainerId;
         this.name = name;
         this.availableTimes = availableTimes;
         this.price = price;
     }
 
-    public PersonalTrainer(int trainerId, String name, double price) {
+    public PersonalTrainer(String trainerId, String name, double price) {
         this(trainerId, name, price, new ArrayList<>());
     }
 
@@ -46,7 +46,7 @@ public class PersonalTrainer implements Serializable {
         }
 
         PersonalTrainer pt = new PersonalTrainer(
-                Integer.parseInt(data.trainerId),
+                data.trainerId,
                 data.name,
                 data.price,
                 times
@@ -96,7 +96,7 @@ public class PersonalTrainer implements Serializable {
     /**
      * @return id of this trainer
      */
-    public int getTrainerId() {
+    public String getTrainerId() {
         return trainerId;
     }
 
@@ -119,7 +119,7 @@ public class PersonalTrainer implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PersonalTrainer that = (PersonalTrainer) o;
-        return trainerId == that.trainerId && Objects.equals(name, that.name);
+        return trainerId.equals(that.trainerId) && Objects.equals(name, that.name);
     }
 
     @Override

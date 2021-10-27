@@ -412,7 +412,6 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 	
 	public void onGymMemuClicked(MenuItem item)
 	{
-
 		Gym gym = UserData.getInstance().findGymById("Minus Fitness Gym Chatswood");
 		if (gym != null) {
 			Intent intent = new Intent(mContext, GymActivity.class);

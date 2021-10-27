@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class Gym implements Serializable {
 
-    private final int gymId;
+    private final String gymId;
 
     /**
      * Name of this gym
@@ -46,7 +46,7 @@ public class Gym implements Serializable {
 
     private Bitmap gymPhoto;
 
-    public Gym(int gymId,
+    public Gym(String gymId,
                String gymName,
                List<PersonalTrainer> personalTrainers,
                Calendar openTime,
@@ -72,7 +72,7 @@ public class Gym implements Serializable {
         this.price = price;
     }
 
-    public Gym(int gymId,
+    public Gym(String gymId,
                String gymName,
                Calendar openTime,
                Calendar closeTime,
@@ -112,7 +112,7 @@ public class Gym implements Serializable {
         }
 
         Gym gym = new Gym(
-                Integer.parseInt(gymData.gymId),
+                gymData.gymId,
                 gymData.name,
                 trainers,
                 CalendarUtil.stringToCalendar(gymData.openTime),
@@ -188,7 +188,7 @@ public class Gym implements Serializable {
     /**
      * @return the id of this gym
      */
-    public int getGymId() {
+    public String getGymId() {
         return gymId;
     }
 
@@ -203,9 +203,9 @@ public class Gym implements Serializable {
      * @return whether this gym is marked as "favourite"
      */
     public boolean isFavourite() {
-        List<Integer> favouriteGyms = UserData.getInstance().getFavouriteGyms();
-        for (int gid : favouriteGyms) {
-            if (gid == gymId) return true;
+        List<String> favouriteGyms = UserData.getInstance().getFavouriteGyms();
+        for (String gid : favouriteGyms) {
+            if (gid.equals(gymId)) return true;
         }
         return false;
     }
