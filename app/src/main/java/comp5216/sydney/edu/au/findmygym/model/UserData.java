@@ -75,6 +75,8 @@ public class UserData extends LiveData<UserData>
 	private DatabaseReference userRef;
 	private Context mContext;
 
+	private boolean isSuccessful = false;
+
 	// This list will load when launching this app
 	// Displays these gyms on map
 	// TODO: 让这个list在loading界面load，load完了再进map
@@ -987,5 +989,11 @@ public class UserData extends LiveData<UserData>
 		});
 	}
 
+	public void setSuccessful(boolean successful) {
+		isSuccessful = successful;
+	}
 
+	public boolean isSuccessful() {
+		return isSuccessful;
+	}
 }

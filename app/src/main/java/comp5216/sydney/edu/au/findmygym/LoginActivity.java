@@ -252,6 +252,7 @@ public class LoginActivity extends BaseActivity
 							// Sign in success, update UI with the signed-in user's information
 							Log.d(TAG, "signInWithCredential:success");
 							firebaseUser = mAuth.getCurrentUser();
+							UserData.getInstance().setSuccessful(true);
 							updateUserdata();
 							Toast.makeText(mContext, "Login Successfully!" + "\n" + "Hi," + firebaseUser.getDisplayName(), Toast.LENGTH_LONG).show();
 							// updateUI(user);
