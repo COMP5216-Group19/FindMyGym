@@ -270,22 +270,22 @@ public class UserData extends LiveData<UserData>
 	private void addMockUser() {
 		Reservation rev1 = new Reservation(
 				getUserId(),
-				"1",
+				"Minus Fitness Gym Chatswood",
 				null,
 				20,
 				new Timeslot(CalendarUtil.stringToCalendar("2021-10-28 10:00"), 60)
 		);
 		Reservation rev2 = new Reservation(
 				getUserId(),
-				"2",
-				"3",
+				"Fitness Second St Leonards",
+				"Tom",
 				52,
 				new Timeslot(CalendarUtil.stringToCalendar("2021-10-22 09:00"), 60)
 		);
 		Reservation rev3 = new Reservation(
 				getUserId(),
-				"2",
-				"4",
+				"Fitness Second St Leonards",
+				"Jerry",
 				56,
 				new Timeslot(CalendarUtil.stringToCalendar("2021-10-23 11:00"), 120)
 		);
@@ -579,7 +579,10 @@ public class UserData extends LiveData<UserData>
 	}
 
 	public Gym findGymById(String gymId) {
+		Log.d(TAG, "Looking for id " + gymId);
+		Log.d(TAG, allGyms.toString());
 		for (Gym gym : allGyms) {
+			Log.d(TAG, "Scanning " + gym.getGymId());
 			if (gymId.equals(gym.getGymId())) {
 				return gym;
 			}

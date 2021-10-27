@@ -73,20 +73,22 @@ public class Schedule_Booking extends Fragment
             String gymId = userData.getReservations().get(i).getGymId();
             System.out.println(gymId);
             Gym gym = userData.findGymById(gymId);
-            String gymName = gym.getGymName();
+            if (gym != null) {
+                String gymName = gym.getGymName();
 
-            //get Trainer name by id
-            String trainerId = userData.getReservations().get(i).getTrainerId();
-            PersonalTrainer tra = gym.findTrainerById(trainerId);
-            String trainerName = tra == null ? "" : tra.getName();
+                //get Trainer name by id
+                String trainerId = userData.getReservations().get(i).getTrainerId();
+                PersonalTrainer tra = gym.findTrainerById(trainerId);
+                String trainerName = tra == null ? "" : tra.getName();
 
-            // get reservation start time
-            Timeslot reservationDate = userData.getReservations().get(i).getSelectedTimeSlot();
-            Calendar reservationDateT = reservationDate.getBeginTime();
+                // get reservation start time
+                Timeslot reservationDate = userData.getReservations().get(i).getSelectedTimeSlot();
+                Calendar reservationDateT = reservationDate.getBeginTime();
 
 
-            if (reservationDateT.after(now)) {
-                bookList.add(new ScheduleList(gymName,trainerName, reservationDateT, getRandomItem(bitmapList)));
+                if (reservationDateT.after(now)) {
+                    bookList.add(new ScheduleList(gymName, trainerName, reservationDateT, getRandomItem(bitmapList)));
+                }
             }
         }
 
