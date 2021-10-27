@@ -295,6 +295,28 @@ public class UserData extends LiveData<UserData>
 		for (Reservation rsv : new Reservation[]{rev1, rev2, rev3}) {
 			udc.reservations.add(rsv.toData());
 		}
+
+		Map<String, String> mem1 = new HashMap<>();
+		mem1.put("gymID", "Minus Fitness Gym Chatswood");
+		mem1.put("title", "Yearly plan");
+		mem1.put("startTime", "2021-05-09 00:00");
+		mem1.put("endTime", "2022-05-08 23:59");
+
+		Map<String, String> mem2 = new HashMap<>();
+		mem2.put("gymID", "Minus Fitness Crows Nest");
+		mem2.put("title", "Yearly plan");
+		mem2.put("startTime", "2021-08-16 00:00");
+		mem2.put("endTime", "2022-08-15 23:59");
+
+		udc.memberships = new ArrayList<>();
+		udc.memberships.add(mem1);
+		udc.memberships.add(mem2);
+
+		udc.favouriteGyms = new ArrayList<>();
+		udc.favouriteGyms.add("Minus Fitness Gym Chatswood");
+		udc.favouriteGyms.add("Minus Fitness Crows Nest");
+		udc.favouriteGyms.add("Fitness Second Bond St");
+
 		userRef.setValue(udc).addOnSuccessListener(unused -> {
 			addUserInfoChangeListener();
 		}).addOnFailureListener(e -> {
@@ -805,6 +827,21 @@ public class UserData extends LiveData<UserData>
 					for (Reservation.ReservationData rd : udc.reservations) {
 						reservations.add(Reservation.fromData(rd));
 					}
+				}
+				memberships = new ArrayList<>();
+				if (udc.memberships != null) {
+					for (Map<String, String> map : udc.memberships) {
+						Membership mem = new Membership(map.get("gymID"),
+								map.get("title"),
+								null,
+								CalendarUtil.stringToCalendar(map.get("startTime")),
+								CalendarUtil.stringToCalendar(map.get("endTime")));
+						memberships.add(mem);
+					}
+				}
+				favouriteGyms = new ArrayList<>();
+				if (udc.favouriteGyms != null) {
+					favouriteGyms.addAll(udc.favouriteGyms);
 				}
 			}
 
