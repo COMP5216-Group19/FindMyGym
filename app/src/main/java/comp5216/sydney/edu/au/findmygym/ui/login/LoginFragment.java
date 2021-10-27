@@ -40,7 +40,6 @@ public class LoginFragment extends Fragment
 	@Override
 	public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
 	{
-		
 		return inflater.inflate(R.layout.login_fragment, container, false);
 	}
 	
@@ -79,8 +78,6 @@ public class LoginFragment extends Fragment
 				handler.postDelayed(new Runnable() {
 					@Override
 					public void run() {
-
-						
 						// Choose a stop animation if your call was succesful or not
 						if (UserData.getInstance().isSuccessful()) {
 							transitionButton.stopAnimation(TransitionButton.StopAnimationStyle.EXPAND, new TransitionButton.OnAnimationStopEndListener() {
@@ -91,7 +88,8 @@ public class LoginFragment extends Fragment
 									startActivity(intent);
 								}
 							});
-						} else {
+						}
+						else {
 //							transitionButton.stopAnimation(TransitionButton.StopAnimationStyle.SHAKE, null);
 						}
 					}

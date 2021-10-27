@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,7 @@ import java.util.List;
 
 import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.databinding.FragmentMapBinding;
+import comp5216.sydney.edu.au.findmygym.model.UserData;
 
 
 public class MapFragment extends Fragment implements OnMapReadyCallback
@@ -44,9 +46,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback
 	private FragmentMapBinding binding;
 	private SupportMapFragment mMapFragment;
 	private SearchView mSearchView;
+	private UserData userData;
 
-	public View onCreateView(@NonNull LayoutInflater inflater,
-	                         ViewGroup container, Bundle savedInstanceState)
+	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		mapViewModel =
 				new ViewModelProvider(this).get(MapViewModel.class);
@@ -77,9 +79,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback
 	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState)
 	{
 		super.onViewCreated(view, savedInstanceState);
-
+		userData = UserData.getInstance();
 		mMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_mapView);
-
+		Log.e(TAG, "TEST GYMS"+ userData.getAllGyms());
 		SearchView mSearchView = getView().findViewById(R.id.idSearchView);
 		mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 			@Override
@@ -132,7 +134,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback
 	public void onMapReady(GoogleMap googleMap)
 	{
 		mMap = googleMap;
-
+		
 		// Add a marker in Sydney and move the camera
 		LatLng gym1 = new LatLng(-33.79911, 151.1792);
 		mMap.addMarker(new MarkerOptions()

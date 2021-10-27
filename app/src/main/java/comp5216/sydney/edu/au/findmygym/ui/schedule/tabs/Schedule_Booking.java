@@ -64,7 +64,7 @@ public class Schedule_Booking extends Fragment
         Bitmap bitmap4 = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.fitness_gym_example_1484x983);
         Bitmap bitmap5 = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.fitness_gym_example_1484x983);
         List<Bitmap> bitmapList = Arrays.asList(bitmap1,bitmap2,bitmap3,bitmap4,bitmap5);
-
+    
         for (int i = 0; i < userData.getReservations().size(); i++)
         {
             Calendar now =  Calendar.getInstance();
