@@ -83,6 +83,8 @@ public class UserData extends LiveData<UserData>
 	// TODO: 或者观察这个list，随list更新map
 	private List<Gym> allGyms;
 
+	private List<PersonalTrainer> allTrainers;
+
 	private volatile static UserData UserData;
 
 	/**
@@ -126,6 +128,7 @@ public class UserData extends LiveData<UserData>
 
 	private void loadAllGyms() {
 		allGyms = new ArrayList<>();
+		allTrainers = new ArrayList<>();
 		gymsRef.get().addOnSuccessListener(dataSnapshot -> {
 			for (DataSnapshot ds : dataSnapshot.getChildren()) {
 				Gym.GymData gd = ds.getValue(Gym.GymData.class);
@@ -492,12 +495,12 @@ public class UserData extends LiveData<UserData>
 //	}
 
 	public List<Gym> getAllGyms() {
-		return new ArrayList<>();
+		return allGyms;
 	}
 
 	@Deprecated
 	public List<PersonalTrainer> getAllTrainers() {
-		return new ArrayList<>();
+		return allTrainers;
 	}
 
 	public void findGymById(String gymId, GymQueryCallback callback) {
@@ -527,6 +530,7 @@ public class UserData extends LiveData<UserData>
 				@Override
 				public void onSucceed(PersonalTrainer trainer) {
 					trainers.add(trainer);
+					allTrainers.add(trainer);
 					if (trainers.size() == gymData.trainerIds.size()) {
 						// Last trainer has been added, ready to open
 						if (gymData.reviewIds != null) {
