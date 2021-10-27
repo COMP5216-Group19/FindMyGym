@@ -245,6 +245,14 @@ public class Gym implements Serializable {
         return address;
     }
 
+    public PersonalTrainer getTrainerById(String tid) {
+        if (tid == null) return null;
+        for (PersonalTrainer trainer : personalTrainers) {
+            if (tid.equals(trainer.getTrainerId())) return trainer;
+        }
+        return null;
+    }
+
     /**
      * @return contact info of this gym
      */

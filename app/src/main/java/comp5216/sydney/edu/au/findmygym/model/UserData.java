@@ -5,15 +5,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.se.omapi.Session;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -36,11 +32,9 @@ import java.util.Map;
 
 import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.GymQueryCallback;
-import comp5216.sydney.edu.au.findmygym.model.callbacks.ReservationQueryCallback;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.ReviewQueryCallback;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.TrainerQueryCallback;
 import comp5216.sydney.edu.au.findmygym.ui.gym.GymViewModel;
-import io.reactivex.rxjava3.internal.operators.observable.ObservableToList;
 
 public class UserData extends LiveData<UserData>
 {
@@ -75,7 +69,7 @@ public class UserData extends LiveData<UserData>
 	// Displays these gyms on map
 	// TODO: 让这个list在loading界面load，load完了再进map
 	// TODO: 或者观察这个list，随list更新map
-	private List<SimpleGym> allSimpleGyms;
+	private List<Gym> allGyms;
 
 	private volatile static UserData UserData;
 
@@ -95,7 +89,7 @@ public class UserData extends LiveData<UserData>
 		gymPictureRef = storage.getReference("gymPictures");
 		trainerAvatarRef = storage.getReference("trainerAvatars");
 
-		loadGymsInfo();
+		loadAllGyms();
 	}
 
 	/**
@@ -118,17 +112,29 @@ public class UserData extends LiveData<UserData>
 		return UserData;
 	}
 
-	private void loadGymsInfo() {
-		allSimpleGyms = new ArrayList<>();
+	private void loadAllGyms() {
+		allGyms = new ArrayList<>();
 		gymsRef.get().addOnSuccessListener(dataSnapshot -> {
 			for (DataSnapshot ds : dataSnapshot.getChildren()) {
 				Gym.GymData gd = ds.getValue(Gym.GymData.class);
 				if (gd != null) {
-					allSimpleGyms.add(SimpleGym.fromData(gd));
+					if (gd.trainerIds == null) {
+						gd.trainerIds = new ArrayList<>();
+					}
+					// Then query trainers of this gym
+					populateTrainersOfGym(gd, new GymQueryCallback() {
+						@Override
+						public void onSucceed(Gym gym) {
+							allGyms.add(gym);
+						}
+
+						@Override
+						public void onFailed(Exception exception) {
+							Log.e(TAG, Arrays.toString(exception.getStackTrace()));
+						}
+					});
 				}
 			}
-			// TODO: load finished
-			System.out.println(allSimpleGyms);
 		}).addOnFailureListener(e -> {
 			Log.e(TAG, Arrays.toString(e.getStackTrace()));
 		});
@@ -473,19 +479,6 @@ public class UserData extends LiveData<UserData>
 //		reservations.add(rev3);
 //	}
 
-	/**
-	 * Returns a list of all simple gym info.
-	 *
-	 * @return a list of all simple gym info
-	 */
-	public List<SimpleGym> getAllSimpleGyms() {
-		return allSimpleGyms;
-	}
-
-	/**
-	 * Use getAllSimpleGyms() instead
-	 */
-	@Deprecated
 	public List<Gym> getAllGyms() {
 		return new ArrayList<>();
 	}
@@ -524,10 +517,11 @@ public class UserData extends LiveData<UserData>
 					trainers.add(trainer);
 					if (trainers.size() == gymData.trainerIds.size()) {
 						// Last trainer has been added, ready to open
-						for (String rid : gymData.reviewIds) {
-							// todo
+						if (gymData.reviewIds != null) {
+							for (String rid : gymData.reviewIds) {
+								// todo
+							}
 						}
-
 						if (gymData.picturePath == null) {
 							Gym gym = Gym.fromGymData(gymData, trainers, reviews, null);
 							callback.onSucceed(gym);
@@ -545,8 +539,12 @@ public class UserData extends LiveData<UserData>
 		}
 	}
 
-	@Deprecated
 	public Gym findGymById(String gymId) {
+		for (Gym gym : allGyms) {
+			if (gymId.equals(gym.getGymId())) {
+				return gym;
+			}
+		}
 		return null;
 	}
 
