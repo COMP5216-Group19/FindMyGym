@@ -741,9 +741,9 @@ public class UserData extends LiveData<UserData>
 		{
 			return this.userAvatar;
 		}
-		// else if(firebaseUser != null){
-		// 	return BitmapFactory()firebaseUser.getPhotoUrl();
-		// }
+//		 else if(firebaseUser != null){
+//		 	return BitmapFactory().(firebaseUser.getPhotoUrl());
+//		 }
 		else
 		{
 			userAvatar = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.diana);
