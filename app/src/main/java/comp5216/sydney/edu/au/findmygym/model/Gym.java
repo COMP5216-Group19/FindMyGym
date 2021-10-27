@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class Gym implements Serializable {
 
-    private final String gymId;
+    private final int gymId;
 
     /**
      * Name of this gym
@@ -46,7 +46,7 @@ public class Gym implements Serializable {
 
     private Bitmap gymPhoto;
 
-    public Gym(String gymId,
+    public Gym(int gymId,
                String gymName,
                List<PersonalTrainer> personalTrainers,
                Calendar openTime,
@@ -72,7 +72,7 @@ public class Gym implements Serializable {
         this.price = price;
     }
 
-    public Gym(String gymId,
+    public Gym(int gymId,
                String gymName,
                Calendar openTime,
                Calendar closeTime,
@@ -97,8 +97,13 @@ public class Gym implements Serializable {
 
     public static Gym fromGymData(GymData gymData,
                                   List<PersonalTrainer> trainers,
-                                  List<Review> reviews,
                                   Bitmap gymPicture) {
+        List<Integer> reviewIds = new ArrayList<>();
+        if (gymData.reviewIds != null) {
+            for (String id : gymData.reviewIds) {
+                reviewIds.add(Integer.parseInt(id));
+            }
+        }
         List<String> equipments;
         if (gymData.equipments == null) {
             equipments = new ArrayList<>();
@@ -107,7 +112,7 @@ public class Gym implements Serializable {
         }
 
         Gym gym = new Gym(
-                gymData.gymId,
+                Integer.parseInt(gymData.gymId),
                 gymData.name,
                 trainers,
                 CalendarUtil.stringToCalendar(gymData.openTime),
@@ -118,7 +123,7 @@ public class Gym implements Serializable {
                 gymData.longitude,
                 gymData.latitude,
                 equipments,
-                reviews
+                new ArrayList<>()  // todo
         );
         gym.setGymPhoto(gymPicture);
         return gym;
@@ -139,11 +144,11 @@ public class Gym implements Serializable {
         data.equipments = new ArrayList<>(equipments);
         data.trainerIds = new ArrayList<>();
         for (PersonalTrainer trainer : personalTrainers) {
-            data.trainerIds.add(trainer.getTrainerId());
+            data.trainerIds.add(String.valueOf(trainer.getTrainerId()));
         }
         data.reviewIds = new ArrayList<>();
         for (Review review : reviews) {
-            data.reviewIds.add(review.getReviewId());
+            data.trainerIds.add(String.valueOf(review.getReviewId()));
         }
         return data;
     }
@@ -183,7 +188,7 @@ public class Gym implements Serializable {
     /**
      * @return the id of this gym
      */
-    public String getGymId() {
+    public int getGymId() {
         return gymId;
     }
 
@@ -198,9 +203,9 @@ public class Gym implements Serializable {
      * @return whether this gym is marked as "favourite"
      */
     public boolean isFavourite() {
-        List<String> favouriteGyms = UserData.getInstance().getFavouriteGyms();
-        for (String gid : favouriteGyms) {
-            if (gid.equals(gymId)) return true;
+        List<Integer> favouriteGyms = UserData.getInstance().getFavouriteGyms();
+        for (int gid : favouriteGyms) {
+            if (gid == gymId) return true;
         }
         return false;
     }
@@ -230,7 +235,6 @@ public class Gym implements Serializable {
      * @return average user rating of this gym
      */
     public double getAvgRating() {
-        if (reviews.isEmpty()) return 5.0;
         double total = 0.0;
         for (Review review : reviews) {
             total += review.getRating();

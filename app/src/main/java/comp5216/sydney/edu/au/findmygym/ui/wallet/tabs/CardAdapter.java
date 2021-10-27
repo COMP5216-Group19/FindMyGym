@@ -11,6 +11,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.vinaygaba.creditcardview.CardNumberFormat;
 import com.vinaygaba.creditcardview.CardType;
 import com.vinaygaba.creditcardview.CreditCardView;
@@ -52,18 +58,20 @@ class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder>
 	@Override
 	public void onBindViewHolder(@NonNull CardAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position)
 	{
-		double ran = Math.random();
-		if (ran < 0.5)
-		{
-			holder.creditCardView.setCardFrontBackground(R.drawable.cardbackground_sky);
-			holder.creditCardView.setCardBackBackground(R.drawable.cardbackground_sky);
-		}
-		else
-		{
-			holder.creditCardView.setCardFrontBackground(R.drawable.cardbackground_world);
-			holder.creditCardView.setCardBackBackground(R.drawable.cardbackground_world);
-		}
-		// holder.creditCardView.setIsEditable(true);
+		// double ran = Math.random();
+		// if (ran < 0.5)
+		// {
+		// 	holder.creditCardView.setCardFrontBackground(R.drawable.cardbackground_sky);
+		// 	holder.creditCardView.setCardBackBackground(R.drawable.cardbackground_sky);
+		// }
+		// else
+		// {
+		// 	holder.creditCardView.setCardFrontBackground(R.drawable.cardbackground_world);
+		// 	holder.creditCardView.setCardBackBackground(R.drawable.cardbackground_world);
+		// }
+		holder.creditCardView.setCardFrontBackground(R.drawable.cardbackground_sky);
+		holder.creditCardView.setCardBackBackground(R.drawable.cardbackground_sky);
+		holder.creditCardView.setIsEditable(false);
 		holder.creditCardView.setIsFlippable(true);
 		holder.creditCardView.setType(CardType.AUTO);
 		holder.creditCardView.setCardNumberFormat(CardNumberFormat.MASKED_ALL_BUT_LAST_FOUR);
@@ -110,13 +118,38 @@ class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder>
 							@Override
 							public void onClick(SweetAlertDialog sDialog)
 							{
-								userData.removeCreditCard(position);
-								// notifyDataSetChanged();
-								sDialog.setTitleText("Deleted!")
-										.setContentText("Your record has been deleted!")
-										.setConfirmClickListener(null)
-										.showCancelButton(false)
-										.changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+								FirebaseFirestore db = FirebaseFirestore.getInstance();
+								CollectionReference cardsRef = db.collection("CARDS");
+								cardsRef.document(userData.getCreditCards().get(position).getId())
+										.delete()
+										.addOnSuccessListener(new OnSuccessListener<Void>()
+										{
+											@Override
+											public void onSuccess(Void unused)
+											{
+												userData.removeCreditCard(position);
+												// notifyDataSetChanged();
+												sDialog.setTitleText("Deleted!")
+														.setContentText("Your record has been deleted!")
+														.setConfirmClickListener(null)
+														.showCancelButton(false)
+														.changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+											}
+										})
+										.addOnFailureListener(new OnFailureListener()
+										{
+											@Override
+											public void onFailure(@NonNull Exception e)
+											{
+												sDialog.setTitleText("Failed!")
+														.setContentText("Your record has NOT been deleted somehow!")
+														.setConfirmClickListener(null)
+														.showCancelButton(false)
+														.changeAlertType(SweetAlertDialog.ERROR_TYPE);
+											}
+										});
+								
+								
 							}
 						})
 						.show();

@@ -8,6 +8,7 @@
         android:theme="@android:style/Theme.Holo.Dialog"
         app:cardCornerRadius="20dp"
         android:background="@color/white"
+        app:cardBackgroundColor="@android:color/transparent"
         tools:context=".AddCardDialog">
 
     <LinearLayout

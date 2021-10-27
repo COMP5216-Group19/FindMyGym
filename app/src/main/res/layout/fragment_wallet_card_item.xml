@@ -16,7 +16,7 @@
             app:type="auto"
             app:putChip="true"
             app:expiryDate = "00/00"
-            app:isEditable="true"
+            app:isEditable="false"
             />
 
 

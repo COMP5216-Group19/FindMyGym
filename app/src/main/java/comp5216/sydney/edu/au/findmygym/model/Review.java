@@ -7,8 +7,6 @@ import java.util.Calendar;
 
 import javax.annotation.Nullable;
 
-import comp5216.sydney.edu.au.findmygym.R;
-
 /**
  * A class that represents a review item.
  */
@@ -31,26 +29,6 @@ public class Review implements Serializable {
 
         // Potential bug: two users with same name post reviews at a same millisecond
         this.reviewId = String.format("%s+%s", userName, CalendarUtil.calendarToString(dateTime));
-    }
-
-    public static Review fromData(ReviewData data, Bitmap userAvatar) {
-        return new Review(
-                data.userName,
-                userAvatar,
-                data.rating,
-                data.comments,
-                CalendarUtil.stringToCalendar(data.dateTime)
-        );
-    }
-
-    public ReviewData toData(String avatarPath) {
-        ReviewData data = new ReviewData();
-        data.avatarPath = avatarPath;
-        data.userName = userName;
-        data.rating = rating;
-        data.dateTime = CalendarUtil.calendarToString(dateTime);
-        data.comments = comments;
-        return data;
     }
 
     public String getReviewId() {
@@ -91,13 +69,5 @@ public class Review implements Serializable {
      */
     public Calendar getDateTime() {
         return dateTime;
-    }
-
-    public static class ReviewData {
-        public String userName;
-        public int rating;
-        public String comments;
-        public String dateTime;
-        public String avatarPath;
     }
 }

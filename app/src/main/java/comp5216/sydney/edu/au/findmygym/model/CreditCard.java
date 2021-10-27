@@ -9,14 +9,24 @@ public class CreditCard
 	private String cardNumber;
 	private String cardName;
 	private String expiryDate;
-	
-	public CreditCard(String cardNumber, String cardName, String expiryDate)
+	private String id;
+	public CreditCard(String cardNumber, String cardName, String expiryDate, String id)
 	{
 		this.cardNumber = cardNumber;
 		this.cardName = cardName;
 		this.expiryDate = expiryDate;
+		this.id = id;
 	}
 	
+	public String getId()
+	{
+		return id;
+	}
+	
+	public void setId(String id)
+	{
+		this.id = id;
+	}
 	
 	public String getCardNumber()
 	{
