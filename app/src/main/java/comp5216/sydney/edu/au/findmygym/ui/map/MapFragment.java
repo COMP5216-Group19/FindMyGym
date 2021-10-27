@@ -178,7 +178,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 	}
 	public String findGymName(String id){
 		String name = "";
-		for (int i = 0; i < userData.allGyms.size(); i++) {
+		for (int i = 0; i < userData.getAllGyms().size(); i++) {
 			if (userData.getAllGyms().get(i).getGymId().equals(id)) {
 				name = userData.allGyms.get(i).getGymName();
 			}
@@ -188,7 +188,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
 	public String findGymAddress(String id){
 		String address = "";
-		for (int i = 0; i < userData.allGyms.size(); i++) {
+		for (int i = 0; i < userData.getAllGyms().size(); i++) {
 			if (userData.getAllGyms().get(i).getGymId().equals(id)) {
 				address = userData.allGyms.get(i).getAddress();
 			}
@@ -197,7 +197,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 	}
 	public double findGymlat(String id){
 		double latitude = 0;
-		for (int i = 0; i < userData.allGyms.size(); i++) {
+		for (int i = 0; i < userData.getAllGyms().size(); i++) {
 			if (userData.getAllGyms().get(i).getGymId() == id) {
 				latitude = userData.allGyms.get(i).getLatitude();
 			}
@@ -206,7 +206,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 	}
 	public double findGymlong(String id){
 		double longitude = 0;
-		for (int i = 0; i < userData.allGyms.size(); i++) {
+		for (int i = 0; i < userData.getAllGyms().size(); i++) {
 			if (userData.getAllGyms().get(i).getGymId() == id) {
 				longitude = userData.allGyms.get(i).getLongitude();
 			}
