@@ -54,33 +54,33 @@ public class FavGymAdapter extends RecyclerView.Adapter<FavGymAdapter.ViewHolder
         viewHolder.getFavGymAddress().setText(findGymAddressById(userData.getFavouriteGyms(), position));
     }
 
-    public String findGymById(List<Integer> favGymList, int position) {
-        int id = favGymList.get(position);
+    public String findGymById(List<String> favGymList, int position) {
+        String id = favGymList.get(position);
         String name = "";
 
-        if (userData.allGyms == null) {
+        if (userData.getAllGyms() == null) {
             return name;
         }
 
-        for (int i = 0; i < userData.allGyms.size(); i++) {
-            if (userData.allGyms.get(i).getGymId() == id) {
-                name = userData.allGyms.get(i).getGymName();
+        for (int i = 0; i < userData.getAllGyms().size(); i++) {
+            if (userData.getAllGyms().get(i).getGymId().equals(id)) {
+                name = userData.getAllGyms().get(i).getGymName();
             }
         }
         return name;
     }
 
-    public String findGymAddressById(List<Integer> favGymList, int position) {
-        int id = favGymList.get(position);
+    public String findGymAddressById(List<String> favGymList, int position) {
+        String id = favGymList.get(position);
         String address = "";
 
-        if (userData.allGyms == null) {
+        if (userData.getAllGyms() == null) {
             return address;
         }
 
-        for (int i = 0; i < userData.allGyms.size(); i++) {
-            if (userData.allGyms.get(i).getGymId() == id) {
-                address = userData.allGyms.get(i).getAddress();
+        for (int i = 0; i < userData.getAllGyms().size(); i++) {
+            if (userData.getAllGyms().get(i).getGymId().equals(id)) {
+                address = userData.getAllGyms().get(i).getAddress();
             }
         }
         return address;

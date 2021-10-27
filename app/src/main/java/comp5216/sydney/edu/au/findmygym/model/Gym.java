@@ -97,13 +97,8 @@ public class Gym implements Serializable {
 
     public static Gym fromGymData(GymData gymData,
                                   List<PersonalTrainer> trainers,
+                                  List<Review> reviews,
                                   Bitmap gymPicture) {
-        List<Integer> reviewIds = new ArrayList<>();
-        if (gymData.reviewIds != null) {
-            for (String id : gymData.reviewIds) {
-                reviewIds.add(Integer.parseInt(id));
-            }
-        }
         List<String> equipments;
         if (gymData.equipments == null) {
             equipments = new ArrayList<>();
@@ -123,7 +118,7 @@ public class Gym implements Serializable {
                 gymData.longitude,
                 gymData.latitude,
                 equipments,
-                new ArrayList<>()  // todo
+                reviews
         );
         gym.setGymPhoto(gymPicture);
         return gym;
@@ -144,13 +139,21 @@ public class Gym implements Serializable {
         data.equipments = new ArrayList<>(equipments);
         data.trainerIds = new ArrayList<>();
         for (PersonalTrainer trainer : personalTrainers) {
-            data.trainerIds.add(String.valueOf(trainer.getTrainerId()));
+            data.trainerIds.add(trainer.getTrainerId());
         }
         data.reviewIds = new ArrayList<>();
         for (Review review : reviews) {
-            data.trainerIds.add(String.valueOf(review.getReviewId()));
+            data.reviewIds.add(review.getReviewId());
         }
         return data;
+    }
+
+    public PersonalTrainer findTrainerById(String tid) {
+        if (tid == null) return null;
+        for (PersonalTrainer trainer : personalTrainers) {
+            if (tid.equals(trainer.getTrainerId())) return trainer;
+        }
+        return null;
     }
 
     public double getPrice() {
@@ -235,6 +238,7 @@ public class Gym implements Serializable {
      * @return average user rating of this gym
      */
     public double getAvgRating() {
+        if (reviews.isEmpty()) return 5.0;
         double total = 0.0;
         for (Review review : reviews) {
             total += review.getRating();
@@ -247,14 +251,6 @@ public class Gym implements Serializable {
      */
     public String getAddress() {
         return address;
-    }
-
-    public PersonalTrainer getTrainerById(String tid) {
-        if (tid == null) return null;
-        for (PersonalTrainer trainer : personalTrainers) {
-            if (tid.equals(trainer.getTrainerId())) return trainer;
-        }
-        return null;
     }
 
     /**

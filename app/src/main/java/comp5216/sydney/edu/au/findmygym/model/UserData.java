@@ -39,7 +39,17 @@ import comp5216.sydney.edu.au.findmygym.ui.gym.GymViewModel;
 public class UserData extends LiveData<UserData>
 {
 	private final String TAG = "[UserData]";
-
+	
+	public final String KEY_uid = "UID";
+	public final String KEY_userName = "USERNAME";
+	public final String KEY_userEmail = "EMAIL";
+	public final String KEY_CARD_name = "CARD_NAME";
+	public final String KEY_CARD_number = "CARD_NUMBER";
+	public final String KEY_CARD_expiryDate = "CARD_DATE";
+	public final String KEY_login_first_time = "LOGIN_FIRST_TIME";
+	public final String KEY_login_last_time = "LOGIN_LAST_TIME";
+	public final String KEY_login_counter = "LOGIN_COUNTER";
+	
 	private ArrayList<PurchaseRecord> purchaseRecords;
 	private ArrayList<ScheduleList> scheduleLists;
 	private ArrayList<CreditCard> creditCards;

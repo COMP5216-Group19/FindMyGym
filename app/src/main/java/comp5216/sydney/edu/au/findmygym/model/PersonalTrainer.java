@@ -119,7 +119,7 @@ public class PersonalTrainer implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PersonalTrainer that = (PersonalTrainer) o;
-        return trainerId.equals(that.trainerId) && Objects.equals(name, that.name);
+        return trainerId == that.trainerId && Objects.equals(name, that.name);
     }
 
     @Override

@@ -218,12 +218,12 @@ public class ProfileFragment extends Fragment
 	public Map<String, Integer> getTrainerLogFromReservations(List<Reservation> reservations) {
 		Map<String, Integer> trainerLog = new HashMap<>();
 		for (Reservation rev: reservations) {
-			String trainerName = findTrainerNameById(rev.getTrainerId());
-			if (trainerLog.containsKey(trainerName)) {
-				trainerLog.put(trainerName, trainerLog.get(trainerName) + 1);
-			} else {
-				trainerLog.put(trainerName, 1);
-			}
+//			String trainerName = findTrainerNameById(rev.getTrainerId());
+//			if (trainerLog.containsKey(trainerName)) {
+//				trainerLog.put(trainerName, trainerLog.get(trainerName) + 1);
+//			} else {
+//				trainerLog.put(trainerName, 1);
+//			}
 		}
 
 		return trainerLog;
@@ -231,12 +231,12 @@ public class ProfileFragment extends Fragment
 
 	public String findTrainerNameById(Integer id) {
 		String name = "";
-		if(userData.getAllSimpleGyms() == null) { return name; }
-		for (int i = 0; i < userData.allTrainers.size(); i++) {
-			if (userData.allTrainers.get(i).getTrainerId() == id) {
-				name = userData.allTrainers.get(i).getName();
-			}
-		}
+//		if(userData.getAllSimpleGyms() == null) { return name; }
+//		for (int i = 0; i < userData.allTrainers.size(); i++) {
+//			if (userData.allTrainers.get(i).getTrainerId() == id) {
+//				name = userData.allTrainers.get(i).getName();
+//			}
+//		}
 		return name;
 	}
 

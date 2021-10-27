@@ -71,15 +71,14 @@ public class Schedule_Booking extends Fragment
 
             //get Gym name by id
             String gymId = userData.getReservations().get(i).getGymId();
+            System.out.println(gymId);
             Gym gym = userData.findGymById(gymId);
             String gymName = gym.getGymName();
 
             //get Trainer name by id
             String trainerId = userData.getReservations().get(i).getTrainerId();
-            PersonalTrainer trainer = gym.getTrainerById(trainerId);
-            String trainerName = trainer == null ? "" : trainer.getName();
-//            PersonalTrainer tra = userData.findTrainerById(trainerId);
-//            String trainerName = tra.getName();
+            PersonalTrainer tra = gym.findTrainerById(trainerId);
+            String trainerName = tra == null ? "" : tra.getName();
 
             // get reservation start time
             Timeslot reservationDate = userData.getReservations().get(i).getSelectedTimeSlot();
@@ -87,7 +86,7 @@ public class Schedule_Booking extends Fragment
 
 
             if (reservationDateT.after(now)) {
-                bookList.add(new ScheduleList(gymName, trainerName, reservationDateT, getRandomItem(bitmapList)));
+                bookList.add(new ScheduleList(gymName,trainerName, reservationDateT, getRandomItem(bitmapList)));
             }
         }
 
