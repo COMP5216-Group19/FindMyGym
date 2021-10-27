@@ -1,6 +1,5 @@
 package comp5216.sydney.edu.au.findmygym;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -9,14 +8,12 @@ import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,9 +24,19 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 
 import androidx.annotation.NonNull;
@@ -49,9 +56,10 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager2.widget.ViewPager2;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import comp5216.sydney.edu.au.findmygym.databinding.ActivityMainBinding;
 import comp5216.sydney.edu.au.findmygym.model.Gym;
@@ -63,11 +71,11 @@ import comp5216.sydney.edu.au.findmygym.ui.schedule.ScheduleFragment;
 import comp5216.sydney.edu.au.findmygym.ui.wallet.WalletFragment;
 import pl.droidsonroids.gif.GifImageView;
 
-public class MainActivity extends BaseActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener,VoiceSpeechRecognizer.ResultsListener
+public class MainActivity extends BaseActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener, VoiceSpeechRecognizer.ResultsListener
 {
 	private final String TAG = "[MainActivity]";
 	private static final int REQUEST_CODE_ENABLE = 11;
-
+	
 	private Context mContext;
 	private AppBarConfiguration mAppBarConfiguration;
 	private ActivityMainBinding binding;
@@ -77,35 +85,33 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 	private View headerView;
 	private DrawerLayout drawer;
 	private FragmentManager fragmentManager;
-
 	ViewPager2 viewPager;
-
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		this.mContext = this.getBaseContext();
+		this.userData = UserData.getInstance();
+		
 		binding = ActivityMainBinding.inflate(getLayoutInflater());
 		setContentView(binding.getRoot());
 		fragmentManager = getSupportFragmentManager();
-
+		
 		//YOU need to use API key to init the google map
 		// SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
 		// 		.findFragmentById(R.id.map);
 		// mapFragment.getMapAsync(this);
-
-
-
-
+		
+		
 		Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
-
+		
 		drawer = binding.drawerLayout;
 		ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 		drawer.addDrawerListener(toggle);
 		toggle.syncState();
-
+		
 		navigationView = binding.navView;
 		navigationView.bringToFront();
 		navigationView.setNavigationItemSelectedListener(this);
@@ -117,26 +123,52 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
 		NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
 		NavigationUI.setupWithNavController(navigationView, navController);//???
-
-		userData = UserData.getInstance();
+		
+	
 		headerView = navigationView.getHeaderView(0);
 		setObserver();//update nav_header
 		setDrawerListener();//setup drawer event handler
 		setFabListener();
 		setSupportActionBar(binding.appBarMain.toolbar);
+		
+		
+		
+		// usersColRef.whereEqualTo("UID", uid).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>()
+		// {
+		// 	@Override
+		// 	public void onComplete(@NonNull Task<QuerySnapshot> task)
+		// 	{
+		// 		if (task.isSuccessful())
+		// 		{
+		// 			// Log.d(TAG, "TASK DONE: "+task.getResult().getDocuments().getClass());
+		// 			for (QueryDocumentSnapshot document : task.getResult())
+		// 			{
+		// 				Log.d(TAG+"[DB] - ", "getId: "+document.getId());
+		// 				Log.d(TAG+"[DB] - ", "getData: "+document.getData());
+		// 				Log.d(TAG+"[DB] - ", "get: "+document.getData().get("NAME"));
+		// 			}
+		// 		}
+		// 		else
+		// 		{
+		// 			Log.d(TAG, "Error getting documents: ", task.getException());
+		// 		}
+		// 	}
+		// });
+		
+		
 	}
-
+	
 	//TEST
 	@Override
 	protected void onResume()
 	{
 		super.onResume();
-		Bitmap ybb = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ybb);
-		GifImageView navAvatar = (GifImageView) headerView.findViewById(R.id.header_avatar);
-		navAvatar.setImageBitmap(ybb);
+		// Bitmap ybb = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ybb);
+		// GifImageView navAvatar = (GifImageView) headerView.findViewById(R.id.header_avatar);
+		// navAvatar.setImageBitmap(ybb);
 	}
-
-
+	
+	
 	@Override
 	public boolean onNavigationItemSelected(@NonNull MenuItem item)
 	{
@@ -145,7 +177,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		item.setChecked(true);
 		drawer.closeDrawers();
 		Log.e(TAG, "onNavigationItemSelected: " + id);
-
+		
 		switch (id)
 		{
 			case R.id.nav_map:
@@ -174,13 +206,13 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		drawer.closeDrawer(GravityCompat.START);
 		return true;
 	}
-
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
 		// Toast.makeText(this, item.getItemId(), Toast.LENGTH_SHORT).show();
 		Log.e(TAG, "onOptionsItemSelected:" + String.valueOf(item.getItemId()));
-
+		
 		switch (item.getItemId())
 		{
 			case Menu.FIRST://16908332
@@ -189,23 +221,22 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		}
 		return false;
 	}
-
+	
 	@Override
 	public void onOptionsMenuClosed(Menu menu)
 	{
-		Toast.makeText(this, "选项菜单关闭了", Toast.LENGTH_SHORT).show();
+		// Toast.makeText(this, "选项菜单关闭了", Toast.LENGTH_SHORT).show();
 	}
-
+	
 	// event before the menu is displayed
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu)
 	{
-		Toast.makeText(this, "选项菜单显示之前onPrepareOptionsMenu方法会被调用，你可以用此方法来根据打当时的情况调整菜单", Toast.LENGTH_SHORT).show();
+		// Toast.makeText(this, "选项菜单显示之前onPrepareOptionsMenu方法会被调用，你可以用此方法来根据打当时的情况调整菜单", Toast.LENGTH_SHORT).show();
 		return true;
 	}
-
-
-
+	
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
@@ -213,7 +244,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-
+	
 	@Override
 	public boolean onSupportNavigateUp()
 	{
@@ -221,7 +252,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		return NavigationUI.navigateUp(navController, mAppBarConfiguration)
 				|| super.onSupportNavigateUp();
 	}
-
+	
 	private void setObserver()
 	{
 		userData.observe(this, new Observer<UserData>()
@@ -232,13 +263,13 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 				Log.e(TAG, "===========> userData changed");
 				TextView navUsername = (TextView) headerView.findViewById(R.id.header_userName);
 				navUsername.setText(userData.getUserName());
-
+				
 				TextView navEmail = (TextView) headerView.findViewById(R.id.header_email);
 				navEmail.setText(userData.getUserMail());
-
+				
 				GifImageView navAvatar = (GifImageView) headerView.findViewById(R.id.header_avatar);
 				// navAvatar.setImageBitmap(userData.getUserAvatar());
-
+				
 				try
 				{
 					Glide.with(mContext)
@@ -256,8 +287,8 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 			}
 		});
 	}
-
-
+	
+	
 	private void setDrawerListener()
 	{
 		drawer.addDrawerListener(new DrawerLayout.DrawerListener()
@@ -267,19 +298,19 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 			{
 				//Log.i(TAG, "onDrawerSlide");
 			}
-
+			
 			@Override
 			public void onDrawerOpened(@NonNull View drawerView)
 			{
 				Log.i(TAG, "onDrawerOpened");
 			}
-
+			
 			@Override
 			public void onDrawerClosed(@NonNull View drawerView)
 			{
 				Log.i(TAG, "onDrawerClosed");
 			}
-
+			
 			@Override
 			public void onDrawerStateChanged(int newState)
 			{
@@ -287,7 +318,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 			}
 		});
 	}
-
+	
 	private void setFabListener()
 	{
 		binding.appBarMain.fab.setOnClickListener(new View.OnClickListener()
@@ -298,14 +329,17 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 				// Snackbar.make(view, "Replace with your own fab action", Snackbar.LENGTH_LONG)
 				// 		.setAction("Action", null).show();
 				//
-
+				
 				// int permission = ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO);
 				// if (permission != PackageManager.PERMISSION_GRANTED) {
 				// 	ActivityCompat.requestPermissions(getApplicationContext(), PERMISSION_AUDIO, GET_RECODE_AUDIO);
 				// }
-				if(ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED){
-					ActivityCompat.requestPermissions( MainActivity.this ,new String[]{android.Manifest.permission.RECORD_AUDIO},1);
-				}else {
+				if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED)
+				{
+					ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.RECORD_AUDIO}, 1);
+				}
+				else
+				{
 					VoiceInputDialogFragment voiceInputDialogFragment = new VoiceInputDialogFragment();
 					voiceInputDialogFragment.setSuggestions(
 							"find the closest gym",
@@ -315,11 +349,11 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 					voiceInputDialogFragment.show(getSupportFragmentManager(), "DIALOG_INPUT");
 					voiceInputDialogFragment.setAutoStart(true);
 				}
-
+				
 			}
 		});
 	}
-
+	
 	public Fragment getVisibleFragment()
 	{
 		FragmentManager fragmentManager = MainActivity.this.getSupportFragmentManager();
@@ -331,7 +365,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		}
 		return null;
 	}
-
+	
 	private void switchFragment(Fragment targetFragment)
 	{
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -348,7 +382,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 					.commit();
 		}
 	}
-
+	
 	/**
 	 * Manipulates the map once available.
 	 * This callback is triggered when the map is ready to be used.
@@ -362,14 +396,14 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 	public void onMapReady(GoogleMap googleMap)
 	{
 		mMap = googleMap;
-//
-//		// Add a marker in Sydney and move the camera
-//		LatLng sydney = new LatLng(-34, 151);
-//		// mMap.setMyLocationEnabled(true);
-//		mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-//		mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+		
+		// Add a marker in Sydney and move the camera
+		LatLng sydney = new LatLng(-34, 151);
+		// mMap.setMyLocationEnabled(true);
+		mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+		mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 	}
-
+	
 	public void onSettingMenuClicked(MenuItem item)
 	{
 		Intent intent = new Intent(mContext, SettingsActivity.class);
@@ -378,26 +412,19 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 	
 	public void onGymMemuClicked(MenuItem item)
 	{
-		UserData.getInstance().findGymById(0, new GymQueryCallback() {
-			@Override
-			public void onSucceed(Gym gym) {
-				Intent intent = new Intent(mContext, GymActivity.class);
-				intent.putExtra("gym", gym);
-				startActivity(intent);
-			}
-
-			@Override
-			public void onFailed(Exception exception) {
-
-			}
-		});
+		Gym gym = UserData.getInstance().findGymById("Minus Fitness Gym Chatswood");
+		if (gym != null) {
+			Intent intent = new Intent(mContext, GymActivity.class);
+			intent.putExtra("gym", gym);
+			startActivity(intent);
+		}
 	}
 	
-//	public void onAvatarClicked(View view)
-//	{
-//		userData.setUserName("YBB!");
-//	}
-//
+	//	public void onAvatarClicked(View view)
+	//	{
+	//		userData.setUserName("YBB!");
+	//	}
+	//
 	public void onLogoutClicked(MenuItem item)
 	{
 		userData.logout();
@@ -418,32 +445,33 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 	// 	fragmentTransaction.replace(R.id.mainFragment, fragment);
 	// 	fragmentTransaction.commit();
 	// }
-
-
-
+	
+	
 	@Override
 	public void onResults(@NonNull String[] strings)
 	{
-		Toast.makeText(getApplicationContext(), Arrays.toString(strings),Toast.LENGTH_LONG).show();
+		Toast.makeText(getApplicationContext(), Arrays.toString(strings), Toast.LENGTH_LONG).show();
 	}
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            View v = getCurrentFocus();
-            if ( v instanceof EditText) {
-                Rect outRect = new Rect();
-                v.getGlobalVisibleRect(outRect);
-                if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
-                    Log.d("focus", "touchevent");
-                    v.clearFocus();
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                }
-            }
-        }
-        return super.dispatchTouchEvent(event);
-    }
-
-
+	
+	@Override
+	public boolean dispatchTouchEvent(MotionEvent event)
+	{
+		if (event.getAction() == MotionEvent.ACTION_DOWN)
+		{
+			View v = getCurrentFocus();
+			if (v instanceof EditText)
+			{
+				Rect outRect = new Rect();
+				v.getGlobalVisibleRect(outRect);
+				if (!outRect.contains((int) event.getRawX(), (int) event.getRawY()))
+				{
+					Log.d("focus", "touchevent");
+					v.clearFocus();
+					InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+					imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+				}
+			}
+		}
+		return super.dispatchTouchEvent(event);
+	}
 }

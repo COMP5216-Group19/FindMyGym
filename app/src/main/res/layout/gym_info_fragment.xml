@@ -61,7 +61,7 @@
 
             <TextView
                 android:id="@+id/gym_name"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:background="@drawable/round_fill_color"

@@ -22,8 +22,8 @@ public class LoadingActivity extends AppCompatActivity
 		getSupportActionBar().hide();
 		shimmer = new Shimmer();
 		shimmer.start(findViewById(R.id.shimmer_tv));
-		shimmer.setRepeatCount(1)
-				.setDuration(500)
+		shimmer.setRepeatCount(0)//1
+				.setDuration(0)//500
 				.setStartDelay(0)
 				.setDirection(Shimmer.ANIMATION_DIRECTION_RTL)
 				.setAnimatorListener(new Animator.AnimatorListener(){

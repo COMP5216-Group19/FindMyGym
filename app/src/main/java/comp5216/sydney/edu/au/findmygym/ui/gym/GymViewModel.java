@@ -92,9 +92,9 @@ public class GymViewModel extends ViewModel {
         return isSameDate(date, tom);
     }
 
-    public PersonalTrainer findTrainerById(int trainerId) {
+    public PersonalTrainer findTrainerById(String trainerId) {
         for (PersonalTrainer pt : allPersonalTrainers) {
-            if (pt.getTrainerId() == trainerId) {
+            if (pt.getTrainerId().equals(trainerId)) {
                 return pt;
             }
         }
@@ -156,71 +156,71 @@ public class GymViewModel extends ViewModel {
                 gym.getCloseTime().get(Calendar.MINUTE));
     }
 
-    private void addTestGym() {
-        allPersonalTrainers = new ArrayList<>();
-        gym = new Gym(111,
-                "Gym A",
-                CalendarUtil.stringToCalendarNoDate("09:00"),
-                CalendarUtil.stringToCalendarNoDate("18:00"),
-                20,
-                "Blah Ave. Blah Unit",
-                "12345678",
-                123.45,
-                -27.5);
-        gym.getEquipments().add("Barbell");
-        gym.getEquipments().add("Bicycle");
-        gym.getEquipments().add("Climbing");
-        gym.getEquipments().add("Dumbbell");
-        gym.getEquipments().add("Rowing");
-        gym.getEquipments().add("Swimming");
-        gym.getEquipments().add("Treadmill");
+//    private void addTestGym() {
+//        allPersonalTrainers = new ArrayList<>();
+//        gym = new Gym(111,
+//                "Gym A",
+//                CalendarUtil.stringToCalendarNoDate("09:00"),
+//                CalendarUtil.stringToCalendarNoDate("18:00"),
+//                20,
+//                "Blah Ave. Blah Unit",
+//                "12345678",
+//                123.45,
+//                -27.5);
+//        gym.getEquipments().add("Barbell");
+//        gym.getEquipments().add("Bicycle");
+//        gym.getEquipments().add("Climbing");
+//        gym.getEquipments().add("Dumbbell");
+//        gym.getEquipments().add("Rowing");
+//        gym.getEquipments().add("Swimming");
+//        gym.getEquipments().add("Treadmill");
+//
+//        Calendar yesterday = Calendar.getInstance();
+//        yesterday.add(Calendar.DATE, -1);
+//        gym.getReviews().add(
+//                new Review("Steven", null, 2,
+//                        "What a terrible place!", yesterday));
+//
+//        Calendar someDaysAgo = Calendar.getInstance();
+//        yesterday.add(Calendar.DATE, -8);
+//        gym.getReviews().add(
+//                new Review("Elisabeth", null, 5,
+//                        "Recommended! Various kind of equipments, enough space, " +
+//                                "a swimming pool inside. Will come again and advise to " +
+//                                "my friends.",
+//                        someDaysAgo));
+//
+//        try {
+//            addMockTrainersInThisWeek(1, "Mark", 30);
+//            addMockTrainersInThisWeek(2, "Ada", 40);
+//        } catch (ParseException e) {
+//            Log.d(TAG, Arrays.toString(e.getStackTrace()));
+//        }
+//    }
 
-        Calendar yesterday = Calendar.getInstance();
-        yesterday.add(Calendar.DATE, -1);
-        gym.getReviews().add(
-                new Review("Steven", null, 2,
-                        "What a terrible place!", yesterday));
-
-        Calendar someDaysAgo = Calendar.getInstance();
-        yesterday.add(Calendar.DATE, -8);
-        gym.getReviews().add(
-                new Review("Elisabeth", null, 5,
-                        "Recommended! Various kind of equipments, enough space, " +
-                                "a swimming pool inside. Will come again and advise to " +
-                                "my friends.",
-                        someDaysAgo));
-
-        try {
-            addMockTrainersInThisWeek(1, "Mark", 30);
-            addMockTrainersInThisWeek(2, "Ada", 40);
-        } catch (ParseException e) {
-            Log.d(TAG, Arrays.toString(e.getStackTrace()));
-        }
-    }
-
-    private void addMockTrainersInThisWeek(int trainerId, String trainerName, double price)
-            throws ParseException {
-        Calendar cal = (Calendar) today.clone();
-        Calendar openTime = gym.getOpenTime();
-        cal.set(Calendar.HOUR_OF_DAY, openTime.get(Calendar.HOUR_OF_DAY));
-        cal.set(Calendar.MINUTE, openTime.get(Calendar.MINUTE));
-        double openHours = (double) (gym.getCloseTime().getTimeInMillis() -
-                openTime.getTimeInMillis()) / 3_600_000;
-        int segments = (int) Math.floor(openHours);
-
-        PersonalTrainer trainer = new PersonalTrainer(trainerId, trainerName, price);
-
-        for (int day = 0; day < 7; day++) {
-            Calendar calInDay = (Calendar) cal.clone();
-            calInDay.add(Calendar.DAY_OF_MONTH, day);
-            for (int hour = 0; hour < segments; hour++) {
-                trainer.addTimeSlot(new Timeslot((Calendar) calInDay.clone(), 60));
-                calInDay.add(Calendar.HOUR_OF_DAY, 1);
-            }
-        }
-        allPersonalTrainers.add(trainer);
-        gym.getPersonalTrainers().add(trainer);
-    }
+//    private void addMockTrainersInThisWeek(int trainerId, String trainerName, double price)
+//            throws ParseException {
+//        Calendar cal = (Calendar) today.clone();
+//        Calendar openTime = gym.getOpenTime();
+//        cal.set(Calendar.HOUR_OF_DAY, openTime.get(Calendar.HOUR_OF_DAY));
+//        cal.set(Calendar.MINUTE, openTime.get(Calendar.MINUTE));
+//        double openHours = (double) (gym.getCloseTime().getTimeInMillis() -
+//                openTime.getTimeInMillis()) / 3_600_000;
+//        int segments = (int) Math.floor(openHours);
+//
+//        PersonalTrainer trainer = new PersonalTrainer(trainerId, trainerName, price);
+//
+//        for (int day = 0; day < 7; day++) {
+//            Calendar calInDay = (Calendar) cal.clone();
+//            calInDay.add(Calendar.DAY_OF_MONTH, day);
+//            for (int hour = 0; hour < segments; hour++) {
+//                trainer.addTimeSlot(new Timeslot((Calendar) calInDay.clone(), 60));
+//                calInDay.add(Calendar.HOUR_OF_DAY, 1);
+//            }
+//        }
+//        allPersonalTrainers.add(trainer);
+//        gym.getPersonalTrainers().add(trainer);
+//    }
 
     public Calendar getSelectedDate() {
         return selectedDate;

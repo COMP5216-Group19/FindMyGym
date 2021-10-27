@@ -1,6 +1,7 @@
 package comp5216.sydney.edu.au.findmygym.ui.wallet.tabs;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,6 +24,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.auth.data.model.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.vinaygaba.creditcardview.CreditCardView;
 import com.yarolegovich.discretescrollview.DiscreteScrollView;
 import com.yarolegovich.discretescrollview.InfiniteScrollAdapter;
@@ -31,7 +43,9 @@ import com.yarolegovich.discretescrollview.transform.ScaleTransformer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import comp5216.sydney.edu.au.findmygym.AddCardDialog;
@@ -48,7 +62,7 @@ public class Wallet_Card extends Fragment
 	DiscreteScrollView discreteScrollView;
 	CardAdapter cardAdapter;
 	UserData userData;
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
@@ -60,9 +74,10 @@ public class Wallet_Card extends Fragment
 	@Override
 	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState)
 	{
-		super.onViewCreated(view, savedInstanceState);
-		this.context = getContext();
 		
+		super.onViewCreated(view, savedInstanceState);
+		userData = UserData.getInstance();
+		this.context = getContext();
 		Bitmap bitmap1 = BitmapFactory.decodeResource(context.getResources(), R.drawable.diana);
 		Bitmap bitmap2 = BitmapFactory.decodeResource(context.getResources(), R.drawable.ybb);
 		Bitmap bitmap3 = BitmapFactory.decodeResource(context.getResources(), R.drawable.azi);
@@ -82,12 +97,12 @@ public class Wallet_Card extends Fragment
 				int result = r.nextInt(9 - 0) + 0;
 				str += String.valueOf(result);
 			}
-			cards.add(new CreditCard(str, "Card" + i, "0000"));
+			cards.add(new CreditCard(str, "Card" + i, "0000",String.valueOf(i+1)));
 		}
 		
-		// userData.setPurchaseRecords(historyList);
-		userData = UserData.getInstance();
-		userData.setCreditCards(cards);
+		importCardsFromDB();
+
+		// userData.setCreditCards(cards);
 		discreteScrollView = getView().findViewById(R.id.wallet_card_discreteScrollView);
 		// discreteScrollView.setLayoutManager(new LinearLayoutManager(context));
 		CardAdapter cardAdapter = new CardAdapter(context);
@@ -160,7 +175,7 @@ public class Wallet_Card extends Fragment
 				CreditCardView creditCardView = dialog.findViewById(R.id.dialog_add_card_creditCardView);
 				Button btn_yes = dialog.findViewById(R.id.dialog_add_card_yes);
 				Button btn_no = dialog.findViewById(R.id.dialog_add_card_no);
-
+				
 				dialog.show();
 				
 				btn_yes.setOnClickListener(new View.OnClickListener()
@@ -170,11 +185,14 @@ public class Wallet_Card extends Fragment
 					{
 						cardName = creditCardView.getCardName();
 						cardDate = creditCardView.getExpiryDate();
-						cardNumber=creditCardView.getCardNumber();
-						Log.e(TAG, "creditCardView: " + creditCardView.getCardName());
-						Log.e(TAG, "creditCardView: " + creditCardView.getCardNumber());
-						Log.e(TAG, "creditCardView: " + creditCardView.getExpiryDate());
-						userData.addCreditCard(new CreditCard(cardNumber,cardName,cardDate));
+						cardNumber = creditCardView.getCardNumber();
+						Log.e(TAG, "creditCardView: " +cardName);
+						Log.e(TAG, "creditCardView: " + cardNumber);
+						Log.e(TAG, "creditCardView: " + cardDate);
+						Log.e(TAG, "onCreate: UID" + userData.getUserId());
+						// userData.addCreditCard(new CreditCard(cardNumber, cardName, cardDate));
+						addCardToDB(cardNumber,cardName,cardDate);
+						
 						dialog.dismiss();
 					}
 				});
@@ -191,5 +209,75 @@ public class Wallet_Card extends Fragment
 				// discreteScrollView.scrollToPosition(0);
 			}
 		});
+		
+		
 	}
+	
+	public void importCardsFromDB()
+	{
+		ProgressDialog progressDialog = new ProgressDialog(this.context);
+		progressDialog.setTitle("Fetching credit cards from server...");
+		progressDialog.show();
+		UserData.getInstance().setCreditCards(new ArrayList<>());
+		FirebaseFirestore db = FirebaseFirestore.getInstance();
+		CollectionReference cardsRef = db.collection("CARDS");
+		cardsRef.whereEqualTo("UID", userData.getUserId())
+				.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>()
+		{
+			@Override
+			public void onComplete(@NonNull Task<QuerySnapshot> task)
+			{
+				if (task.isSuccessful()) {
+					Log.d(TAG, "Found " + task.getResult().getDocuments().size()+ " Cards in DB");
+					for (QueryDocumentSnapshot document : task.getResult()) {
+						String number = document.getData().get(userData.KEY_CARD_number).toString();
+						String name = document.getData().get(userData.KEY_CARD_name).toString();
+						String date = document.getData().get(userData.KEY_CARD_expiryDate).toString();
+						String id = document.getId();
+						Log.d(TAG, "Card ID "+ id);
+						Log.d(TAG, "KEY_CARD_number "+number);
+						Log.d(TAG, "KEY_CARD_name "+name);
+						Log.d(TAG, "KEY_CARD_expiryDate "+date);
+						userData.addCreditCard(new CreditCard(number,name,date, id));
+					}
+					progressDialog.dismiss();
+				} else {
+					progressDialog.dismiss();
+					Log.d(TAG, "Failed to getting Cards from remote DataBase", task.getException());
+					Toast.makeText(context,"Failed to getting Cards from remote DataBase",Toast.LENGTH_LONG);
+				}
+			}
+		} );
+	}
+	
+	public void addCardToDB(String cardNumber, String cardName, String cardDate){
+		Map<String, Object> newCard = new HashMap<>();
+		newCard.put(userData.KEY_CARD_number,cardNumber);
+		newCard.put(userData.KEY_CARD_name,cardName);
+		newCard.put(userData.KEY_CARD_expiryDate,cardDate);
+		newCard.put(userData.KEY_uid, userData.getUserId());
+		FirebaseFirestore db = FirebaseFirestore.getInstance();
+		CollectionReference cardsRef = db.collection("CARDS");
+		cardsRef.add(newCard)
+		// cardsRef.add(new CreditCard())
+				.addOnSuccessListener(new OnSuccessListener<DocumentReference>()
+				{
+					@Override
+					public void onSuccess(DocumentReference documentReference)
+					{
+						importCardsFromDB();
+						Log.d(TAG,"Add card successfully: "+documentReference.getId());
+					}
+				})
+				.addOnFailureListener(new OnFailureListener()
+				{
+					@Override
+					public void onFailure(@NonNull Exception e)
+					{
+						Log.d(TAG,"Add card Failed: "+e.toString());
+						e.printStackTrace();
+					}
+				});
+	}
+	
 }

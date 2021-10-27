@@ -13,25 +13,26 @@ public class Reservation implements Serializable {
 
     private String rsvId;
     // null if no trainer reserved
-    private Integer trainerId;
+    private String trainerId;
 
-    private int gymId;
+    private String gymId;
     private String userId;
 
     private Timeslot timeslot;
 
     @SuppressLint("DefaultLocale")
-    public Reservation(String userId, int gymId, Integer trainerId, Timeslot timeslot) {
+    public Reservation(String userId, String gymId, String trainerId, Timeslot timeslot) {
         this.userId = userId;
         this.gymId = gymId;
         this.trainerId = trainerId;
         this.timeslot = timeslot;
 
-        this.rsvId = String.format("%s+%d+%s", userId, gymId, timeslot.toDatabaseString());
+        this.rsvId = String.format("%s+%s+%s", userId, gymId, timeslot.toDatabaseString());
     }
 
     public static Reservation fromData(ReservationData data) {
-        return new Reservation(data.userId, data.gymId, data.trainerId,
+        return new Reservation(data.userId, data.gymId,
+                data.trainerId.isEmpty() ? null : data.trainerId,
                 Timeslot.fromDatabaseString(data.timeslot));
     }
 
@@ -39,7 +40,7 @@ public class Reservation implements Serializable {
         ReservationData data = new ReservationData();
         data.userId = userId;
         data.gymId = gymId;
-        data.trainerId = trainerId;
+        data.trainerId = trainerId == null ? "" : trainerId;
         data.timeslot = timeslot.toDatabaseString();
         return data;
     }
@@ -48,7 +49,7 @@ public class Reservation implements Serializable {
         return rsvId;
     }
 
-    public int getGymId() {
+    public String getGymId() {
         return gymId;
     }
 
@@ -64,7 +65,7 @@ public class Reservation implements Serializable {
     /**
      * @return the personal trainer to reserve
      */
-    public Integer getTrainerId() {
+    public String getTrainerId() {
         return trainerId;
     }
 
@@ -76,9 +77,9 @@ public class Reservation implements Serializable {
     }
 
     public static class ReservationData {
-        String userId;
-        int gymId;
-        Integer trainerId;
-        String timeslot;
+        public String userId;
+        public String gymId;
+        public String trainerId;
+        public String timeslot;
     }
 }

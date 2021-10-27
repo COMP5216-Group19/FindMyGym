@@ -5,19 +5,13 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 
-import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
+import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -30,19 +24,29 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.StorageReference;
 import com.royrodriguez.transitionbutton.TransitionButton;
 
-import java.io.IOException;
-import java.net.URL;
+import java.text.ParseException;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import comp5216.sydney.edu.au.findmygym.model.UserData;
 import comp5216.sydney.edu.au.findmygym.ui.login.LoginFragment;
@@ -248,6 +252,7 @@ public class LoginActivity extends BaseActivity
 							// Sign in success, update UI with the signed-in user's information
 							Log.d(TAG, "signInWithCredential:success");
 							firebaseUser = mAuth.getCurrentUser();
+							UserData.getInstance().setSuccessful(true);
 							updateUserdata();
 							Toast.makeText(mContext, "Login Successfully!" + "\n" + "Hi," + firebaseUser.getDisplayName(), Toast.LENGTH_LONG).show();
 							// updateUI(user);
@@ -269,7 +274,70 @@ public class LoginActivity extends BaseActivity
 	private void updateUserdata(){
 		userData.setContext(mContext);
 		userData.setFirebaseUser(firebaseUser);
+		
+		
+		FirebaseFirestore db = FirebaseFirestore.getInstance();
+		String uid = userData.getUserId();
+		DocumentReference userdataRef = db.collection("USERS").document(uid);
+		userdataRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>()
+		{
+			@Override
+			public void onSuccess(DocumentSnapshot documentSnapshot)
+			{
+				if (documentSnapshot.exists())
+				{
+					Log.d(TAG , "getId: " + documentSnapshot.getId());
+					Log.d(TAG , "getData: " + documentSnapshot.getData());
+					Log.d(TAG , "get: KEY_uid" + documentSnapshot.getData().get(userData.KEY_uid));
+					Log.d(TAG , "get: KEY_userName" + documentSnapshot.getData().get(userData.KEY_userName));
+					Log.d(TAG , "get: KEY_userEmail" + documentSnapshot.getData().get(userData.KEY_userEmail));
+					userdataRef.update(userData.KEY_login_last_time,getTimeStamp());
+					long counter = (long) documentSnapshot.getData().get(userData.KEY_login_counter);
+					counter++;
+					userdataRef.update(userData.KEY_login_counter,counter);
+					userdataRef.update(userData.KEY_userName,userData.getUserName());
+				}
+				else
+				{
+					Map<String, Object> userdataMap = new HashMap<>();
+					userdataMap.put(userData.KEY_uid, userData.getUserId());
+					userdataMap.put(userData.KEY_userName, userData.getUserName());
+					userdataMap.put(userData.KEY_userEmail, userData.getUserMail());
+					userdataMap.put(userData.KEY_login_first_time, getTimeStamp());
+					userdataMap.put(userData.KEY_login_last_time, getTimeStamp());
+					userdataMap.put(userData.KEY_login_counter,1);
+					db.collection("USERS").document(uid).set(userdataMap)
+							.addOnSuccessListener(new OnSuccessListener<Void>()
+							{
+								@Override
+								public void onSuccess(Void unused)
+								{
+									Log.e(TAG, "UserData INIT Successfully in DB: " + uid);
+								}
+							})
+							.addOnFailureListener(new OnFailureListener()
+							{
+								@Override
+								public void onFailure(@NonNull Exception e)
+								{
+									Log.e(TAG, "UserData INIT Failed in DB: " + uid);
+								}
+							});
+				}
+			}
+		});
 	}
 	
+	public Timestamp getTimeStamp(){
+		// SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+		// Date date = null;
+		// try{
+		// 	date = format.parse(String.valueOf(Calendar.getInstance()));
+		// } catch (ParseException e)
+		// {
+		// 	e.printStackTrace();
+		// }
+		return new Timestamp(new Date());
+	}
 
 }

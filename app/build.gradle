@@ -31,14 +31,13 @@ android {
         viewBinding true
     }
 }
-apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
 
 dependencies {
 //    implementation 'com.android.support:appcompat-v7:1.3.1'
     implementation "androidx.appcompat:appcompat-resources:1.3.1"
 //    implementation "androidx.appcompat:appcompat:+"
     // For loading and tinting drawables on older versions of the platform
+    implementation 'com.google.android.gms:play-services-auth:19.2.0'
 
 
     implementation 'androidx.appcompat:appcompat:1.3.1'
@@ -52,10 +51,9 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.3.5'
     implementation 'com.google.android.gms:play-services-maps:17.0.1'
     implementation 'androidx.preference:preference:1.1.1'
-    implementation 'com.google.firebase:firebase-auth:19.2.0'
+    implementation 'com.google.firebase:firebase-auth:21.0.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'com.google.firebase:firebase-database:19.2.1'
-    implementation 'com.google.android.gms:play-services-location:18.0.0'
+    implementation 'com.google.firebase:firebase-database:20.0.2'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
@@ -124,4 +122,12 @@ dependencies {
     //delete dialog
     implementation 'com.github.f0ris.sweetalert:library:1.6.2'
 
+    // Import the BoM for the Firebase platform
+    implementation platform('com.google.firebase:firebase-bom:28.4.1')
+    // Declare the dependency for the Cloud Firestore library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation 'com.google.firebase:firebase-firestore'
 }
+
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'

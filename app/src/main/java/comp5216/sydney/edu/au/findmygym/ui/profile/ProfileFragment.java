@@ -1,7 +1,10 @@
 package comp5216.sydney.edu.au.findmygym.ui.profile;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +15,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.bumptech.glide.Glide;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
@@ -60,15 +64,7 @@ public class ProfileFragment extends Fragment
 
 		binding = FragmentProfileBinding.inflate(inflater, container, false);
 		View root = binding.getRoot();
-		//		final TextView textView = binding.textProfile;
-		//		profileViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>()
-		//		{
-		//			@Override
-		//			public void onChanged(@Nullable String s)
-		//			{
-		//				textView.setText(s);
-		//			}
-		//		});
+
 		return root;
 	}
 
@@ -85,7 +81,10 @@ public class ProfileFragment extends Fragment
 
 		//TODO: need to change allGyms into firebase databases
 		FavGymAdapter favGymAdapter = new FavGymAdapter();
-
+		Glide.with(this.getContext())
+				.load(userData.getUserAvatarUri())
+				.placeholder(R.drawable.ic_launcher_background)
+				.into(binding.avatarImage);
 		binding.avatarImage.setImageBitmap(userData.getUserAvatar());
 		binding.nameText.setText(userData.getUserName());
 		binding.emailText.setText(userData.getUserMail());
@@ -219,12 +218,12 @@ public class ProfileFragment extends Fragment
 	public Map<String, Integer> getTrainerLogFromReservations(List<Reservation> reservations) {
 		Map<String, Integer> trainerLog = new HashMap<>();
 		for (Reservation rev: reservations) {
-			String trainerName = findTrainerNameById(rev.getTrainerId());
-			if (trainerLog.containsKey(trainerName)) {
-				trainerLog.put(trainerName, trainerLog.get(trainerName) + 1);
-			} else {
-				trainerLog.put(trainerName, 1);
-			}
+//			String trainerName = findTrainerNameById(rev.getTrainerId());
+//			if (trainerLog.containsKey(trainerName)) {
+//				trainerLog.put(trainerName, trainerLog.get(trainerName) + 1);
+//			} else {
+//				trainerLog.put(trainerName, 1);
+//			}
 		}
 
 		return trainerLog;
@@ -232,12 +231,12 @@ public class ProfileFragment extends Fragment
 
 	public String findTrainerNameById(Integer id) {
 		String name = "";
-		if(userData.allGyms == null) { return name; }
-		for (int i = 0; i < userData.allTrainers.size(); i++) {
-			if (userData.allTrainers.get(i).getTrainerId() == id) {
-				name = userData.allTrainers.get(i).getName();
-			}
-		}
+//		if(userData.getAllSimpleGyms() == null) { return name; }
+//		for (int i = 0; i < userData.allTrainers.size(); i++) {
+//			if (userData.allTrainers.get(i).getTrainerId() == id) {
+//				name = userData.allTrainers.get(i).getName();
+//			}
+//		}
 		return name;
 	}
 
