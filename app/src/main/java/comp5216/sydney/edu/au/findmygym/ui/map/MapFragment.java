@@ -176,38 +176,38 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 		});
 		mMapFragment.getMapAsync(this);
 	}
-	public String findGymName(int id){
+	public String findGymName(String id){
 		String name = "";
 		for (int i = 0; i < userData.allGyms.size(); i++) {
-			if (userData.allGyms.get(i).getGymId() == id) {
+			if (userData.getAllGyms().get(i).getGymId().equals(id)) {
 				name = userData.allGyms.get(i).getGymName();
 			}
 		}
 		return name;
 	}
 
-	public String findGymAddress(int id){
+	public String findGymAddress(String id){
 		String address = "";
 		for (int i = 0; i < userData.allGyms.size(); i++) {
-			if (userData.allGyms.get(i).getGymId() == id) {
+			if (userData.getAllGyms().get(i).getGymId().equals(id)) {
 				address = userData.allGyms.get(i).getAddress();
 			}
 		}
 		return address;
 	}
-	public double findGymlat(int id){
+	public double findGymlat(String id){
 		double latitude = 0;
 		for (int i = 0; i < userData.allGyms.size(); i++) {
-			if (userData.allGyms.get(i).getGymId() == id) {
+			if (userData.getAllGyms().get(i).getGymId() == id) {
 				latitude = userData.allGyms.get(i).getLatitude();
 			}
 		}
 		return latitude;
 	}
-	public double findGymlong(int id){
+	public double findGymlong(String id){
 		double longitude = 0;
 		for (int i = 0; i < userData.allGyms.size(); i++) {
-			if (userData.allGyms.get(i).getGymId() == id) {
+			if (userData.getAllGyms().get(i).getGymId() == id) {
 				longitude = userData.allGyms.get(i).getLongitude();
 			}
 		}
@@ -431,7 +431,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 ////	public void displaySelectedMarkers(View view) {
 ////
 ////		dialog.dismiss();
-////		Log.i("TAG", "member Status " + member.isChecked() + " cloest Status  " + closest.isChecked());
+////		Log.i("TAG", "member Status " + member.isChecked() + " closet Status  " + closest.isChecked());
 ////		//according these check boxes status execute your code to show/hide markers
 //////		if (member.isChecked() && !closest.isChecked()) {
 //////			//show member and hide other markers
@@ -441,7 +441,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 //////			}
 //////			//}
 ////		if (closest.isChecked()) {
-////			//hide others and show cloest markers
+////			//hide others and show closet markers
 ////			//if (view.getId() == R.id.checkBox2){
 ////			for (Marker marker : markers){
 ////				marker.setVisible(false);
