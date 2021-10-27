@@ -101,13 +101,17 @@ public class GymViewModel extends ViewModel {
         return null;
     }
 
+    public double getTotalPrice() {
+        return gymPrice + trainerPrice;
+    }
+
     /**
      * Make a reservation.
      *
      * @param reservation the reservation to be made
      */
     public void makeReservation(Reservation reservation) {
-        // TODO: 预约
+
     }
 
     /**

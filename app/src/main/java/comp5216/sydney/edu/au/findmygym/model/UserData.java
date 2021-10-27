@@ -27,6 +27,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -76,6 +77,7 @@ public class UserData extends LiveData<UserData>
 	private Context mContext;
 
 	private boolean isSuccessful = false;
+	private boolean downloadFinished = false;
 
 	// This list will load when launching this app
 	// Displays these gyms on map
@@ -130,25 +132,36 @@ public class UserData extends LiveData<UserData>
 		allGyms = new ArrayList<>();
 		allTrainers = new ArrayList<>();
 		gymsRef.get().addOnSuccessListener(dataSnapshot -> {
+			List<Gym.GymData> gymDataList = new ArrayList<>();
 			for (DataSnapshot ds : dataSnapshot.getChildren()) {
 				Gym.GymData gd = ds.getValue(Gym.GymData.class);
 				if (gd != null) {
-					if (gd.trainerIds == null) {
-						gd.trainerIds = new ArrayList<>();
-					}
-					// Then query trainers of this gym
-					populateTrainersOfGym(gd, new GymQueryCallback() {
-						@Override
-						public void onSucceed(Gym gym) {
-							allGyms.add(gym);
-						}
-
-						@Override
-						public void onFailed(Exception exception) {
-							Log.e(TAG, Arrays.toString(exception.getStackTrace()));
-						}
-					});
+					gymDataList.add(gd);
 				}
+			}
+
+			for (Gym.GymData gd : gymDataList) {
+				if (gd.trainerIds == null) {
+					gd.trainerIds = new ArrayList<>();
+				}
+				// Then query trainers of this gym
+				populateTrainersOfGym(gd, new GymQueryCallback() {
+					@Override
+					public void onSucceed(Gym gym) {
+						allGyms.add(gym);
+						Log.d(TAG, "Downloaded gym " + gym.getGymId());
+						if (allGyms.size() == gymDataList.size()) {
+							downloadFinished = true;
+							Log.d(TAG, "All gyms downloaded!");
+						}
+					}
+
+					@Override
+					public void onFailed(Exception exception) {
+						Log.e(TAG, Arrays.toString(exception.getStackTrace()));
+					}
+				});
+
 			}
 		}).addOnFailureListener(e -> {
 			Log.e(TAG, Arrays.toString(e.getStackTrace()));
@@ -256,18 +269,21 @@ public class UserData extends LiveData<UserData>
 				getUserId(),
 				"1",
 				null,
+				20,
 				new Timeslot(CalendarUtil.stringToCalendar("2021-10-28 10:00"), 60)
 		);
 		Reservation rev2 = new Reservation(
 				getUserId(),
 				"2",
 				"3",
+				52,
 				new Timeslot(CalendarUtil.stringToCalendar("2021-10-22 09:00"), 60)
 		);
 		Reservation rev3 = new Reservation(
 				getUserId(),
 				"2",
 				"4",
+				56,
 				new Timeslot(CalendarUtil.stringToCalendar("2021-10-23 11:00"), 120)
 		);
 
@@ -580,15 +596,6 @@ public class UserData extends LiveData<UserData>
 				// todo
 			}
 		}).addOnFailureListener(callback::onFailed);
-	}
-
-	public void findReviewById(String reviewId, ReviewQueryCallback callback) {
-
-	}
-
-	@Deprecated
-	public PersonalTrainer findTrainerById(String trainerId) {
-		return null;
 	}
 
 	public void postNewReservation(Reservation reservation) {
@@ -998,6 +1005,6 @@ public class UserData extends LiveData<UserData>
 	}
 
 	public boolean isSuccessful() {
-		return isSuccessful;
+		return isSuccessful && downloadFinished;
 	}
 }

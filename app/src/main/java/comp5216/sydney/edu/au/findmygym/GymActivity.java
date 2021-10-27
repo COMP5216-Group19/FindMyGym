@@ -196,6 +196,7 @@ public class GymActivity extends AppCompatActivity {
                             UserData.getInstance().getUserId(),
                             mViewModel.getGym().getGymId(),
                             trainerRsv == null ? null : trainerRsv.trainer.getTrainerId(),
+                            mViewModel.getTotalPrice(),
                             mViewModel.getSelectedGymTimeslot());
                     mViewModel.makeReservation(reservation);
                 })
