@@ -86,6 +86,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 	private static final String KEY_CAMERA_POSITION = "camera_position";
 	private static final String KEY_LOCATION = "location";
 
+	public ArrayList<String> list = new ArrayList<String>();
+
+
 
 
 	public View onCreateView(@NonNull LayoutInflater inflater,
@@ -178,9 +181,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 	}
 	public String findGymName(String id){
 		String name = "";
+		if(userData.getAllGyms()==null) {return name;}
 		for (int i = 0; i < userData.getAllGyms().size(); i++) {
 			if (userData.getAllGyms().get(i).getGymId().equals(id)) {
-				name = userData.allGyms.get(i).getGymName();
+				name = userData.getAllGyms().get(i).getGymName();
 			}
 		}
 		return name;
@@ -190,7 +194,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 		String address = "";
 		for (int i = 0; i < userData.getAllGyms().size(); i++) {
 			if (userData.getAllGyms().get(i).getGymId().equals(id)) {
-				address = userData.allGyms.get(i).getAddress();
+				address = userData.getAllGyms().get(i).getAddress();
 			}
 		}
 		return address;
@@ -198,8 +202,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 	public double findGymlat(String id){
 		double latitude = 0;
 		for (int i = 0; i < userData.getAllGyms().size(); i++) {
-			if (userData.getAllGyms().get(i).getGymId() == id) {
-				latitude = userData.allGyms.get(i).getLatitude();
+			if (userData.getAllGyms().get(i).getGymId().equals(id)) {
+				latitude = userData.getAllGyms().get(i).getLatitude();
 			}
 		}
 		return latitude;
@@ -207,8 +211,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 	public double findGymlong(String id){
 		double longitude = 0;
 		for (int i = 0; i < userData.getAllGyms().size(); i++) {
-			if (userData.getAllGyms().get(i).getGymId() == id) {
-				longitude = userData.allGyms.get(i).getLongitude();
+			if (userData.getAllGyms().get(i).getGymId().equals(id)) {
+				longitude = userData.getAllGyms().get(i).getLongitude();
 			}
 		}
 		return longitude;
@@ -224,12 +228,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 		getDeviceLocation();
 		mMap.setMyLocationEnabled(true);
 		mMap.setOnInfoWindowLongClickListener(this);
+		for (int i = 0; i < userData.getAllGyms().size(); i++){
+			list.add(userData.getAllGyms().get(i).getGymId());
+		}
+
 
 		for(int i=0; i<10; i++){
 			markers.add(mMap.addMarker(new MarkerOptions()
-					.position(new LatLng(findGymlat(i), findGymlong(i)))
-					.title(findGymName(i))
-					.snippet(findGymAddress(i))
+					.position(new LatLng(findGymlat(list.get(i)), findGymlong(list.get(i))))
+					.title(findGymName(list.get(i)))
+					.snippet(findGymAddress(list.get(i)))
 					.icon(BitmapFromVector(getActivity().getApplicationContext(),R.drawable.ic_baseline_fitness_center_24))));
 
 		};
@@ -242,7 +250,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 //				return false;
 //			}
 //		});
-		calculatedistance();
+//		calculatedistance();
 	}
 
 	public List<Marker> getList() {
@@ -373,12 +381,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 		String title = marker.getTitle();
 		int j = 0;
 		for(int i=0; i<10; i++){
-			if (title.equals(findGymName(i))) {
+			if (title.equals(findGymName(list.get(i)))) {
 				j=i;
 			}
 		}
 
-		UserData.getInstance().findGymById(j, new GymQueryCallback() {
+		UserData.getInstance().findGymById(list.get(j), new GymQueryCallback() {
 			@Override
 			public void onSucceed(Gym gym) {
 				Intent intent = new Intent(getActivity(), GymActivity.class);
@@ -393,21 +401,21 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 		});
 	}
 
-	public Integer calculatedistance() {
-		getDeviceLocation();
-
-		for(int i=0; i<10; i++){
-
-			Location markerLocation = new Location("");
-			markerLocation.setLatitude(findGymlat(i));
-			markerLocation.setLongitude(findGymlong(i));
-			double distance = mLastKnownLocation.distanceTo(markerLocation);
-			distancelist.add(distance);
-
-		};
-
-		return distancelist.indexOf(Collections.min(distancelist));
-	}
+//	public Integer calculatedistance() {
+//		getDeviceLocation();
+//
+//		for(int i=0; i<10; i++){
+//
+//			Location markerLocation = new Location("");
+//			markerLocation.setLatitude(findGymlat(i));
+//			markerLocation.setLongitude(findGymlong(i));
+//			double distance = mLastKnownLocation.distanceTo(markerLocation);
+//			distancelist.add(distance);
+//
+//		};
+//
+//		return distancelist.indexOf(Collections.min(distancelist));
+//	}
 
 //	AlertDialog dialog;
 //	RadioButton closest, member;
