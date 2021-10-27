@@ -92,7 +92,7 @@ public class LoginFragment extends Fragment
 								}
 							});
 						} else {
-							transitionButton.stopAnimation(TransitionButton.StopAnimationStyle.SHAKE, null);
+//							transitionButton.stopAnimation(TransitionButton.StopAnimationStyle.SHAKE, null);
 						}
 					}
 				}, 2000);

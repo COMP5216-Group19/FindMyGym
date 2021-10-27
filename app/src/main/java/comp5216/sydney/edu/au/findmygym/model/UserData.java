@@ -137,34 +137,37 @@ public class UserData extends LiveData<UserData>
 				Gym.GymData gd = ds.getValue(Gym.GymData.class);
 				if (gd != null) {
 					gymDataList.add(gd);
+				} else {
+					Log.e(TAG, "null gym");
 				}
 			}
 
 			for (Gym.GymData gd : gymDataList) {
 				if (gd.trainerIds == null) {
-					gd.trainerIds = new ArrayList<>();
-				}
-				// Then query trainers of this gym
-				populateTrainersOfGym(gd, new GymQueryCallback() {
-					@Override
-					public void onSucceed(Gym gym) {
-						allGyms.add(gym);
-						Log.d(TAG, "Downloaded gym " + gym.getGymId());
-						if (allGyms.size() == gymDataList.size()) {
-							downloadFinished = true;
-							Log.d(TAG, "All gyms downloaded!");
+					allGyms.add(Gym.fromGymData(gd, new ArrayList<>(),
+							new ArrayList<>(), null));
+				} else {
+					// Then query trainers of this gym
+					populateTrainersOfGym(gd, new GymQueryCallback() {
+						@Override
+						public void onSucceed(Gym gym) {
+							allGyms.add(gym);
+							Log.d(TAG, "Downloaded gym " + gym.getGymId());
+							if (allGyms.size() == gymDataList.size()) {
+								downloadFinished = true;
+								Log.d(TAG, "All gyms downloaded!");
+							}
 						}
-					}
 
-					@Override
-					public void onFailed(Exception exception) {
-						Log.e(TAG, Arrays.toString(exception.getStackTrace()));
-					}
-				});
-
+						@Override
+						public void onFailed(Exception exception) {
+							Log.e(TAG, Arrays.toString(exception.getStackTrace()));
+						}
+					});
+				}
 			}
 		}).addOnFailureListener(e -> {
-			Log.e(TAG, Arrays.toString(e.getStackTrace()));
+			Log.e(TAG, "Gym download error", e);
 		});
 	}
 
@@ -440,6 +443,8 @@ public class UserData extends LiveData<UserData>
 				151.2102227,
 				-33.8706586
 		);
+		addMockTrainersInThisWeek(allTrainers, gym8, "Jenny", "Jenny", 30.0);
+
 		Gym gym9 = new Gym(
 				"Sliver's Gym",
 				"Sliver's Gym",
@@ -451,6 +456,8 @@ public class UserData extends LiveData<UserData>
 				151.2052855,
 				-33.8334692
 		);
+		addMockTrainersInThisWeek(allTrainers, gym9, "Nofe", "Nofe", 18.0);
+
 		randomAddEquipment(gym0);
 		randomAddEquipment(gym1);
 		randomAddEquipment(gym2);
