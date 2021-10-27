@@ -412,22 +412,13 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 	
 	public void onGymMemuClicked(MenuItem item)
 	{
-		UserData.getInstance().findGymById(0, new GymQueryCallback()
-		{
-			@Override
-			public void onSucceed(Gym gym)
-			{
-				Intent intent = new Intent(mContext, GymActivity.class);
-				intent.putExtra("gym", gym);
-				startActivity(intent);
-			}
-			
-			@Override
-			public void onFailed(Exception exception)
-			{
-				
-			}
-		});
+
+		Gym gym = UserData.getInstance().findGymById("Minus Fitness Gym Chatswood");
+		if (gym != null) {
+			Intent intent = new Intent(mContext, GymActivity.class);
+			intent.putExtra("gym", gym);
+			startActivity(intent);
+		}
 	}
 	
 	//	public void onAvatarClicked(View view)

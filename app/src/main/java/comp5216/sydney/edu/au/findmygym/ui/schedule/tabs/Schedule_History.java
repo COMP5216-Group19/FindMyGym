@@ -63,25 +63,25 @@ public class Schedule_History extends Fragment
         userData = UserData.getInstance();
 
         Bitmap bitmap1 = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.fitness_gym_example_1484x983);
-        Bitmap bitmap2 = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.fitness_gym_example_1484x983);
-        Bitmap bitmap3 = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.fitness_gym_example_1484x983);
-        Bitmap bitmap4 = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.fitness_gym_example_1484x983);
-        Bitmap bitmap5 = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.fitness_gym_example_1484x983);
-        List<Bitmap> bitmapList = Arrays.asList(bitmap1,bitmap2,bitmap3,bitmap4,bitmap5);
+//        Bitmap bitmap2 = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.fitness_gym_example_1484x983);
+//        Bitmap bitmap3 = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.fitness_gym_example_1484x983);
+//        Bitmap bitmap4 = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.fitness_gym_example_1484x983);
+//        Bitmap bitmap5 = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.fitness_gym_example_1484x983);
+        List<Bitmap> bitmapList = Arrays.asList(new Bitmap[]{bitmap1});
 
         for (int i = 0; i < userData.getReservations().size(); i++)
         {
             Calendar now =  Calendar.getInstance();
 
             //get Gym name by id
-            int gymId = userData.getReservations().get(i).getGymId();
+            String gymId = userData.getReservations().get(i).getGymId();
             Gym gym = userData.findGymById(gymId);
             String gymName = gym.getGymName();
 
             //get Trainer name by id
-            int trainerId = userData.getReservations().get(i).getTrainerId();
-            PersonalTrainer trainer = userData.findTrainerById(trainerId);
-            String trainerName = trainer.getName();
+            String trainerId = userData.getReservations().get(i).getTrainerId();
+            PersonalTrainer trainer = gym.getTrainerById(trainerId);
+            String trainerName = trainer == null ? "" : trainer.getName();
 
             // get reservation start time
             Timeslot reservationDate = userData.getReservations().get(i).getSelectedTimeSlot();
