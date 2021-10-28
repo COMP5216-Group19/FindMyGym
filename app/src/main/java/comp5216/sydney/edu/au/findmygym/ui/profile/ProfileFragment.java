@@ -85,7 +85,6 @@ public class ProfileFragment extends Fragment
 				.load(userData.getUserAvatarUri())
 				.placeholder(R.drawable.ic_launcher_background)
 				.into(binding.avatarImage);
-		binding.avatarImage.setImageBitmap(userData.getUserAvatar());
 		binding.nameText.setText(userData.getUserName());
 		binding.emailText.setText(userData.getUserMail());
 
@@ -156,8 +155,6 @@ public class ProfileFragment extends Fragment
 		barChart.notifyDataSetChanged();
 		barChart.invalidate();
 
-
-
 		//Set PieChart
 		PieChart pieChart = getView().findViewById(R.id.pieChart);
 
@@ -218,25 +215,25 @@ public class ProfileFragment extends Fragment
 	public Map<String, Integer> getTrainerLogFromReservations(List<Reservation> reservations) {
 		Map<String, Integer> trainerLog = new HashMap<>();
 		for (Reservation rev: reservations) {
-//			String trainerName = findTrainerNameById(rev.getTrainerId());
-//			if (trainerLog.containsKey(trainerName)) {
-//				trainerLog.put(trainerName, trainerLog.get(trainerName) + 1);
-//			} else {
-//				trainerLog.put(trainerName, 1);
-//			}
+			String trainerName = findTrainerNameById(rev.getTrainerId());
+			if (trainerLog.containsKey(trainerName)) {
+				trainerLog.put(trainerName, trainerLog.get(trainerName) + 1);
+			} else {
+				trainerLog.put(trainerName, 1);
+			}
 		}
 
 		return trainerLog;
 	}
 
-	public String findTrainerNameById(Integer id) {
+	public String findTrainerNameById(String id) {
 		String name = "";
-//		if(userData.getAllSimpleGyms() == null) { return name; }
-//		for (int i = 0; i < userData.allTrainers.size(); i++) {
-//			if (userData.allTrainers.get(i).getTrainerId() == id) {
-//				name = userData.allTrainers.get(i).getName();
-//			}
-//		}
+		if(userData.getAllGyms() == null) { return name; }
+		for (int i = 0; i < userData.getAllTrainers().size(); i++) {
+			if (userData.getAllTrainers().get(i).getTrainerId().equals(id)) {
+				name = userData.getAllTrainers().get(i).getName();
+			}
+		}
 		return name;
 	}
 

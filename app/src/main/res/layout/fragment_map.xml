@@ -31,17 +31,30 @@
 
     <androidx.appcompat.widget.SearchView
         android:id="@+id/idSearchView"
-        android:layout_width="390dp"
-        android:layout_height="32dp"
-        android:layout_margin="10dp"
+        android:layout_width="325dp"
+        android:layout_height="37dp"
+        android:layout_margin="13dp"
         android:background="@color/white"
         android:elevation="5dp"
         app:iconifiedByDefault="false"
         app:layout_constraintBottom_toBottomOf="@+id/map_mapView"
-        app:layout_constraintEnd_toEndOf="@+id/map_mapView"
-        app:layout_constraintStart_toStartOf="@+id/map_mapView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/map_mapView"
         app:layout_constraintVertical_bias="0.0"
         app:queryHint="Search Gym" />
+
+    <Button
+        android:id="@+id/filter_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="200dp"
+        android:backgroundTint="#03DAC5"
+        android:text="Filter"
+        android:textColor="#000000"
+        app:layout_constraintBottom_toBottomOf="@+id/map_mapView"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
