@@ -1554,6 +1554,21 @@ public class UserData extends LiveData<UserData>
 		return isSuccessful && downloadFinished;
 	}
 
+	public void getUsernameByUID(String UID, ObjectQueryCallback callback) {
+		FirebaseFirestore db = FirebaseFirestore.getInstance();
+		db.collection(KEY_USERS).document(UID).get().addOnCompleteListener(task -> {
+			if (task.isSuccessful()) {
+				try {
+					callback.onSucceed(task.getResult().get(KEY_userName));
+				} catch (Exception e) {
+					callback.onFailed(e);
+				}
+			} else {
+				callback.onFailed(task.getException());
+			}
+		});
+	}
+
 	public void getTrainersByGymId(String GID, ListQueryCallback callback)
 	{
 		String mTag = "[getTrainersByGymId]";

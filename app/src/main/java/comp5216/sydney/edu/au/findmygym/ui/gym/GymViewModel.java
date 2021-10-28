@@ -10,9 +10,7 @@ import com.wdullaer.materialdatetimepicker.time.Timepoint;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.ParseException;
-import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -43,7 +41,7 @@ public class GymViewModel extends ViewModel {
     /**
      * Whether the current user has came to this gym.
      */
-    boolean arrivedByThisUser;
+    boolean visitedByThisUser;
     private Calendar now = Calendar.getInstance();
     private final Calendar today = beginOfADay(now);
     private Gym gym;
@@ -171,7 +169,7 @@ public class GymViewModel extends ViewModel {
 
     private void generateValuesByGym() {
         gymPrice = gym.getPrice();
-        arrivedByThisUser = UserData.getInstance().hasBeenToGym(gym.getGymId());
+        visitedByThisUser = UserData.getInstance().hasBeenToGym(gym.getGymId());
 
         Calendar oneHourLater = (Calendar) now.clone();
         oneHourLater.add(Calendar.HOUR_OF_DAY, 1);

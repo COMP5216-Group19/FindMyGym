@@ -33,6 +33,8 @@ import comp5216.sydney.edu.au.findmygym.Utils.ImageUtil;
 import comp5216.sydney.edu.au.findmygym.model.Gym;
 import comp5216.sydney.edu.au.findmygym.model.Review;
 import comp5216.sydney.edu.au.findmygym.model.Timeslot;
+import comp5216.sydney.edu.au.findmygym.model.UserData;
+import comp5216.sydney.edu.au.findmygym.model.callbacks.ObjectQueryCallback;
 
 public class GymInfoFragment extends Fragment {
 
@@ -72,7 +74,7 @@ public class GymInfoFragment extends Fragment {
         Button postReviewButton = view.findViewById(R.id.gym_post_review_button);
         TextInputLayout inputLayout = view.findViewById(R.id.gym_review_input_layout);
 
-        if (!mViewModel.arrivedByThisUser) {
+        if (!mViewModel.visitedByThisUser) {
             inputLayout.setHint(R.string.gym_go_first_then_comment);
             inputLayout.setEnabled(false);
             postReviewButton.setEnabled(false);
@@ -131,6 +133,18 @@ public class GymInfoFragment extends Fragment {
         for (Review review : gym.getReviews()) {
             View itemView = makeReviewView(review, reviewsList);
             reviewsList.addView(itemView, 0);
+            UserData.getInstance().getUsernameByUID(review.getUserId(), new ObjectQueryCallback() {
+                @Override
+                public void onSucceed(Object object) {
+                    TextView userNameText = itemView.findViewById(R.id.review_user_name);
+                    userNameText.setText((String) object);
+                }
+
+                @Override
+                public void onFailed(Exception e) {
+
+                }
+            });
         }
     }
 
