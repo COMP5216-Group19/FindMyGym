@@ -1082,23 +1082,22 @@ public class UserData extends LiveData<UserData>
 	}
 
 	public List<String> getFavouriteGyms() {
-		if (favouriteGyms != null) {
-
-		} else {
+		if (favouriteGyms == null) {
 			favouriteGyms = new ArrayList<>();
-//			favouriteGyms.add();
 		}
 		return this.favouriteGyms;
 	}
 
 	public void addToFavouriteGyms(String gymId) {
 		favouriteGyms.add(gymId);
-		// todo: 其他操作
+		userRef.child(getUserId()).child("favouriteGyms").setValue(favouriteGyms);
+		postValue(this);
 	}
 
 	public void removeFromFavouriteGyms(String gymId) {
 		favouriteGyms.remove(gymId);
-		// todo: 其他操作
+		userRef.child(getUserId()).child("favouriteGyms").setValue(favouriteGyms);
+		postValue(this);
 	}
 
 	public void setFavouriteGyms(List<String> favouriteGyms) {

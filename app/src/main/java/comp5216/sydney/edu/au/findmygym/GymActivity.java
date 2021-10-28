@@ -40,7 +40,6 @@ public class GymActivity extends AppCompatActivity {
         mContext = GymActivity.this;
 
         mViewModel = new ViewModelProvider(this).get(GymViewModel.class);
-        // todo: set gym
         mViewModel.setGym((Gym) getIntent().getSerializableExtra("gym"));
 
         isFavourite = mViewModel.getGym().isFavourite();
