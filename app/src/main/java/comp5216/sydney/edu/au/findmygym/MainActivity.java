@@ -68,6 +68,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import comp5216.sydney.edu.au.findmygym.Utils.ImageUtil;
 import comp5216.sydney.edu.au.findmygym.databinding.ActivityMainBinding;
 import comp5216.sydney.edu.au.findmygym.model.Gym;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.GymQueryCallback;
@@ -136,30 +137,8 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		setDrawerListener();//setup drawer event handler
 		setFabListener();
 		setSupportActionBar(binding.appBarMain.toolbar);
-		
-		// usersColRef.whereEqualTo("UID", uid).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>()
-		// {
-		// 	@Override
-		// 	public void onComplete(@NonNull Task<QuerySnapshot> task)
-		// 	{
-		// 		if (task.isSuccessful())
-		// 		{
-		// 			// Log.d(TAG, "TASK DONE: "+task.getResult().getDocuments().getClass());
-		// 			for (QueryDocumentSnapshot document : task.getResult())
-		// 			{
-		// 				Log.d(TAG+"[DB] - ", "getId: "+document.getId());
-		// 				Log.d(TAG+"[DB] - ", "getData: "+document.getData());
-		// 				Log.d(TAG+"[DB] - ", "get: "+document.getData().get("NAME"));
-		// 			}
-		// 		}
-		// 		else
-		// 		{
-		// 			Log.d(TAG, "Error getting documents: ", task.getException());
-		// 		}
-		// 	}
-		// });
-		
-		
+		userData.setContext(mContext);
+		UserData.uploadingGymImg();
 	}
 	
 	//TEST
@@ -276,32 +255,11 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 				
 				try
 				{
-					loadImage("azi",navAvatar,mContext);
-					// String id = "ybb";
-					// StorageReference picRef = FirebaseStorage.getInstance().getReferenceFromUrl(userData.URL_STORAGE_ORIGINAL_IMAGE+id+".jpg");
-					// picRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
-					// {
-					// 	@Override
-					// 	public void onSuccess(Uri uri)
-					// 	{
-					// 		Glide.with(mContext)
-					// 				.load(uri)
-					// 				.placeholder(R.drawable.ic_launcher_background)
-					// 				.into(navAvatar);
-					// 	}
-					// }).addOnFailureListener(new OnFailureListener()
-					// {
-					// 	@Override
-					// 	public void onFailure(@NonNull Exception e)
-					// 	{
-					// 		Log.e(TAG, "onFailure: Load Failed"+userData.URL_STORAGE_ORIGINAL_IMAGE+id+".jpg" );
-					// 	}
-					// });
-					
-					// Glide.with(mContext)
-					// 		.load(userData.getUserAvatarUri())
-					// 		.placeholder(R.drawable.ic_launcher_background)
-					// 		.into(navAvatar);
+					// ImageUtil.loadImage("azi",navAvatar,mContext);
+					Glide.with(mContext)
+							.load(userData.getUserAvatarUri())
+							.placeholder(R.drawable.ic_launcher_background)
+							.into(navAvatar);
 				} catch (Exception e)
 				{
 					Log.e(TAG, "updateUserdata: " + e.toString());
@@ -501,34 +459,4 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		return super.dispatchTouchEvent(event);
 	}
 	
-	public static void loadImage(String imageName, ImageView imageView, Context context){
-		UserData userData = UserData.getInstance();
-		ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo wifiNetworkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-		StorageReference picRef;
-		if(wifiNetworkInfo.isConnected()){
-			picRef = FirebaseStorage.getInstance().getReferenceFromUrl(userData.URL_STORAGE_ORIGINAL_IMAGE+imageName+".jpg");
-		}else {
-			picRef = FirebaseStorage.getInstance().getReferenceFromUrl(userData.URL_STORAGE_REDUCED_IMAGE+imageName+".jpg");
-		}
-		
-		picRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
-		{
-			@Override
-			public void onSuccess(Uri uri)
-			{
-				Glide.with(context)
-						.load(uri)
-						.placeholder(R.drawable.ic_launcher_background)
-						.into(imageView);
-			}
-		}).addOnFailureListener(new OnFailureListener()
-		{
-			@Override
-			public void onFailure(@NonNull Exception e)
-			{
-				Log.e("[LOADING IMAGE]", "onFailure: Load Image Uri Failed"+picRef.toString());
-			}
-		});
-	}
 }
