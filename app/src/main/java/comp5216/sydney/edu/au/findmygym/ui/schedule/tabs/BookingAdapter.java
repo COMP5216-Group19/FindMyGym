@@ -57,25 +57,7 @@ class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.ViewHolder>
         holder.tv_title.setText(scheduleLists.get(position).getTitle());
         holder.tv_trainer.setText(scheduleLists.get(position).getTrainer());
         holder.tv_time.setText(scheduleLists.get(position).getTimeStr());
-        holder.cardView.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                Toast.makeText(mContext, "Clicked on" + scheduleLists.get(position).getTitle(), Toast.LENGTH_SHORT).show();
-            }
-        });
 
-        holder.cardView.setOnLongClickListener(new View.OnLongClickListener()
-        {
-            @Override
-            public boolean onLongClick(View view)
-            {
-                Toast.makeText(mContext, "LongClicked on" + scheduleLists.get(position).getTitle(), Toast.LENGTH_SHORT).show();
-                userData.removePurchaseRecord(position);
-                return false;
-            }
-        });
 
 
     }
