@@ -699,12 +699,12 @@ public class UserData extends LiveData<UserData>
 		allGyms.add(gym8);
 		allGyms.add(gym9);
 
-//		for (Gym gym : allGyms) {
-//			addGymToDatabase(gym);
-//		}
-		for (PersonalTrainer personalTrainer : allTrainers) {
-			addTrainerToDatabase(personalTrainer);
+		for (Gym gym : allGyms) {
+			addGymToDatabase(gym);
 		}
+//		for (PersonalTrainer personalTrainer : allTrainers) {
+//			addTrainerToDatabase(personalTrainer);
+//		}
 //		addReviewToDb(allReviews);
 	}
 
