@@ -391,6 +391,29 @@ public class UserData extends LiveData<UserData>
 					}
 				});
 	}
+
+	public void removeTrainerTimeslot(String trainerId, Timeslot timeslot) {
+
+		FirebaseFirestore db = FirebaseFirestore.getInstance();
+		CollectionReference reference = db.collection(KEY_TRAINERS);
+		DocumentReference dr = reference.document(trainerId);
+		String strToRemove = timeslot.toDatabaseString();
+		dr.get().addOnCompleteListener(task -> {
+			if (task.isSuccessful()) {
+				List<String> list = (List<String>) task.getResult().get(KEY_TRAINER_times);
+				if (list != null && list.remove(strToRemove)) {
+					dr.update(KEY_TRAINER_times, list).addOnCompleteListener(task1 -> {
+						Log.d(TAG, "Update trainer timeslot: " + task1.isSuccessful());
+					});
+				} else {
+					Log.e(TAG, "Update trainer timeslot failed: no such timeslot");
+				}
+			} else {
+				Log.e(TAG, "Update trainer timeslot failed", task.getException());
+			}
+		});
+
+	}
 	
 	public void addReservation(Reservation reservation)
 	{
