@@ -3,6 +3,8 @@ package comp5216.sydney.edu.au.findmygym;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -32,6 +34,7 @@ public class GymActivity extends AppCompatActivity {
     public boolean isFavourite;
     Context mContext;
     GymViewModel mViewModel;
+    private MenuItem favouriteItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,12 +46,31 @@ public class GymActivity extends AppCompatActivity {
         mViewModel.setGym((Gym) getIntent().getSerializableExtra("gym"));
 
         isFavourite = mViewModel.getGym().isFavourite();
-        
+        if (favouriteItem != null) {
+            Log.d(TAG, "onCreateOptionsMenu called first");
+            onOptionsItemSelected(favouriteItem);
+        } else {
+            Log.d(TAG, "favourite item still null");
+        }
+
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.gym_container, GymFragment.newInstance())
                     .commitNow();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        boolean b = super.onCreateOptionsMenu(menu);
+        favouriteItem = menu.findItem(R.id.action_favourite);
+
+        if (mViewModel != null) {
+            Log.d(TAG, "onCreate called first");
+            updateFavouriteItemIcon(favouriteItem);
+        }
+
+        return b;
     }
 
     @Override
@@ -84,21 +106,25 @@ public class GymActivity extends AppCompatActivity {
     public void onAddToFavouriteClicked(MenuItem item) {
 
         if (isFavourite) {
-//            item.setIcon(android.R.drawable.btn_star_big_off);
-            item.setIcon(R.drawable.outline_star_border_24);
             isFavourite = false;
             UserData.getInstance().removeFromFavouriteGyms(mViewModel.getGym().getGymId());
             Toast.makeText(this.getBaseContext(), "Removed from favourite!",
                     Toast.LENGTH_SHORT).show();
         } else {
-//            item.setIcon(android.R.drawable.btn_star_big_on);
-            item.setIcon(R.drawable.outline_star_24);
             isFavourite = true;
             UserData.getInstance().addToFavouriteGyms(mViewModel.getGym().getGymId());
             Toast.makeText(this.getBaseContext(), "Added to favourite!",
                     Toast.LENGTH_SHORT).show();
         }
+        updateFavouriteItemIcon(item);
+    }
 
+    private void updateFavouriteItemIcon(MenuItem item) {
+        if (isFavourite) {
+            item.setIcon(R.drawable.outline_star_24);
+        } else {
+            item.setIcon(R.drawable.outline_star_border_24);
+        }
     }
 
     private void onDateSelectedListener(DatePickerDialog view,
