@@ -8,7 +8,7 @@
 
     <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="110dp"
+            android:layout_height="130dp"
             app:cardCornerRadius="25dp"
             app:cardBackgroundColor="@color/blue_300"
             android:id="@+id/item_schedule_cardView"
