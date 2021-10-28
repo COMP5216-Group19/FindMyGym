@@ -33,8 +33,8 @@ public class GymViewModel extends ViewModel {
     Calendar selectedDate;
     Timepoint beginTime;
     Timepoint endTime;
-    double gymPrice;
-    double trainerPrice;
+    int gymPrice;
+    int trainerPrice;
     List<PersonalTrainer> allPersonalTrainers;
     /**
      * Whether the current user has came to this gym.
@@ -102,7 +102,7 @@ public class GymViewModel extends ViewModel {
         return null;
     }
 
-    public double getTotalPrice() {
+    public int getTotalPrice() {
         return gymPrice + trainerPrice;
     }
 

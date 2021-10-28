@@ -43,7 +43,7 @@ public class GymActivity extends AppCompatActivity {
         mViewModel.setGym((Gym) getIntent().getSerializableExtra("gym"));
 
         isFavourite = mViewModel.getGym().isFavourite();
-
+        
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.gym_container, GymFragment.newInstance())

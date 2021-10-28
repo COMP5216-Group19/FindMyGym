@@ -152,7 +152,7 @@ public class Gym implements Serializable {
         return null;
     }
 
-    public double getPrice() {
+    public int getPrice() {
         return price;
     }
 
