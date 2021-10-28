@@ -13,13 +13,13 @@ public class ScheduleList {
     private String title;
     private String trainer;
     private Calendar time;
-    private Bitmap image;
+    private String gymId;
 
-    public ScheduleList(String title, String trainer, Calendar time, Bitmap image) {
+    public ScheduleList(String title, String trainer, Calendar time, String gymId) {
         this.title = title;
         this.trainer = trainer;
         this.time = time;
-        this.image = image;
+        this.gymId = gymId;
     }
 
     public String getTitle() {
@@ -55,13 +55,7 @@ public class ScheduleList {
         this.time = time;
     }
 
-    public Bitmap getImage() {
-        return image;
+    public String getGymId() {
+        return gymId;
     }
-
-    public void setImage(Bitmap image) {
-        this.image = image;
-    }
-
-
 }
