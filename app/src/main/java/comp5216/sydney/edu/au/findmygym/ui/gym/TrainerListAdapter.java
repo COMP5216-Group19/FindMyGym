@@ -54,7 +54,7 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
 //        this.reserveButton = parentView.findViewById(R.id.gym_reserve_button);
         reload(parentView);
 
-        setSelectedDate(mViewModel.getToday());
+        setSelectedDate(mViewModel.getSelectedDate());
         setBeginTime(mViewModel.getBeginTime());
         setEndTime(mViewModel.getEndTime());
 

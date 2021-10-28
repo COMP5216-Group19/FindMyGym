@@ -165,12 +165,12 @@ public class GymActivity extends AppCompatActivity {
     public void onDatePickerClicked(View view) {
         DatePickerDialog pickerDialog = DatePickerDialog.newInstance(
                 this::onDateSelectedListener,
-                mViewModel.getToday().get(Calendar.YEAR),
-                mViewModel.getToday().get(Calendar.MONTH),
-                mViewModel.getToday().get(Calendar.DAY_OF_MONTH)
+                mViewModel.getMinSelectableDate().get(Calendar.YEAR),
+                mViewModel.getMinSelectableDate().get(Calendar.MONTH),
+                mViewModel.getMinSelectableDate().get(Calendar.DAY_OF_MONTH)
         );
-        pickerDialog.setMinDate(mViewModel.getToday());
-//        pickerDialog.setSelectableDays(mViewModel.getTrainerListAdapter().getSelectableDays());
+        pickerDialog.setMinDate(mViewModel.getMinSelectableDate());
+
         pickerDialog.setHighlightedDays(
                 new Calendar[]{mViewModel.getSelectedDate()});
         pickerDialog.show(getSupportFragmentManager(), TAG);
@@ -199,6 +199,9 @@ public class GymActivity extends AppCompatActivity {
         Timepoint endTp = new Timepoint(closeTime.get(Calendar.HOUR_OF_DAY),
                 closeTime.get(Calendar.MINUTE));
         pickerDialog.setMinTime(beginTp);
+        if (beginTp.compareTo(endTp) > 0) {
+            endTp = beginTp;
+        }
         pickerDialog.setMaxTime(endTp);
         pickerDialog.setTitle(getString(R.string.gym_start_time));
         pickerDialog.show(getSupportFragmentManager(), TAG);
@@ -214,6 +217,9 @@ public class GymActivity extends AppCompatActivity {
         Timepoint endTp = new Timepoint(closeTime.get(Calendar.HOUR_OF_DAY),
                 closeTime.get(Calendar.MINUTE));
         pickerDialog.setMinTime(mViewModel.getBeginTime());
+        if (mViewModel.getBeginTime().compareTo(endTp) > 0) {
+            endTp = mViewModel.getBeginTime();
+        }
         pickerDialog.setMaxTime(endTp);
         pickerDialog.setTitle(getString(R.string.gym_start_time));
         pickerDialog.show(getSupportFragmentManager(), TAG);
