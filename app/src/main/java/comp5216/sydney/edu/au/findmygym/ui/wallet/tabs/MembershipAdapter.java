@@ -16,8 +16,11 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 import comp5216.sydney.edu.au.findmygym.R;
+import comp5216.sydney.edu.au.findmygym.Utils.ImageUtil;
+import comp5216.sydney.edu.au.findmygym.model.Gym;
 import comp5216.sydney.edu.au.findmygym.model.Membership;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
+import comp5216.sydney.edu.au.findmygym.model.callbacks.ObjectQueryCallback;
 
 /**
  * Created by yarolegovich on 07.03.2017.
@@ -45,10 +48,28 @@ public class MembershipAdapter extends RecyclerView.Adapter<MembershipAdapter.Vi
 	
 	@Override
 	public void onBindViewHolder(ViewHolder holder, int position) {
-		Glide.with(holder.itemView.getContext())
-				.load(userData.getMemberships().get(position).getImage())
-				.into(holder.image);
-		holder.title.setText(userData.getMemberships().get(position).getTitle());
+		// Glide.with(holder.itemView.getContext())
+		// 		.load(userData.getMemberships().get(position).getImage())
+		// 		.into(holder.image);
+		String gymID = userData.getMemberships().get(position).getGymID();
+		holder.title.setText(gymID);
+		UserData.getInstance().getGymByID(gymID, new ObjectQueryCallback()
+		{
+			@Override
+			public void onSucceed(Object object)
+			{
+				Gym gym = (Gym) object;
+				ImageUtil.loadImage(gym.getGymName(), holder.image, context);
+				holder.title.setText(gym.getGymName());
+			}
+
+			@Override
+			public void onFailed(Exception e)
+			{
+
+			}
+		});
+		
 		
 	}
 	

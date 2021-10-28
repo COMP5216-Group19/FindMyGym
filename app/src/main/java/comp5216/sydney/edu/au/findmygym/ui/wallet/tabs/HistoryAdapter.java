@@ -3,6 +3,7 @@ package comp5216.sydney.edu.au.findmygym.ui.wallet.tabs;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +14,20 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import comp5216.sydney.edu.au.findmygym.R;
+import comp5216.sydney.edu.au.findmygym.Utils.ImageUtil;
+import comp5216.sydney.edu.au.findmygym.model.Gym;
 import comp5216.sydney.edu.au.findmygym.model.PurchaseRecord;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
+import comp5216.sydney.edu.au.findmygym.model.callbacks.ObjectQueryCallback;
 import pl.droidsonroids.gif.GifImageView;
 
 class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder>
@@ -28,7 +37,8 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder>
 	private UserData userData;
 	Context context;
 	
-	public interface OnItemLongClickListener {
+	public interface OnItemLongClickListener
+	{
 		public boolean onItemLongClicked(int position);
 	}
 	
@@ -50,11 +60,31 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder>
 	@Override
 	public void onBindViewHolder(@NonNull HistoryAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position)
 	{
+		Log.d(TAG, "onBindViewHolder: "+this.getItemCount());
 		
-		holder.giv_image.setImageBitmap(userData.getPurchaseRecords().get(position).getImage());
-		holder.tv_title.setText(userData.getPurchaseRecords().get(position).getTitle());
+		String gymID = userData.getMemberships().get(position).getGymID();
+		holder.tv_title.setText(userData.getPurchaseRecords().get(position).getGymId());
 		holder.tv_description.setText(userData.getPurchaseRecords().get(position).getTimeStr());
 		holder.tv_cost.setText(userData.getPurchaseRecords().get(position).getCostStr());
+		
+		UserData.getInstance().getGymByID(gymID, new ObjectQueryCallback()
+		{
+			@Override
+			public void onSucceed(Object object)
+			{
+				Gym gym = (Gym) object;
+				ImageUtil.loadImage(gym.getGymName(), holder.giv_image, context);
+				holder.tv_title.setText(gym.getGymName());
+			}
+			
+			@Override
+			public void onFailed(Exception e)
+			{
+				Log.e(TAG, e.toString());
+				e.printStackTrace();
+			}
+		});
+		
 		holder.cardView.setOnClickListener(new View.OnClickListener()
 		{
 			@Override
@@ -77,9 +107,11 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder>
 						.showCancelButton(true)
 						// .setConfirmButtonBackgroundColor(R.color.red_100)
 						// .setConfirmButtonTextColor(R.color.red_100)
-						.setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+						.setCancelClickListener(new SweetAlertDialog.OnSweetClickListener()
+						{
 							@Override
-							public void onClick(SweetAlertDialog sDialog) {
+							public void onClick(SweetAlertDialog sDialog)
+							{
 								sDialog.dismissWithAnimation();
 							}
 						})
@@ -88,21 +120,46 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder>
 							@Override
 							public void onClick(SweetAlertDialog sDialog)
 							{
-								userData.removePurchaseRecord(position);
-								sDialog.setTitleText("Deleted!")
-										.setContentText("Your record has been deleted!")
-										.setConfirmClickListener(null)
-										.showCancelButton(false)
-										.changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+								FirebaseFirestore db = FirebaseFirestore.getInstance();
+								CollectionReference reference = db.collection(userData.KEY_TRANSACTIONS);
+								reference.document(userData.getPurchaseRecords().get(position).getID())
+										.delete()
+										.addOnSuccessListener(new OnSuccessListener<Void>()
+										{
+											@Override
+											public void onSuccess(Void unused)
+											{
+												userData.removePurchaseRecord(position);
+												// notifyDataSetChanged();
+												sDialog.setTitleText("Deleted!")
+														.setContentText("Your record has been deleted!")
+														.setConfirmClickListener(null)
+														.showCancelButton(false)
+														.changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+											}
+										})
+										.addOnFailureListener(new OnFailureListener()
+										{
+											@Override
+											public void onFailure(@NonNull Exception e)
+											{
+												sDialog.setTitleText("Failed!")
+														.setContentText("Your record has NOT been deleted somehow!")
+														.setConfirmClickListener(null)
+														.showCancelButton(false)
+														.changeAlertType(SweetAlertDialog.ERROR_TYPE);
+											}
+										});
+								
+								
 							}
 						})
 						.show();
-				
 				return false;
 			}
 		});
 		
-
+		
 	}
 	
 	@Override
@@ -111,12 +168,14 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder>
 		return userData.getPurchaseRecords().size();
 	}
 	
-	public class ViewHolder extends RecyclerView.ViewHolder{
+	public class ViewHolder extends RecyclerView.ViewHolder
+	{
 		CardView cardView;
 		GifImageView giv_image;
 		TextView tv_title;
 		TextView tv_description;
 		TextView tv_cost;
+		
 		public ViewHolder(@NonNull View itemView)
 		{
 			super(itemView);

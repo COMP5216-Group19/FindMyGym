@@ -33,6 +33,7 @@ import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.model.CreditCard;
 import comp5216.sydney.edu.au.findmygym.model.Membership;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
+import comp5216.sydney.edu.au.findmygym.model.callbacks.ListQueryCallback;
 
 public class Wallet_Membership extends Fragment
 {
@@ -63,24 +64,36 @@ public class Wallet_Membership extends Fragment
 		
 		
 		//mock data
-		ArrayList<Membership> memberships = new ArrayList<>();
-		for (int i = 0; i < 3; i++)
-		{
-			Calendar start =  Calendar.getInstance();
-			Calendar end =  Calendar.getInstance();
-			Random random = new Random();
-			end.set(Calendar.DAY_OF_MONTH,end.get(Calendar.DAY_OF_MONTH)+1);
-			start.set(Calendar.HOUR_OF_DAY,random.nextInt(23 - 0 + 1) + 0);
-			memberships.add(new Membership(String.valueOf(i),"Membership"+i,getRandomItem(bitmapList),start,end));
-		}
+		// ArrayList<Membership> memberships = new ArrayList<>();
+		// for (int i = 0; i < 3; i++)
+		// {
+		// 	Calendar start =  Calendar.getInstance();
+		// 	Calendar end =  Calendar.getInstance();
+		// 	Random random = new Random();
+		// 	end.set(Calendar.DAY_OF_MONTH,end.get(Calendar.DAY_OF_MONTH)+1);
+		// 	start.set(Calendar.HOUR_OF_DAY,random.nextInt(23 - 0 + 1) + 0);
+		// 	memberships.add(new Membership(String.valueOf(i),"Membership"+i,start,end));
+		// }
 		
 		
 		DiscreteScrollView scrollView = getView().findViewById(R.id.wallet_membership_discreteScrollView);
-		
 		UserData userData = UserData.getInstance();
-		//TODO
-		// userData.setMemberships( new ArrayList<>());
-		// userData.setMemberships(memberships);
+		
+		userData.getMembershipsByUID(userData.getUserId(), new ListQueryCallback()
+		{
+			@Override
+			public void onSucceed(ArrayList list)
+			{
+				Log.d(TAG, "getMembershipsByUID successfully!"+list.toString());
+			}
+			
+			@Override
+			public void onFailed(Exception e)
+			{
+				Log.e(TAG, e.toString());
+				e.printStackTrace();
+			}
+		});
 		
 		MembershipAdapter membershipAdapter = new MembershipAdapter(context);
 		// scrollView.setAdapter(membershipAdapter);
@@ -106,7 +119,7 @@ public class Wallet_Membership extends Fragment
 				Log.e(TAG,"real: "+position);
 				Log.e(TAG,"selected: "+adapterPosition);
 				TextView gym = getView().findViewById(R.id.membership_textview_gym);
-				gym.setText("GymID: "+membershipAdapter.getItem(position).getGymID());
+				gym.setText(membershipAdapter.getItem(position).getTitle());
 				TextView start = getView().findViewById(R.id.membership_textview_startTime);
 				start.setText("Member since: "+membershipAdapter.getItem(position).getStartTimeStr());
 				TextView end = getView().findViewById(R.id.membership_textview_endTime);

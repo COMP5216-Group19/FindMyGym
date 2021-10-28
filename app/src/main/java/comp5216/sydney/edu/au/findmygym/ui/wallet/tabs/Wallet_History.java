@@ -30,6 +30,7 @@ import java.util.Random;
 import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.model.PurchaseRecord;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
+import comp5216.sydney.edu.au.findmygym.model.callbacks.ListQueryCallback;
 
 
 public class Wallet_History extends Fragment implements SwipeRefreshLayout.OnRefreshListener
@@ -59,24 +60,39 @@ public class Wallet_History extends Fragment implements SwipeRefreshLayout.OnRef
 		swipeRefreshLayout = view.findViewById(R.id.wallet_history_refreshLayout);
 		swipeRefreshLayout.setOnRefreshListener(this);
 		
-		
-		Bitmap bitmap1 = BitmapFactory.decodeResource(context.getResources(), R.drawable.diana);
-		Bitmap bitmap2 = BitmapFactory.decodeResource(context.getResources(), R.drawable.ybb);
-		Bitmap bitmap3 = BitmapFactory.decodeResource(context.getResources(), R.drawable.azi);
-		Bitmap bitmap4 = BitmapFactory.decodeResource(context.getResources(), R.drawable.onion);
-		Bitmap bitmap5 = BitmapFactory.decodeResource(context.getResources(), R.drawable.mea);
-		List<Bitmap> bitmapList = Arrays.asList(bitmap1,bitmap2,bitmap3,bitmap4,bitmap5);
-		
-		for (int i = 0; i < 3; i++)
+		userData.getPurchaseRecordsByUID(userData.getUserId(), new ListQueryCallback()
 		{
-			Calendar cal =  Calendar.getInstance();
-			System.out.println(cal);
-			Random random = new Random();
-			cal.set(Calendar.HOUR_OF_DAY,random.nextInt(23 - 0 + 1) + 0);
-			historyList.add(new PurchaseRecord(111,"Gym "+i, cal, getRandomItem(bitmapList)));
-		}
+			@Override
+			public void onSucceed(ArrayList list)
+			{
+				Log.d(TAG, "getPurchaseRecordsByUID successfully!"+list.toString());
+			}
+			
+			@Override
+			public void onFailed(Exception e)
+			{
+				Log.e(TAG, e.toString());
+				e.printStackTrace();
+			}
+		});
 		
-		userData.setPurchaseRecords(historyList);
+		// Bitmap bitmap1 = BitmapFactory.decodeResource(context.getResources(), R.drawable.diana);
+		// Bitmap bitmap2 = BitmapFactory.decodeResource(context.getResources(), R.drawable.ybb);
+		// Bitmap bitmap3 = BitmapFactory.decodeResource(context.getResources(), R.drawable.azi);
+		// Bitmap bitmap4 = BitmapFactory.decodeResource(context.getResources(), R.drawable.onion);
+		// Bitmap bitmap5 = BitmapFactory.decodeResource(context.getResources(), R.drawable.mea);
+		// List<Bitmap> bitmapList = Arrays.asList(bitmap1,bitmap2,bitmap3,bitmap4,bitmap5);
+		//
+		// for (int i = 0; i < 3; i++)
+		// {
+		// 	Calendar cal =  Calendar.getInstance();
+		// 	System.out.println(cal);
+		// 	Random random = new Random();
+		// 	cal.set(Calendar.HOUR_OF_DAY,random.nextInt(23 - 0 + 1) + 0);
+		// 	historyList.add(new PurchaseRecord(111,"Gym "+i, cal, getRandomItem(bitmapList)));
+		// }
+		//
+		// userData.setPurchaseRecords(historyList);
 		
 		recyclerView = getView().findViewById(R.id.history_recyclerview);
 		recyclerView.setLayoutManager(new LinearLayoutManager(context));

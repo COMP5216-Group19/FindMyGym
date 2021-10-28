@@ -9,21 +9,42 @@ import java.util.GregorianCalendar;
 
 public class Membership
 {
+	String userID;
 	String gymID;
 	String title;
-	Bitmap image;
 	Calendar startTime;
 	Calendar endTime;
 	
-
 	
-	public Membership(String gymID, String title, Bitmap image, Calendar startTime, Calendar endTime)
+	public Membership(String userID, String gymID, String title, Calendar startTime, Calendar endTime)
 	{
+		this.userID = userID;
 		this.gymID = gymID;
 		this.title = title;
-		this.image = image;
 		this.startTime = startTime;
 		this.endTime = endTime;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "Membership{" +
+				"userID='" + userID + '\'' +
+				", gymID='" + gymID + '\'' +
+				", title='" + title + '\'' +
+				", startTime=" + startTime +
+				", endTime=" + endTime +
+				'}';
+	}
+	
+	public String getUserID()
+	{
+		return userID;
+	}
+	
+	public void setUserID(String userID)
+	{
+		this.userID = userID;
 	}
 	
 	public String getGymID()
@@ -82,15 +103,7 @@ public class Membership
 		this.endTime = endTime;
 	}
 	
-	public Bitmap getImage()
-	{
-		return image;
-	}
-	
-	public void setImage(Bitmap image)
-	{
-		this.image = image;
-	}
+
 	
 	
 }

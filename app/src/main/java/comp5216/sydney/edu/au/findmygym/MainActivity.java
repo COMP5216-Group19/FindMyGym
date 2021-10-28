@@ -47,10 +47,13 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import comp5216.sydney.edu.au.findmygym.databinding.ActivityMainBinding;
+import comp5216.sydney.edu.au.findmygym.model.Membership;
 import comp5216.sydney.edu.au.findmygym.model.Gym;
+import comp5216.sydney.edu.au.findmygym.model.PurchaseRecord;
 import comp5216.sydney.edu.au.findmygym.model.Reservation;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.ListQueryCallback;
@@ -113,7 +116,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
 		NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
 		NavigationUI.setupWithNavController(navigationView, navController);//???
-
+		
 		headerView = navigationView.getHeaderView(0);
 		setObserver();//update nav_header
 		setDrawerListener();//setup drawer event handler
@@ -143,8 +146,10 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		// 	}
 		//
 		// });
-		String gym_id_1 = "8Pp4nlV5Fc3XW06BXkhV";//Minus Fitness Waterloo
-		
+		String gym_id_1 = "8Pp4nlV5Fc3XW06BXkhV";
+		String gym_id_2 = "AVRANcg0CBCAUBos8t0G";
+		String gym_id_3 = "PANGsw8b7ufa9ANPq6bx";
+		String gym_id_4 = "Q0JiYLebVbR4RrXVUJXi";
 		// userData.addReservation(new Reservation(null,userData.getUserId(),gym_id_1,null, 500,new Timeslot(Calendar.getInstance(),120)));
 		// userData.getReservationByID("A58BwZ0Ck53NlC35ND60", new ObjectQueryCallback()
 		// {
@@ -167,7 +172,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		// 	@Override
 		// 	public void onSucceed(ArrayList list)
 		// 	{
-		// 		Log.d(TAG, "DBTEST: " + list.toString() );
+		// 		Log.d(TAG, "DBTEST: getReservationsByUID" + list.toString() );
 		// 	}
 		//
 		// 	@Override
@@ -177,8 +182,77 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		// 		e.printStackTrace();
 		// 	}
 		// });
+		// initMembership();
+		// userData.getMembershipsByUID(userData.getUserId(), new ListQueryCallback()
+		// {
+		// 	@Override
+		// 	public void onSucceed(ArrayList list)
+		// 	{
+		// 		Log.d(TAG, "DBTEST: getMembershipsByUID" + list.toString());
+		// 	}
+		//
+		// 	@Override
+		// 	public void onFailed(Exception e)
+		// 	{
+		// 		Log.e(TAG, e.toString());
+		// 		e.printStackTrace();
+		// 	}
+		// });
 		
+
+		//
+		// userData.getPurchaseRecordsByUID(userData.getUserId(), new ListQueryCallback()
+		// {
+		// 	@Override
+		// 	public void onSucceed(ArrayList list)
+		// 	{
+		// 		Log.d(TAG, "DBTEST: getPurchaseRecordsByUID" + list.toString());
+		// 	}
+		//
+		// 	@Override
+		// 	public void onFailed(Exception e)
+		// 	{
+		// 		Log.e(TAG, e.toString());
+		// 		e.printStackTrace();
+		// 	}
+		// });
+		// initPurchaseRecords();
 	}
+	
+	public void initPurchaseRecords(){
+		String gym_id_1 = "8Pp4nlV5Fc3XW06BXkhV";
+		String gym_id_2 = "AVRANcg0CBCAUBos8t0G";
+		String gym_id_3 = "PANGsw8b7ufa9ANPq6bx";
+		String gym_id_4 = "Q0JiYLebVbR4RrXVUJXi";
+		userData.addPurchaseRecord(new PurchaseRecord(null,3000,userData.getUserId(),gym_id_1,Calendar.getInstance()));
+		userData.addPurchaseRecord(new PurchaseRecord(null,2400,userData.getUserId(),gym_id_2,Calendar.getInstance()));
+		userData.addPurchaseRecord(new PurchaseRecord(null,2100,userData.getUserId(),gym_id_3,Calendar.getInstance()));
+		userData.addPurchaseRecord(new PurchaseRecord(null,6200,userData.getUserId(),gym_id_4,Calendar.getInstance()));
+	}
+	
+	
+	
+	
+	public void initMembership()
+	{
+		String gym_id_1 = "8Pp4nlV5Fc3XW06BXkhV";
+		String gym_id_2 = "AVRANcg0CBCAUBos8t0G";
+		String gym_id_3 = "PANGsw8b7ufa9ANPq6bx";
+		String gym_id_4 = "Q0JiYLebVbR4RrXVUJXi";
+		Calendar cal1 = Calendar.getInstance();
+		cal1.set(Calendar.MONTH, cal1.get(Calendar.MONTH) + 1);
+		Calendar cal2 = Calendar.getInstance();
+		cal2.set(Calendar.MONTH, cal2.get(Calendar.MONTH) + 3);
+		Calendar cal3 = Calendar.getInstance();
+		cal3.set(Calendar.MONTH, cal3.get(Calendar.MONTH) + 6);
+		Calendar cal4 = Calendar.getInstance();
+		cal4.set(Calendar.MONTH, cal4.get(Calendar.MONTH) + 12);
+		userData.addMembership(new Membership(userData.getUserId(), gym_id_1, "Monthly Plan", Calendar.getInstance(), cal1));
+		userData.addMembership(new Membership(userData.getUserId(), gym_id_2, "Seasonal Plan", Calendar.getInstance(), cal2));
+		userData.addMembership(new Membership(userData.getUserId(), gym_id_3, "Half-year Plan", Calendar.getInstance(), cal3));
+		userData.addMembership(new Membership(userData.getUserId(), gym_id_4, "Yearly Plan", Calendar.getInstance(), cal4));
+	}
+	
 	
 	//TEST
 	@Override
@@ -435,28 +509,31 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 	
 	public void onGymMemuClicked(MenuItem item)
 	{
-//		Gym gym = UserData.getInstance().findGymById("Minus Fitness Gym Chatswood");
-//		if (gym != null) {
-//			Intent intent = new Intent(mContext, GymActivity.class);
-//			intent.putExtra("gym", gym);
-//			startActivity(intent);
-//		}
-
-		UserData.getInstance().getGymByID("8Pp4nlV5Fc3XW06BXkhV", new ObjectQueryCallback() {
+		//		Gym gym = UserData.getInstance().findGymById("Minus Fitness Gym Chatswood");
+		//		if (gym != null) {
+		//			Intent intent = new Intent(mContext, GymActivity.class);
+		//			intent.putExtra("gym", gym);
+		//			startActivity(intent);
+		//		}
+		
+		UserData.getInstance().getGymByID("8Pp4nlV5Fc3XW06BXkhV", new ObjectQueryCallback()
+		{
 			@Override
-			public void onSucceed(Object object) {
+			public void onSucceed(Object object)
+			{
 				Gym gym = (Gym) object;
 				Intent intent = new Intent(mContext, GymActivity.class);
 				intent.putExtra("gym", gym);
 				startActivity(intent);
 			}
-
+			
 			@Override
-			public void onFailed(Exception e) {
-
+			public void onFailed(Exception e)
+			{
+			
 			}
 		});
-
+		
 	}
 	
 	//	public void onAvatarClicked(View view)
