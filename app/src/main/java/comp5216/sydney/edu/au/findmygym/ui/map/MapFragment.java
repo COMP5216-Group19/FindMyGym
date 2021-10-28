@@ -464,19 +464,25 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 			}
 		}
 
-		UserData.getInstance().findGymById(list.get(j), new GymQueryCallback() {
-			@Override
-			public void onSucceed(Gym gym) {
-				Intent intent = new Intent(getActivity(), GymActivity.class);
-				intent.putExtra("gym", gym);
-				startActivity(intent);
-			}
-
-			@Override
-			public void onFailed(Exception exception) {
-
-			}
-		});
+		Gym gym = UserData.getInstance().findGymById(list.get(j));
+		if (gym != null) {
+			Intent intent = new Intent(getActivity(), GymActivity.class);
+			intent.putExtra("gym", gym);
+			startActivity(intent);
+		}
+//		UserData.getInstance().findGymById(list.get(j), new GymQueryCallback() {
+//			@Override
+//			public void onSucceed(Gym gym) {
+//				Intent intent = new Intent(getActivity(), GymActivity.class);
+//				intent.putExtra("gym", gym);
+//				startActivity(intent);
+//			}
+//
+//			@Override
+//			public void onFailed(Exception exception) {
+//
+//			}
+//		});
 	}
 
 	public Integer closestdistance() {
