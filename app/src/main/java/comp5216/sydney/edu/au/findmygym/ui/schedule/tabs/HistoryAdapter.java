@@ -57,25 +57,7 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder>
         holder.tv_title.setText(scheduleList.get(position).getTitle());
         holder.tv_trainer.setText(scheduleList.get(position).getTrainer());
         holder.tv_time.setText(scheduleList.get(position).getTimeStr());
-        holder.cardView.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                Toast.makeText(mContext, "Clicked on" + scheduleList.get(position).getTitle(), Toast.LENGTH_SHORT).show();
-            }
-        });
 
-        holder.cardView.setOnLongClickListener(new View.OnLongClickListener()
-        {
-            @Override
-            public boolean onLongClick(View view)
-            {
-                Toast.makeText(mContext, "LongClicked on" + scheduleList.get(position).getTitle(), Toast.LENGTH_SHORT).show();
-                userData.removePurchaseRecord(position);
-                return false;
-            }
-        });
 
 
     }
