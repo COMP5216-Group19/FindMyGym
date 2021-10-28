@@ -67,10 +67,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import comp5216.sydney.edu.au.findmygym.Utils.ImageUtil;
 import comp5216.sydney.edu.au.findmygym.databinding.ActivityMainBinding;
 import comp5216.sydney.edu.au.findmygym.model.Gym;
+import comp5216.sydney.edu.au.findmygym.model.PersonalTrainer;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.GymQueryCallback;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
 import comp5216.sydney.edu.au.findmygym.ui.map.MapFragment;
@@ -138,7 +140,22 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		setFabListener();
 		setSupportActionBar(binding.appBarMain.toolbar);
 		userData.setContext(mContext);
-		UserData.uploadingGymImg();
+		// UserData.uploadingGymImg();
+		userData.getGymByID("8Pp4nlV5Fc3XW06BXkhV");
+		
+		try
+		{
+			PersonalTrainer personalTrainer = userData.getTrainerByID("8tQCqe4ZECfRHolAejCW");
+			Log.e(TAG, "onCreate: " + personalTrainer.toString() );
+		} catch (ExecutionException e)
+		{
+			e.printStackTrace();
+		} catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
+		
+		
 	}
 	
 	//TEST

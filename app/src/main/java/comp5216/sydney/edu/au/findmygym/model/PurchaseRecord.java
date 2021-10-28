@@ -10,13 +10,13 @@ import java.util.GregorianCalendar;
 
 public class PurchaseRecord
 {
-	private double cost;
+	private int cost;
 	private String gymId;
 	private Calendar time;
 	private Bitmap image;
 
 	
-	public PurchaseRecord(double cost, String gymId, Calendar time, Bitmap image)
+	public PurchaseRecord(int cost, String gymId, Calendar time, Bitmap image)
 	{
 		this.cost = cost;
 		this.gymId = gymId;
@@ -24,7 +24,7 @@ public class PurchaseRecord
 		this.image = image;
 	}
 	
-	public double getCost()
+	public int getCost()
 	{
 		return cost;
 	}
@@ -79,7 +79,7 @@ public class PurchaseRecord
 	public String getCostStr()
 	{
 		String ret = "$";
-		ret += String.valueOf(this.cost);
+		ret += String.format("%.2f",(double)this.cost/100);
 		return ret;
 	}
 }

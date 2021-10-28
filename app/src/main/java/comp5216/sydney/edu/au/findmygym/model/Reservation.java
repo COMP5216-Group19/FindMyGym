@@ -17,11 +17,11 @@ public class Reservation implements Serializable {
 
     private String gymId;
     private String userId;
-    private double price;
+    private int price;
     private Timeslot timeslot;
 
     @SuppressLint("DefaultLocale")
-    public Reservation(String userId, String gymId, String trainerId, double price,
+    public Reservation(String userId, String gymId, String trainerId, int price,
                        Timeslot timeslot) {
         this.userId = userId;
         this.gymId = gymId;
@@ -49,7 +49,7 @@ public class Reservation implements Serializable {
         return data;
     }
 
-    public double getPrice() {
+    public int getPrice() {
         return price;
     }
 
@@ -88,7 +88,7 @@ public class Reservation implements Serializable {
         public String userId;
         public String gymId;
         public String trainerId;
-        public double price;
+        public int price;
         public String timeslot;
     }
 }

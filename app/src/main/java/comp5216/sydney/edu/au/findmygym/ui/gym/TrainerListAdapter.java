@@ -141,7 +141,7 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
         System.out.println("Updated " + reservation);
         if (reservation == null) {
 //            reserveButton.setEnabled(false);
-            mViewModel.trainerPrice = 0.0;
+            mViewModel.trainerPrice = 0;
         } else {
 //            reserveButton.setEnabled(true);
             mViewModel.trainerPrice = trainerReservation.trainer.getPrice();
