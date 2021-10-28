@@ -143,7 +143,7 @@ public class UserData extends LiveData<UserData>
 		gymPictureRef = storage.getReference("gymPictures");
 		trainerAvatarRef = storage.getReference("trainerAvatars");
 
-		addMockGymsToDatabase();
+//		addMockGymsToDatabase();
 
 //		loadAllGyms();
 	}
