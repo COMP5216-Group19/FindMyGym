@@ -50,6 +50,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import comp5216.sydney.edu.au.findmygym.databinding.ActivityMainBinding;
+import comp5216.sydney.edu.au.findmygym.model.Gym;
 import comp5216.sydney.edu.au.findmygym.model.Reservation;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.ListQueryCallback;
@@ -436,10 +437,26 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 	{
 //		Gym gym = UserData.getInstance().findGymById("Minus Fitness Gym Chatswood");
 //		if (gym != null) {
-			Intent intent = new Intent(mContext, GymActivity.class);
+//			Intent intent = new Intent(mContext, GymActivity.class);
 //			intent.putExtra("gym", gym);
-			startActivity(intent);
+//			startActivity(intent);
 //		}
+
+		UserData.getInstance().getGymByID("8Pp4nlV5Fc3XW06BXkhV", new ObjectQueryCallback() {
+			@Override
+			public void onSucceed(Object object) {
+				Gym gym = (Gym) object;
+				Intent intent = new Intent(mContext, GymActivity.class);
+				intent.putExtra("gym", gym);
+				startActivity(intent);
+			}
+
+			@Override
+			public void onFailed(Exception e) {
+
+			}
+		});
+
 	}
 	
 	//	public void onAvatarClicked(View view)

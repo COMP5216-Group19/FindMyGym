@@ -2,6 +2,8 @@ package comp5216.sydney.edu.au.findmygym.Utils;
 
 import android.annotation.SuppressLint;
 
+import com.google.firebase.Timestamp;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -48,5 +50,11 @@ public class CalendarUtil
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static Calendar timestampToCalendar(Timestamp timestamp) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(timestamp.toDate());
+        return calendar;
     }
 }

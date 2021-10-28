@@ -29,14 +29,18 @@ public class Review implements Serializable {
         this.dateTime = dateTime;
 
         // Potential bug: two users with same name post reviews at a same millisecond
-        this.reviewId = String.format("%s+%s", userId, CalendarUtil.calendarToString(dateTime));
+//        this.reviewId = String.format("%s+%s", userId, CalendarUtil.calendarToString(dateTime));
     }
 
     public String getGymId() {
         return gymId;
     }
 
-//    public static Review fromData(ReviewData data, Bitmap userAvatar) {
+    public void setReviewId(String reviewId) {
+        this.reviewId = reviewId;
+    }
+
+    //    public static Review fromData(ReviewData data, Bitmap userAvatar) {
 //        return new Review(
 //                data.userName,
 //                userAvatar,

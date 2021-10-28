@@ -51,10 +51,10 @@ public class GymViewModel extends ViewModel {
     GymRsvFragment rsvFragment;
 
     public GymViewModel() {
-        addTestGym();
-
-        // after set gym
-        generateValuesByGym();
+//        addTestGym();
+//
+//        // after set gym
+//        generateValuesByGym();
     }
 
     /**

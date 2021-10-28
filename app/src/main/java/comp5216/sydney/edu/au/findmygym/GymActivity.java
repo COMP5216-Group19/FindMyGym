@@ -23,6 +23,7 @@ import java.util.Calendar;
 
 import comp5216.sydney.edu.au.findmygym.model.Gym;
 import comp5216.sydney.edu.au.findmygym.model.Reservation;
+import comp5216.sydney.edu.au.findmygym.model.Review;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
 import comp5216.sydney.edu.au.findmygym.ui.gym.GymFragment;
 import comp5216.sydney.edu.au.findmygym.ui.gym.GymViewModel;
@@ -58,6 +59,14 @@ public class GymActivity extends AppCompatActivity {
                     .replace(R.id.gym_container, GymFragment.newInstance())
                     .commitNow();
         }
+
+//        UserData.getInstance().addReview(new Review(
+//                UserData.getInstance().getUserId(),
+//                "8Pp4nlV5Fc3XW06BXkhV",
+//                4,
+//                "WTF",
+//                Calendar.getInstance()
+//        ));
     }
 
     @Override

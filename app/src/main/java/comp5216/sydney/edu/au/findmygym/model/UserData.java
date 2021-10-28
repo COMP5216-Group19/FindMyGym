@@ -60,6 +60,7 @@ public class UserData extends LiveData<UserData>
 	public final String KEY_USERS = "USERS";
 	public final String KEY_TRAINERS = "TRAINERS";
 	public final String KEY_RESERVATION = "RESERVATION";
+	public final String KEY_REVIEWS = "REVIEWS";
 	
 	public final String KEY_uid = "UID";
 	public final String KEY_userName = "USERNAME";
@@ -92,6 +93,7 @@ public class UserData extends LiveData<UserData>
 	public final String KEY_TRAINER_name = "TRAINER_NAME";
 	public final String KEY_TRAINER_price = "TRAINER_PRICE";
 	public final String KEY_TRAINER_times = "TRAINER_TIMES";
+	public final String KEY_TRAINER_gymId = "TRAINER_GYM_ID";
 
 	public final String KEY_REVIEW_userId = "REVIEW_USER_ID";
 	public final String KEY_REVIEW_gymId = "REVIEW_GYM_ID";
@@ -344,10 +346,10 @@ public class UserData extends LiveData<UserData>
 				});
 	}
 	
-	public void getGymByID(String ID)
+	public void getGymByID(String ID, ObjectQueryCallback callback)
 	{
 		FirebaseFirestore db = FirebaseFirestore.getInstance();
-		DocumentReference gymRef = db.collection(this.KEY_GYMS).document(ID);
+		DocumentReference gymRef = db.collection(KEY_GYMS).document(ID);
 		gymRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>()
 		{
 			@Override
@@ -363,7 +365,7 @@ public class UserData extends LiveData<UserData>
 					String closeTime = (String) task.getResult().get(KEY_GYM_closeTime);
 					ArrayList<String> equipments = (ArrayList) task.getResult().get(KEY_GYM_equipments);
 					ArrayList<String> reviews = (ArrayList) task.getResult().get(KEY_GYM_reviews);
-					ArrayList<String> trainers = (ArrayList) task.getResult().get(KEY_GYM_trainers);
+//					ArrayList<String> trainers = (ArrayList) task.getResult().get(KEY_GYM_trainers);
 					Double latitude = (Double) task.getResult().get(KEY_GYM_latitude);
 					Double longitude = (Double) task.getResult().get(KEY_GYM_longitude);
 					
@@ -373,7 +375,46 @@ public class UserData extends LiveData<UserData>
 					Log.d(TAG, ID + " longitude: " + longitude);
 					Log.d(TAG, ID + " equipments: " + equipments);
 					Log.d(TAG, ID + " reviews: " + reviews);
-					Log.d(TAG, ID + " trainers: " + trainers);
+//					Log.d(TAG, ID + " trainers: " + trainers);
+
+					getTrainersByGymId(ID, new ListQueryCallback() {
+						@Override
+						public void onSucceed(ArrayList list) {
+							Log.d(TAG, " successfully get trainers of gym " + ID);
+							final List<PersonalTrainer> trainerList = list;
+							getReviewsByGymId(ID, new ListQueryCallback() {
+								@Override
+								public void onSucceed(ArrayList list) {
+									Log.d(TAG, " successfully get reviews of gym " + ID);
+									Gym gym = new Gym(
+											ID,
+											name,
+											trainerList,
+											comp5216.sydney.edu.au.findmygym.Utils.CalendarUtil.stringToCalendar(openTime),
+											comp5216.sydney.edu.au.findmygym.Utils.CalendarUtil.stringToCalendar(closeTime),
+											price,
+											address,
+											contact,
+											longitude,
+											latitude,
+											equipments,
+											list
+									);
+									callback.onSucceed(gym);
+								}
+
+								@Override
+								public void onFailed(Exception e) {
+									Log.d(TAG, " failed to get reviews of gym " + ID, e);
+								}
+							});
+						}
+
+						@Override
+						public void onFailed(Exception e) {
+							Log.d(TAG, " failed to get trainers of gym " + ID, e);
+						}
+					});
 				}
 			}
 		});
@@ -1494,6 +1535,97 @@ public class UserData extends LiveData<UserData>
 	public boolean isSuccessful()
 	{
 		return isSuccessful && downloadFinished;
+	}
+
+	public void getTrainersByGymId(String GID, ListQueryCallback callback)
+	{
+		String mTag = "[getTrainersByGymId]";
+		FirebaseFirestore db = FirebaseFirestore.getInstance();
+		CollectionReference ref = db.collection(KEY_TRAINERS);
+		final PersonalTrainer[] trainers = {null};
+		ref.whereEqualTo(KEY_TRAINER_gymId, GID).get()
+				.addOnCompleteListener(task -> {
+					if (task.isSuccessful())
+					{
+						try
+						{
+							ArrayList<PersonalTrainer> trainersList = new ArrayList<>();
+							Log.d(TAG, "Found " + task.getResult().getDocuments().size() + " trainers in DB");
+							for (QueryDocumentSnapshot document : task.getResult())
+							{
+								List<String> tsStrings = (List<String>) document.get(KEY_TRAINER_times);
+								List<Timeslot> ts = new ArrayList<>();
+								for (String tss : tsStrings) {
+									ts.add(Timeslot.fromDatabaseString(tss));
+								}
+								PersonalTrainer trainer = new PersonalTrainer(
+										document.getId(),
+										document.get(KEY_TRAINER_name, String.class),
+										Math.toIntExact((long) document.get(KEY_TRAINER_price)),
+										ts
+								);
+								trainers[0] = trainer;
+								trainersList.add(trainer);
+							}
+							Log.d(mTag, "getTrainersByGymId successfully!" + GID);
+//								comp5216.sydney.edu.au.findmygym.model.UserData.getInstance().rev = reviewsList;
+							callback.onSucceed(trainersList);
+						} catch (Exception e)
+						{
+							callback.onFailed(e);
+						}
+					}
+					else
+					{
+						Log.d(mTag, "getTrainersByGymId failed!" + GID);
+					}
+				});
+	}
+
+	public void getReviewsByGymId(String GID, ListQueryCallback callback)
+	{
+		String mTag = "[getReviewsByGymId]";
+		FirebaseFirestore db = FirebaseFirestore.getInstance();
+		CollectionReference ref = db.collection(KEY_REVIEWS);
+		final Review[] reviews = {null};
+		ref.whereEqualTo(KEY_REVIEW_gymId, GID).get()
+				.addOnCompleteListener(new OnCompleteListener<QuerySnapshot>()
+				{
+					@Override
+					public void onComplete(@NonNull Task<QuerySnapshot> task)
+					{
+						if (task.isSuccessful())
+						{
+							try
+							{
+								ArrayList<Review> reviewsList = new ArrayList<>();
+								Log.d(TAG, "Found " + task.getResult().getDocuments().size() + " Reviews in DB");
+								for (QueryDocumentSnapshot document : task.getResult())
+								{
+									Review review =
+											new Review((String) document.get(KEY_REVIEW_userId),
+													(String) document.get(KEY_REVIEW_gymId),
+													Math.toIntExact((Long) document.get(KEY_REVIEW_rating)),
+													(String) document.get(KEY_REVIEW_comments),
+													comp5216.sydney.edu.au.findmygym.Utils.CalendarUtil.timestampToCalendar((Timestamp) document.get(KEY_REVIEW_dateTime)));
+									review.setReviewId(document.getId());
+									reviews[0] = review;
+									reviewsList.add(review);
+								}
+								Log.d(mTag, "getReviewsByGymId successfully!" + GID);
+//								comp5216.sydney.edu.au.findmygym.model.UserData.getInstance().rev = reviewsList;
+								callback.onSucceed(reviewsList);
+							} catch (Exception e)
+							{
+								callback.onFailed(e);
+							}
+						}
+						else
+						{
+							Log.d(mTag, "getReviewsByGymId failed!" + GID);
+						}
+					}
+				});
 	}
 
 	public void addReview(Review review) {
