@@ -247,85 +247,80 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 		getLocationPermission();
 		updateLocationUI();
 		getDeviceLocation();
-		if (ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-		{
-			mMap.setMyLocationEnabled(true);
-			mMap.setOnInfoWindowLongClickListener(this);
-			
-			if (userData.getAllGyms() == null) return;
-			for (int i = 0; i < userData.getAllGyms().size(); i++){
-				list.add(userData.getAllGyms().get(i).getGymId());
-			}
-			
-			for(int i=0; i<userData.getAllGyms().size(); i++){
-				markers.add(mMap.addMarker(new MarkerOptions()
-						.position(new LatLng(findGymlat(list.get(i)), findGymlong(list.get(i))))
-						.title(findGymName(list.get(i)))
-						.snippet(findGymAddress(list.get(i)))));
-				
-			};
-			
-			Button filterButton = getView().findViewById(R.id.filter_button);
-			
-			filterButton.setOnClickListener(new View.OnClickListener() {
-				
-				
-				@Override
-				public void onClick(View v) {
-					
-					AlertDialog dialog = null;
-					
-					AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-					LayoutInflater inflater = getActivity().getLayoutInflater();
-					View view = inflater.inflate(R.layout.marker_select, null);
-					builder.setView(view);
-					
-					dialog = builder.create();
-					dialog.show();
-					closest = view.findViewById(R.id.radioButton1);
-					favourite = view.findViewById(R.id.radioButton2);
-					Button okButton = view.findViewById(R.id.okButton);
-					Button cancelButton = view.findViewById(R.id.cancelButton);
-					AlertDialog finalDialog = dialog;
-					cancelButton.setOnClickListener(new View.OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							finalDialog.dismiss();
-						}
-					});
-					AlertDialog finalDialog1 = dialog;
-					okButton.setOnClickListener(new View.OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							if (closest.isChecked()) {
-								//hide others and show closet markers
-								//if (view.getId() == R.id.checkBox2){
-								
-								for (Marker marker : markers){
-									String title = marker.getTitle();
-									marker.setVisible(false);
-									if (title.equals(findGymName(list.get(closestdistance())))){
-										marker.setVisible(true);
-										DEFAULT_ZOOM=14;
-										mMap.animateCamera(CameraUpdateFactory
-												.newLatLngZoom(marker.getPosition(), DEFAULT_ZOOM));
-									}
-								}
-								finalDialog1.dismiss();
-								
-								
-							}
-							
-						}
-					});
-					
-					
-				}
-			});
-		}else {
-			Log.e(TAG,"Permission denied!");
+		mMap.setMyLocationEnabled(true);
+		mMap.setOnInfoWindowLongClickListener(this);
+
+		if (userData.getAllGyms() == null) return;
+		for (int i = 0; i < userData.getAllGyms().size(); i++){
+			list.add(userData.getAllGyms().get(i).getGymId());
 		}
 
+
+		for(int i=0; i<userData.getAllGyms().size(); i++){
+			markers.add(mMap.addMarker(new MarkerOptions()
+					.position(new LatLng(findGymlat(list.get(i)), findGymlong(list.get(i))))
+					.title(findGymName(list.get(i)))
+					.snippet(findGymAddress(list.get(i)))));
+
+		};
+
+		Button filterButton = getView().findViewById(R.id.filter_button);
+
+		filterButton.setOnClickListener(new View.OnClickListener() {
+
+
+			@Override
+			public void onClick(View v) {
+
+				AlertDialog dialog = null;
+
+				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+				LayoutInflater inflater = getActivity().getLayoutInflater();
+				View view = inflater.inflate(R.layout.marker_select, null);
+				builder.setView(view);
+
+				dialog = builder.create();
+				dialog.show();
+				closest = view.findViewById(R.id.radioButton1);
+				favourite = view.findViewById(R.id.radioButton2);
+				Button okButton = view.findViewById(R.id.okButton);
+				Button cancelButton = view.findViewById(R.id.cancelButton);
+				AlertDialog finalDialog = dialog;
+				cancelButton.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						finalDialog.dismiss();
+					}
+				});
+				AlertDialog finalDialog1 = dialog;
+				okButton.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						if (closest.isChecked()) {
+							//hide others and show closet markers
+							//if (view.getId() == R.id.checkBox2){
+
+							for (Marker marker : markers){
+								String title = marker.getTitle();
+								marker.setVisible(false);
+								if (title.equals(findGymName(list.get(closestdistance())))){
+									marker.setVisible(true);
+									DEFAULT_ZOOM=14;
+									mMap.animateCamera(CameraUpdateFactory
+											.newLatLngZoom(marker.getPosition(), DEFAULT_ZOOM));
+								}
+							}
+							finalDialog1.dismiss();
+
+
+						}
+
+					}
+				});
+
+
+			}
+		});
 
 
 //		calculatedistance();
