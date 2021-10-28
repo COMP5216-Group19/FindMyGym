@@ -256,7 +256,6 @@ public class UserData extends LiveData<UserData>
 		FirebaseFirestore db = FirebaseFirestore.getInstance();
 		DocumentReference gymRef = db.collection(comp5216.sydney.edu.au.findmygym.model.UserData.getInstance().KEY_TRAINERS).document(ID);
 		final PersonalTrainer[] personalTrainer = {null};
-		final boolean[] flag = {true};
 		gymRef.get()
 				.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>()
 				{
@@ -287,34 +286,15 @@ public class UserData extends LiveData<UserData>
 							{
 								callback.onFailed(e);
 							}
-							
-							
 						}
 						else
 						{
 							Log.d(TAG, "getTrainerByID failed!" + ID);
-							// callback.onSucceed(personalTrainer[0]);
 						}
 					}
 				});
 	}
 	
-	private Handler mHandler = new Handler()
-	{
-		@Override
-		public void handleMessage(Message msg)
-		{
-			super.handleMessage(msg);
-			switch (msg.what)
-			{
-				case 1:
-					Log.d(TAG, "handleMessage: getTrainerByID Successfully");
-				default:
-					Log.d(TAG, "handleMessage: getTrainerByID Failed");
-					break;
-			}
-		}
-	};
 	
 	private void loadAllGyms()
 	{
