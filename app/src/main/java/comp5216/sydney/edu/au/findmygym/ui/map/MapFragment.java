@@ -233,8 +233,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 			markers.add(mMap.addMarker(new MarkerOptions()
 					.position(new LatLng(findGymlat(list.get(i)), findGymlong(list.get(i))))
 					.title(findGymName(list.get(i)))
-					.snippet(findGymAddress(list.get(i)))
-					.icon(BitmapFromVector(getActivity().getApplicationContext(),R.drawable.ic_baseline_fitness_center_24))));
+					.snippet(findGymAddress(list.get(i)))));
 
 		};
 
