@@ -135,6 +135,8 @@ public class UserData extends LiveData<UserData>
 		FirebaseStorage storage = FirebaseStorage.getInstance();
 		gymPictureRef = storage.getReference("gymPictures");
 		trainerAvatarRef = storage.getReference("trainerAvatars");
+
+		loadAllGyms();
 	}
 
 	/**
