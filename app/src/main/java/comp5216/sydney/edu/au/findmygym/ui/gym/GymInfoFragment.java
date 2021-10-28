@@ -32,6 +32,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.text.DateFormat;
 
 import comp5216.sydney.edu.au.findmygym.R;
+import comp5216.sydney.edu.au.findmygym.Utils.ImageUtil;
 import comp5216.sydney.edu.au.findmygym.model.Gym;
 import comp5216.sydney.edu.au.findmygym.model.Review;
 import comp5216.sydney.edu.au.findmygym.model.Timeslot;
@@ -109,12 +110,7 @@ public class GymInfoFragment extends Fragment {
         gymAddress.setText(gym.getAddress());
         gymContact.setText(gym.getContact());
 
-        Bitmap gymImage = gym.getGymPhoto();
-        if (gymImage == null) {
-            gymImageView.setImageResource(R.drawable.fitness_gym_example_1484x983);
-        } else {
-            gymImageView.setImageBitmap(gymImage);
-        }
+        ImageUtil.loadImage(gym.getGymId(), gymImageView, getContext());
 
         int[] chipColorIds = new int[]{
                 R.color.light_orange,
