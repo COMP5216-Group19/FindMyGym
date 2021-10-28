@@ -6,6 +6,9 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -14,6 +17,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +41,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 
 import androidx.annotation.NonNull;
@@ -56,6 +62,7 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager2.widget.ViewPager2;
 
+import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -123,15 +130,12 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
 		NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
 		NavigationUI.setupWithNavController(navigationView, navController);//???
-		
-	
+
 		headerView = navigationView.getHeaderView(0);
 		setObserver();//update nav_header
 		setDrawerListener();//setup drawer event handler
 		setFabListener();
 		setSupportActionBar(binding.appBarMain.toolbar);
-		
-		
 		
 		// usersColRef.whereEqualTo("UID", uid).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>()
 		// {
@@ -272,10 +276,32 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 				
 				try
 				{
-					Glide.with(mContext)
-							.load(userData.getUserAvatarUri())
-							.placeholder(R.drawable.ic_launcher_background)
-							.into(navAvatar);
+					loadImage("azi",navAvatar,mContext);
+					// String id = "ybb";
+					// StorageReference picRef = FirebaseStorage.getInstance().getReferenceFromUrl(userData.URL_STORAGE_ORIGINAL_IMAGE+id+".jpg");
+					// picRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
+					// {
+					// 	@Override
+					// 	public void onSuccess(Uri uri)
+					// 	{
+					// 		Glide.with(mContext)
+					// 				.load(uri)
+					// 				.placeholder(R.drawable.ic_launcher_background)
+					// 				.into(navAvatar);
+					// 	}
+					// }).addOnFailureListener(new OnFailureListener()
+					// {
+					// 	@Override
+					// 	public void onFailure(@NonNull Exception e)
+					// 	{
+					// 		Log.e(TAG, "onFailure: Load Failed"+userData.URL_STORAGE_ORIGINAL_IMAGE+id+".jpg" );
+					// 	}
+					// });
+					
+					// Glide.with(mContext)
+					// 		.load(userData.getUserAvatarUri())
+					// 		.placeholder(R.drawable.ic_launcher_background)
+					// 		.into(navAvatar);
 				} catch (Exception e)
 				{
 					Log.e(TAG, "updateUserdata: " + e.toString());
@@ -473,5 +499,36 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 			}
 		}
 		return super.dispatchTouchEvent(event);
+	}
+	
+	public static void loadImage(String imageName, ImageView imageView, Context context){
+		UserData userData = UserData.getInstance();
+		ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo wifiNetworkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+		StorageReference picRef;
+		if(wifiNetworkInfo.isConnected()){
+			picRef = FirebaseStorage.getInstance().getReferenceFromUrl(userData.URL_STORAGE_ORIGINAL_IMAGE+imageName+".jpg");
+		}else {
+			picRef = FirebaseStorage.getInstance().getReferenceFromUrl(userData.URL_STORAGE_REDUCED_IMAGE+imageName+".jpg");
+		}
+		
+		picRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
+		{
+			@Override
+			public void onSuccess(Uri uri)
+			{
+				Glide.with(context)
+						.load(uri)
+						.placeholder(R.drawable.ic_launcher_background)
+						.into(imageView);
+			}
+		}).addOnFailureListener(new OnFailureListener()
+		{
+			@Override
+			public void onFailure(@NonNull Exception e)
+			{
+				Log.e("[LOADING IMAGE]", "onFailure: Load Image Uri Failed"+picRef.toString());
+			}
+		});
 	}
 }

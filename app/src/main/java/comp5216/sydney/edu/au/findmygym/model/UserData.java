@@ -1,26 +1,39 @@
 package comp5216.sydney.edu.au.findmygym.model;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.se.omapi.Session;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -41,6 +54,11 @@ public class UserData extends LiveData<UserData>
 {
 	private final String TAG = "[UserData]";
 	
+	
+	public final String KEY_GYMS = "GYMS";
+	public final String KEY_CARDS = "CARDS";
+	public final String KEY_USERS = "USERS";
+	
 	public final String KEY_uid = "UID";
 	public final String KEY_userName = "USERNAME";
 	public final String KEY_userEmail = "EMAIL";
@@ -51,6 +69,18 @@ public class UserData extends LiveData<UserData>
 	public final String KEY_login_last_time = "LOGIN_LAST_TIME";
 	public final String KEY_login_counter = "LOGIN_COUNTER";
 	
+	public final String KEY_GYM_name = "GYM_NAME";
+	public final String KEY_GYM_address = "GYM_ADDRESS";
+	public final String KEY_GYM_latitude = "GYM_LATITUDE";
+	public final String KEY_GYM_longitude = "GYM_LONGITUDE";
+	public final String KEY_GYM_contact = "GYM_CONTACT";
+	public final String KEY_GYM_closeTime = "GYM_CLOSETIME";
+	public final String KEY_GYM_openTime = "GYM_OPENTIME";
+	public final String KEY_GYM_price = "GYM_PRICE";
+	public final String KEY_GYM_equipments = "GYM_EQUIPMENTS";
+	public final String KEY_GYM_trainers = "GYM_TRAINERS";
+	public final String URL_STORAGE_ORIGINAL_IMAGE = "gs://findmygym-e9f2e.appspot.com/Original/";
+	public final String URL_STORAGE_REDUCED_IMAGE = "gs://findmygym-e9f2e.appspot.com/Reduced/";
 	private ArrayList<PurchaseRecord> purchaseRecords;
 	private ArrayList<ScheduleList> scheduleLists;
 	private ArrayList<CreditCard> creditCards;
@@ -94,6 +124,7 @@ public class UserData extends LiveData<UserData>
 	 */
 	private UserData()
 	{
+		this.memberships = new ArrayList<>();
 		this.purchaseRecords = new ArrayList<>();
 		this.scheduleLists = new ArrayList<>(1);
 		database = FirebaseDatabase.getInstance();
@@ -104,8 +135,6 @@ public class UserData extends LiveData<UserData>
 		FirebaseStorage storage = FirebaseStorage.getInstance();
 		gymPictureRef = storage.getReference("gymPictures");
 		trainerAvatarRef = storage.getReference("trainerAvatars");
-
-		loadAllGyms();
 	}
 
 	/**
@@ -121,13 +150,99 @@ public class UserData extends LiveData<UserData>
 				{
 					UserData = new UserData();
 //					UserData.addMockGym();
-
 				}
 			}
 		}
 		return UserData;
 	}
 
+	// private void addMockGyms(){
+	// 	Map<String, Object> newGyms = new HashMap<>();
+	// 	newGyms.put(this.KEY_GYM_name, "Fitness Second Bond St");
+	// 	newGyms.put(this.KEY_GYM_address, "20 Bond St, Sydney NSW 2000");
+	// 	newGyms.put(this.KEY_GYM_latitude, -33.86441);
+	// 	newGyms.put(this.KEY_GYM_longitude, 151.20829);
+	// 	newGyms.put(this.KEY_GYM_contact, "123-4567");
+	// 	newGyms.put(this.KEY_GYM_closeTime, "1970-01-01 19:00");
+	// 	newGyms.put(this.KEY_GYM_openTime, "1970-01-01 09:00");
+	// 	newGyms.put(this.KEY_GYM_price, 20);
+	// 	newGyms.put(this.KEY_GYM_equipments, Arrays.asList("Climbing","Barbell","Bicycle","Rowing","Treadmill"));
+	// 	newGyms.put(this.KEY_GYM_trainers, Arrays.asList("111","222","333","444","555"));
+	//
+	// 	FirebaseFirestore db = FirebaseFirestore.getInstance();
+	// 	CollectionReference cardsRef = db.collection("GYMS");
+	// 	cardsRef.add(newGyms)
+	// 			// cardsRef.add(new CreditCard())
+	// 			.addOnSuccessListener(new OnSuccessListener<DocumentReference>()
+	// 			{
+	// 				@Override
+	// 				public void onSuccess(DocumentReference documentReference)
+	// 				{
+	// 					// importCardsFromDB();
+	// 					Log.d(TAG,"Add mocked gyms successfully: "+documentReference.getId());
+	// 				}
+	// 			})
+	// 			.addOnFailureListener(new OnFailureListener()
+	// 			{
+	// 				@Override
+	// 				public void onFailure(@NonNull Exception e)
+	// 				{
+	// 					Log.d(TAG,"Add mocked gyms Failed: "+e.toString());
+	// 					e.printStackTrace();
+	// 				}
+	// 			});
+	// }
+	//
+	// public void getGymByID(String ID){
+	// 	FirebaseFirestore db = FirebaseFirestore.getInstance();
+	// 	DocumentReference gymRef = db.collection(this.KEY_GYMS).document(ID);
+	// 	gymRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>()
+	// 	{
+	// 		@Override
+	// 		public void onComplete(@NonNull Task<DocumentSnapshot> task)
+	// 		{
+	// 			if(task.isSuccessful()){
+	// 				String name = (String) task.getResult().get(KEY_GYM_name);
+	// 				ArrayList equipments = (ArrayList) task.getResult().get(KEY_GYM_equipments);
+	// 				String contact = (String) task.getResult().get(KEY_GYM_contact);
+	// 				Double latitude = (Double) task.getResult().get(KEY_GYM_latitude);
+	// 				Double longitude = (Double) task.getResult().get(KEY_GYM_longitude);
+	//
+	// 				Log.d(TAG, "name: "+name);
+	// 				Log.d(TAG, "equipments: "+equipments);
+	// 				Log.d(TAG, "contact: "+contact);
+	// 				Log.d(TAG, "latitude: "+latitude);
+	// 				Log.d(TAG, "longitude: "+longitude);
+	// 			}
+	// 		}
+	// 	});
+	// }
+	
+	// public void getTrainerByID(String ID){
+	// 	FirebaseFirestore db = FirebaseFirestore.getInstance();
+	// 	DocumentReference gymRef = db.collection(this.KEY_GYMS).document(ID);
+	// 	gymRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>()
+	// 	{
+	// 		@Override
+	// 		public void onComplete(@NonNull Task<DocumentSnapshot> task)
+	// 		{
+	// 			if(task.isSuccessful()){
+	// 				String name = (String) task.getResult().get(KEY_GYM_name);
+	// 				ArrayList equipments = (ArrayList) task.getResult().get(KEY_GYM_equipments);
+	// 				String contact = (String) task.getResult().get(KEY_GYM_contact);
+	// 				Double latitude = (Double) task.getResult().get(KEY_GYM_latitude);
+	// 				Double longitude = (Double) task.getResult().get(KEY_GYM_longitude);
+	//
+	// 				Log.d(TAG, "name: "+name);
+	// 				Log.d(TAG, "equipments: "+equipments);
+	// 				Log.d(TAG, "contact: "+contact);
+	// 				Log.d(TAG, "latitude: "+latitude);
+	// 				Log.d(TAG, "longitude: "+longitude);
+	// 			}
+	// 		}
+	// 	});
+	// }
+	
 	private void loadAllGyms() {
 		allGyms = new ArrayList<>();
 		allTrainers = new ArrayList<>();
