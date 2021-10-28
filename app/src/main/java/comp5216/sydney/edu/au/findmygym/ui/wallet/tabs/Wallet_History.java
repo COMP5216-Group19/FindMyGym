@@ -60,12 +60,14 @@ public class Wallet_History extends Fragment implements SwipeRefreshLayout.OnRef
 		swipeRefreshLayout = view.findViewById(R.id.wallet_history_refreshLayout);
 		swipeRefreshLayout.setOnRefreshListener(this);
 		
+		// userData.setPurchaseRecords(new ArrayList<>());
 		userData.getPurchaseRecordsByUID(userData.getUserId(), new ListQueryCallback()
 		{
 			@Override
 			public void onSucceed(ArrayList list)
 			{
-				Log.d(TAG, "getPurchaseRecordsByUID successfully!"+list.toString());
+				Log.d(TAG, "getPurchaseRecordsByUID successfully!"+list.size()+list.toString());
+				// userData.setPurchaseRecords(list);
 			}
 			
 			@Override

@@ -50,6 +50,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
+import comp5216.sydney.edu.au.findmygym.Utils.ImageUtil;
 import comp5216.sydney.edu.au.findmygym.databinding.ActivityMainBinding;
 import comp5216.sydney.edu.au.findmygym.model.Membership;
 import comp5216.sydney.edu.au.findmygym.model.Gym;
@@ -217,6 +218,21 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		// 	}
 		// });
 		// initPurchaseRecords();
+		uploadingGymImg();
+	}
+	public void uploadingGymImg()
+	{
+		Context context = this.getApplicationContext();
+		ImageUtil.uploadImage("8Pp4nlV5Fc3XW06BXkhV", R.drawable.gym1, context);
+		ImageUtil.uploadImage("AVRANcg0CBCAUBos8t0G", R.drawable.gym2, context);
+		ImageUtil.uploadImage("PANGsw8b7ufa9ANPq6bx", R.drawable.gym3, context);
+		ImageUtil.uploadImage("Q0JiYLebVbR4RrXVUJXi", R.drawable.gym4, context);
+		ImageUtil.uploadImage("S6imrUoT5OVYapOJVXqO", R.drawable.gym5, context);
+		ImageUtil.uploadImage("U8lxg0yrlVnxbtREcDNo", R.drawable.gym6, context);
+		ImageUtil.uploadImage("UlBO5BGMClwdHXPPl6mh", R.drawable.gym7, context);
+		ImageUtil.uploadImage("YixOfdt2iITE1VBb51ge", R.drawable.gym8, context);
+		ImageUtil.uploadImage("ZMao9oZR2Hf2VRDnwmwk", R.drawable.gym9, context);
+		ImageUtil.uploadImage("efa3VHgYwiwaoyX0Hz6h", R.drawable.gym10, context);
 	}
 	
 	public void initPurchaseRecords(){
