@@ -112,45 +112,23 @@ public class GymViewModel extends ViewModel {
      *
      * @param reservation the reservation to be made
      */
-    public void makeReservation(Reservation reservation) {
-        // UserData userData = UserData.getInstance();
-        // if (reservation.getPrice() > 0) {
-        //     PurchaseRecord pr = new PurchaseRecord(
-        //
-        //             reservation.getPrice(),
-        //             UserData.getInstance().getUserId(),
-        //             UserData.getInstance().findGymById(reservation.getGymId()).getGymName(),
-        //             reservation.getSelectedTimeSlot().getBeginTime());
-        //     userData.addPurchaseRecord(pr);
-        //     userData.addPurchaseRecordToDatabase(pr);
-        // }
-        // List<Reservation> reservations = userData.getReservations();
-        // reservations.add(reservation);
-        // List<Reservation.ReservationData> rds = new ArrayList<>();
-        // for (Reservation rsv : reservations) {
-        //     rds.add(rsv.toData());
-        // }
-        // userData.getUserRef().child("reservations").setValue(rds)
-        //         .addOnSuccessListener(unused -> {
-        //             Log.d(TAG, "Uploaded new reservation");
-        //             if (reservation.getTrainerId() != null) {
-        //                 Log.d(TAG, "Updating trainer timeslots");
-        //                 PersonalTrainer trainer = userData.findGymById(reservation.getGymId())
-        //                         .findTrainerById(reservation.getTrainerId());
-        //                 String timeDbString = reservation.getSelectedTimeSlot().toDatabaseString();
-        //                 trainer.getAvailableTimes()
-        //                         .removeIf(timeslot ->
-        //                                 timeslot.toDatabaseString().equals(timeDbString));
-        //                 userData.getTrainersRef()
-        //                         .child(reservation.getTrainerId()).child("availableTime")
-        //                         .setValue(trainer.getAvailableTimesDbStrings());
-        //             }
-        //             Toast.makeText(rsvFragment.getContext(),
-        //                     rsvFragment.getContext().getString(R.string.gym_reserve_success),
-        //                     Toast.LENGTH_LONG).show();
-        //         }).addOnFailureListener(e -> {
-        //     Log.e(TAG, "Failed to upload new reservation", e);
-        // });
+    public void makeReservation(Reservation reservation, TrainerReservation trainerReservation) {
+        UserData userData = UserData.getInstance();
+        if (reservation.getPrice() > 0) {
+            PurchaseRecord pr = new PurchaseRecord(
+                    null,
+                    reservation.getPrice(),
+                    UserData.getInstance().getUserId(),
+                    gym.getGymId(),
+                    reservation.getSelectedTimeSlot().getBeginTime());
+            userData.addPurchaseRecord(pr);
+            userData.addPurchaseRecordToDatabase(pr);
+        }
+        userData.addReservation(reservation);
+        if (trainerReservation != null) {
+            userData.removeTrainerTimeslot(trainerReservation.trainer.getTrainerId(),
+                    trainerReservation.timeslot);
+        }
     }
 
     /**
