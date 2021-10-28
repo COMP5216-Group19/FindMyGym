@@ -52,7 +52,9 @@ import comp5216.sydney.edu.au.findmygym.GymActivity;
 import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.databinding.FragmentMapBinding;
 import comp5216.sydney.edu.au.findmygym.model.Gym;
+import comp5216.sydney.edu.au.findmygym.model.SimpleGym;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
+import comp5216.sydney.edu.au.findmygym.model.callbacks.ObjectQueryCallback;
 
 
 public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnInfoWindowLongClickListener
@@ -445,32 +447,34 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 	@Override
 	public void onInfoWindowLongClick(Marker marker) {
 		String title = marker.getTitle();
-		int j = 0;
-		for(int i = 0; i<userData.getAllSimpleGyms().size(); i++){
-			if (title.equals(findGymName(list.get(i)))) {
-				j=i;
+		Log.d(TAG, title);
+		Log.d(TAG, list.toString());
+		String gymId = null;
+		for (SimpleGym simpleGym : userData.getAllSimpleGyms()) {
+			if (simpleGym.getGymName().equals(title)) {
+				gymId = simpleGym.getGymId();
+				break;
 			}
 		}
 
-		Gym gym = UserData.getInstance().findGymById(list.get(j));
-		if (gym != null) {
-			Intent intent = new Intent(getActivity(), GymActivity.class);
-			intent.putExtra("gym", gym);
-			startActivity(intent);
+		if (gymId != null) {
+			UserData.getInstance().getGymByID(gymId, new ObjectQueryCallback() {
+				@Override
+				public void onSucceed(Object object) {
+					Gym gym = (Gym) object;
+					Intent intent = new Intent(getContext(), GymActivity.class);
+					intent.putExtra("gym", gym);
+					startActivity(intent);
+				}
+
+				@Override
+				public void onFailed(Exception e) {
+					Log.d(TAG, "failed to get gym", e);
+				}
+			});
+		} else {
+			Log.wtf(TAG, "Cannot find gym id with the clicked name/");
 		}
-//		UserData.getInstance().findGymById(list.get(j), new GymQueryCallback() {
-//			@Override
-//			public void onSucceed(Gym gym) {
-//				Intent intent = new Intent(getActivity(), GymActivity.class);
-//				intent.putExtra("gym", gym);
-//				startActivity(intent);
-//			}
-//
-//			@Override
-//			public void onFailed(Exception exception) {
-//
-//			}
-//		});
 	}
 
 	public Integer closestdistance() {
