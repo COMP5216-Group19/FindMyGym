@@ -80,7 +80,7 @@ public class Wallet_Membership extends Fragment
 		UserData userData = UserData.getInstance();
 		//TODO
 		// userData.setMemberships( new ArrayList<>());
-		userData.setMemberships(memberships);
+		// userData.setMemberships(memberships);
 		
 		MembershipAdapter membershipAdapter = new MembershipAdapter(context);
 		// scrollView.setAdapter(membershipAdapter);
