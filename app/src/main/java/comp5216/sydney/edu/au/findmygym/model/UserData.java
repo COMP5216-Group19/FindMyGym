@@ -636,7 +636,8 @@ public class UserData extends LiveData<UserData>
 					Log.d(TAG, "Uploaded new reservation");
 					if (reservation.getTrainerId() != null) {
 						Log.d(TAG, "Updating trainer timeslots");
-						trainersRef.child(reservation.getTrainerId());
+//						trainersRef.child(reservation.getTrainerId()).child("availableTime")
+//								.equalTo()
 					}
 				}).addOnFailureListener(e -> {
 					Log.e(TAG, "Failed to upload new reservation", e);
@@ -712,7 +713,18 @@ public class UserData extends LiveData<UserData>
 		postValue(this);
 	}
 
+	public void addPurchaseRecordToDatabase(PurchaseRecord purchaseRecord) {
+		Map<String, String> recordItem = new HashMap<>();
+		recordItem.put("price", String.valueOf(purchaseRecord.getCost()));
+		recordItem.put("gymId", purchaseRecord.getTitle());
+		recordItem.put("time", purchaseRecord.getTimeStr());
+		userRef.child("purchaseRecord").child(String.valueOf(purchaseRecords.size() - 1))
+				.setValue(recordItem).addOnSuccessListener(unused -> {
 
+		}).addOnFailureListener(e -> {
+			Log.e(TAG, "Failed to upload purchaseRecord");
+		});
+	}
 
 	public void setPurchaseRecords(ArrayList<PurchaseRecord> purchaseRecords)
 	{

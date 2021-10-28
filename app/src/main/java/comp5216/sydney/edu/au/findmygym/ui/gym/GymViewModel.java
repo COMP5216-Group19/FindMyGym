@@ -17,6 +17,7 @@ import java.util.List;
 import comp5216.sydney.edu.au.findmygym.model.CalendarUtil;
 import comp5216.sydney.edu.au.findmygym.model.Gym;
 import comp5216.sydney.edu.au.findmygym.model.PersonalTrainer;
+import comp5216.sydney.edu.au.findmygym.model.PurchaseRecord;
 import comp5216.sydney.edu.au.findmygym.model.Reservation;
 import comp5216.sydney.edu.au.findmygym.model.Review;
 import comp5216.sydney.edu.au.findmygym.model.Timeslot;
@@ -111,7 +112,16 @@ public class GymViewModel extends ViewModel {
      * @param reservation the reservation to be made
      */
     public void makeReservation(Reservation reservation) {
-
+        UserData.getInstance().postNewReservation(reservation);
+        if (reservation.getPrice() > 0) {
+            PurchaseRecord pr = new PurchaseRecord(
+                    reservation.getPrice(),
+                    UserData.getInstance().findGymById(reservation.getGymId()).getGymName(),
+                    reservation.getSelectedTimeSlot().getBeginTime(),
+                    null);
+            UserData.getInstance().addPurchaseRecord(pr);
+            UserData.getInstance().addPurchaseRecordToDatabase(pr);
+        }
     }
 
     /**
