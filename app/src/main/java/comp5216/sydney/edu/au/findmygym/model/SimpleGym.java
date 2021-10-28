@@ -4,24 +4,38 @@ import androidx.annotation.NonNull;
 
 public class SimpleGym {
 
-    public final int gymId;
+    public final String gymId;
     public final String gymName;
+    public final String address;
     public final double longitude;
     public final double latitude;
 
-    private SimpleGym(int gymId, String gymName, double longitude, double latitude) {
+    public SimpleGym(String gymId, String gymName, String address, double longitude, double latitude) {
         this.gymId = gymId;
         this.gymName = gymName;
+        this.address = address;
         this.longitude = longitude;
         this.latitude = latitude;
     }
 
-    public static SimpleGym fromData(Gym.GymData data) {
-        return new SimpleGym(
-                Integer.parseInt(data.gymId),
-                data.name,
-                data.longitude,
-                data.latitude);
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public String getGymId() {
+        return gymId;
+    }
+
+    public String getGymName() {
+        return gymName;
+    }
+
+    public String getAddress() {
+        return address;
     }
 
     @NonNull

@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import java.util.ArrayList;
+
 import java.util.List;
 
 import comp5216.sydney.edu.au.findmygym.R;
@@ -58,13 +58,13 @@ public class FavGymAdapter extends RecyclerView.Adapter<FavGymAdapter.ViewHolder
         String id = favGymList.get(position);
         String name = "";
 
-        if (userData.getAllGyms() == null) {
+        if (userData.getAllSimpleGyms() == null) {
             return name;
         }
 
-        for (int i = 0; i < userData.getAllGyms().size(); i++) {
-            if (userData.getAllGyms().get(i).getGymId().equals(id)) {
-                name = userData.getAllGyms().get(i).getGymName();
+        for (int i = 0; i < userData.getAllSimpleGyms().size(); i++) {
+            if (userData.getAllSimpleGyms().get(i).getGymId().equals(id)) {
+                name = userData.getAllSimpleGyms().get(i).getGymName();
             }
         }
         return name;
@@ -74,13 +74,13 @@ public class FavGymAdapter extends RecyclerView.Adapter<FavGymAdapter.ViewHolder
         String id = favGymList.get(position);
         String address = "";
 
-        if (userData.getAllGyms() == null) {
+        if (userData.getAllSimpleGyms() == null) {
             return address;
         }
 
-        for (int i = 0; i < userData.getAllGyms().size(); i++) {
-            if (userData.getAllGyms().get(i).getGymId().equals(id)) {
-                address = userData.getAllGyms().get(i).getAddress();
+        for (int i = 0; i < userData.getAllSimpleGyms().size(); i++) {
+            if (userData.getAllSimpleGyms().get(i).getGymId().equals(id)) {
+                address = userData.getAllSimpleGyms().get(i).getAddress();
             }
         }
         return address;

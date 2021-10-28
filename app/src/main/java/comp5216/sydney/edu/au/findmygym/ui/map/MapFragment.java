@@ -1,16 +1,13 @@
 package comp5216.sydney.edu.au.findmygym.ui.map;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
@@ -19,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -48,18 +44,15 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import comp5216.sydney.edu.au.findmygym.GymActivity;
 import comp5216.sydney.edu.au.findmygym.R;
-import comp5216.sydney.edu.au.findmygym.databinding.ActivityMainBinding;
 import comp5216.sydney.edu.au.findmygym.databinding.FragmentMapBinding;
 import comp5216.sydney.edu.au.findmygym.model.Gym;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
-import comp5216.sydney.edu.au.findmygym.model.callbacks.GymQueryCallback;
 
 
 public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnInfoWindowLongClickListener
@@ -186,15 +179,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 	public String findGymName(String id)
 	{
 		String name = "";
-		if (userData.getAllGyms() == null)
+		if (userData.getAllSimpleGyms() == null)
 		{
 			return name;
 		}
-		for (int i = 0; i < userData.getAllGyms().size(); i++)
+		for (int i = 0; i < userData.getAllSimpleGyms().size(); i++)
 		{
-			if (userData.getAllGyms().get(i).getGymId().equals(id))
+			if (userData.getAllSimpleGyms().get(i).getGymId().equals(id))
 			{
-				name = userData.getAllGyms().get(i).getGymName();
+				name = userData.getAllSimpleGyms().get(i).getGymName();
 			}
 		}
 		return name;
@@ -203,11 +196,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 	public String findGymAddress(String id)
 	{
 		String address = "";
-		for (int i = 0; i < userData.getAllGyms().size(); i++)
+		for (int i = 0; i < userData.getAllSimpleGyms().size(); i++)
 		{
-			if (userData.getAllGyms().get(i).getGymId().equals(id))
+			if (userData.getAllSimpleGyms().get(i).getGymId().equals(id))
 			{
-				address = userData.getAllGyms().get(i).getAddress();
+				address = userData.getAllSimpleGyms().get(i).getAddress();
 			}
 		}
 		return address;
@@ -216,11 +209,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 	public double findGymlat(String id)
 	{
 		double latitude = 0;
-		for (int i = 0; i < userData.getAllGyms().size(); i++)
+		for (int i = 0; i < userData.getAllSimpleGyms().size(); i++)
 		{
-			if (userData.getAllGyms().get(i).getGymId().equals(id))
+			if (userData.getAllSimpleGyms().get(i).getGymId().equals(id))
 			{
-				latitude = userData.getAllGyms().get(i).getLatitude();
+				latitude = userData.getAllSimpleGyms().get(i).getLatitude();
 			}
 		}
 		return latitude;
@@ -229,11 +222,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 	public double findGymlong(String id)
 	{
 		double longitude = 0;
-		for (int i = 0; i < userData.getAllGyms().size(); i++)
+		for (int i = 0; i < userData.getAllSimpleGyms().size(); i++)
 		{
-			if (userData.getAllGyms().get(i).getGymId().equals(id))
+			if (userData.getAllSimpleGyms().get(i).getGymId().equals(id))
 			{
-				longitude = userData.getAllGyms().get(i).getLongitude();
+				longitude = userData.getAllSimpleGyms().get(i).getLongitude();
 			}
 		}
 		return longitude;
@@ -250,13 +243,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 		mMap.setMyLocationEnabled(true);
 		mMap.setOnInfoWindowLongClickListener(this);
 
-		if (userData.getAllGyms() == null) return;
-		for (int i = 0; i < userData.getAllGyms().size(); i++){
-			list.add(userData.getAllGyms().get(i).getGymId());
+		if (userData.getAllSimpleGyms() == null) return;
+		for (int i = 0; i < userData.getAllSimpleGyms().size(); i++){
+			list.add(userData.getAllSimpleGyms().get(i).getGymId());
 		}
 
 
-		for(int i=0; i<userData.getAllGyms().size(); i++){
+		for(int i = 0; i<userData.getAllSimpleGyms().size(); i++){
 			markers.add(mMap.addMarker(new MarkerOptions()
 					.position(new LatLng(findGymlat(list.get(i)), findGymlong(list.get(i))))
 					.title(findGymName(list.get(i)))
@@ -453,7 +446,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 	public void onInfoWindowLongClick(Marker marker) {
 		String title = marker.getTitle();
 		int j = 0;
-		for(int i=0; i<userData.getAllGyms().size(); i++){
+		for(int i = 0; i<userData.getAllSimpleGyms().size(); i++){
 			if (title.equals(findGymName(list.get(i)))) {
 				j=i;
 			}
@@ -483,7 +476,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 	public Integer closestdistance() {
 		getDeviceLocation();
 
-		for(int i=0; i<userData.getAllGyms().size(); i++){
+		for(int i = 0; i<userData.getAllSimpleGyms().size(); i++){
 
 			Location markerLocation = new Location("");
 			markerLocation.setLatitude(findGymlat(list.get(i)));

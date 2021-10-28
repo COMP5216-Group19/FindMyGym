@@ -1,10 +1,7 @@
 package comp5216.sydney.edu.au.findmygym.ui.profile;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -229,7 +226,7 @@ public class ProfileFragment extends Fragment
 
 	public String findTrainerNameById(String id) {
 		String name = "";
-		if(userData.getAllGyms() == null) { return name; }
+		if(userData.getAllSimpleGyms() == null) { return name; }
 		for (int i = 0; i < userData.getAllTrainers().size(); i++) {
 			if (userData.getAllTrainers().get(i).getTrainerId().equals(id)) {
 				name = userData.getAllTrainers().get(i).getName();

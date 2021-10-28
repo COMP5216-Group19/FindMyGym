@@ -4,8 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Handler;
-import android.os.Message;
 import android.se.omapi.Session;
 import android.util.Log;
 
@@ -18,11 +16,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -40,7 +35,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.Utils.ImageUtil;
@@ -135,7 +129,7 @@ public class UserData extends LiveData<UserData>
 	// Displays these gyms on map
 	// TODO: 让这个list在loading界面load，load完了再进map
 	// TODO: 或者观察这个list，随list更新map
-	private List<Gym> allGyms;
+	private List<SimpleGym> allSimpleGyms = new ArrayList<>();
 	
 	private List<PersonalTrainer> allTrainers;
 	
@@ -158,7 +152,7 @@ public class UserData extends LiveData<UserData>
 		gymPictureRef = storage.getReference("gymPictures");
 		trainerAvatarRef = storage.getReference("trainerAvatars");
 		
-		loadAllGyms();
+		loadAllSimpleGyms();
 	}
 	
 	/**
@@ -345,6 +339,29 @@ public class UserData extends LiveData<UserData>
 					}
 				});
 	}
+
+	private void loadAllSimpleGyms() {
+		FirebaseFirestore db = FirebaseFirestore.getInstance();
+		db.collection(KEY_GYMS).get().addOnCompleteListener(task -> {
+			if (task.isSuccessful()) {
+				System.out.println(task.getResult());
+				for (QueryDocumentSnapshot snapshot : task.getResult()) {
+					SimpleGym simpleGym = new SimpleGym(
+							snapshot.getId(),
+							snapshot.get(KEY_GYM_name, String.class),
+							snapshot.get(KEY_GYM_address, String.class),
+							snapshot.get(KEY_GYM_longitude, Double.class),
+							snapshot.get(KEY_GYM_latitude, Double.class)
+					);
+					Log.d(TAG, "Downloaded simple gym " + snapshot.getId());
+					allSimpleGyms.add(simpleGym);
+				}
+				postValue(this);
+			} else {
+				Log.e(TAG, "Failed to read all gyms info from database");
+			}
+		});
+	}
 	
 	public void getGymByID(String ID, ObjectQueryCallback callback)
 	{
@@ -364,7 +381,7 @@ public class UserData extends LiveData<UserData>
 					String openTime = (String) task.getResult().get(KEY_GYM_openTime);
 					String closeTime = (String) task.getResult().get(KEY_GYM_closeTime);
 					ArrayList<String> equipments = (ArrayList) task.getResult().get(KEY_GYM_equipments);
-					ArrayList<String> reviews = (ArrayList) task.getResult().get(KEY_GYM_reviews);
+//					ArrayList<String> reviews = (ArrayList) task.getResult().get(KEY_GYM_reviews);
 //					ArrayList<String> trainers = (ArrayList) task.getResult().get(KEY_GYM_trainers);
 					Double latitude = (Double) task.getResult().get(KEY_GYM_latitude);
 					Double longitude = (Double) task.getResult().get(KEY_GYM_longitude);
@@ -374,7 +391,7 @@ public class UserData extends LiveData<UserData>
 					Log.d(TAG, ID + " latitude: " + latitude);
 					Log.d(TAG, ID + " longitude: " + longitude);
 					Log.d(TAG, ID + " equipments: " + equipments);
-					Log.d(TAG, ID + " reviews: " + reviews);
+//					Log.d(TAG, ID + " reviews: " + reviews);
 //					Log.d(TAG, ID + " trainers: " + trainers);
 
 					getTrainersByGymId(ID, new ListQueryCallback() {
@@ -949,9 +966,9 @@ public class UserData extends LiveData<UserData>
 	//		reservations.add(rev3);
 	//	}
 	
-	public List<Gym> getAllGyms()
+	public List<SimpleGym> getAllSimpleGyms()
 	{
-		return allGyms;
+		return allSimpleGyms;
 	}
 	
 	@Deprecated
@@ -1031,16 +1048,16 @@ public class UserData extends LiveData<UserData>
 	
 	public Gym findGymById(String gymId)
 	{
-		Log.d(TAG, "Looking for id " + gymId);
-		Log.d(TAG, allGyms.toString());
-		for (Gym gym : allGyms)
-		{
-			Log.d(TAG, "Scanning " + gym.getGymId());
-			if (gymId.equals(gym.getGymId()))
-			{
-				return gym;
-			}
-		}
+//		Log.d(TAG, "Looking for id " + gymId);
+//		Log.d(TAG, allSimpleGyms.toString());
+//		for (Gym gym : allSimpleGyms)
+//		{
+//			Log.d(TAG, "Scanning " + gym.getGymId());
+//			if (gymId.equals(gym.getGymId()))
+//			{
+//				return gym;
+//			}
+//		}
 		return null;
 	}
 	
