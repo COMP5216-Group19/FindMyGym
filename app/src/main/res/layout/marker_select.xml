@@ -23,7 +23,8 @@
         android:layout_below="@+id/title_hour_selection"
         android:layout_marginLeft="30dp"
         android:layout_marginStart="30dp"
-        android:text="Closest Gym" />
+        android:text="Closest Gym"
+        android:checked="true"/>
 
     <RadioButton
         android:id="@+id/radioButton2"
@@ -31,7 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="30dp"
         android:layout_marginStart="30dp"
-        android:text="Trains"
+        android:text="Favourite"
         android:layout_below="@+id/radioButton1"/>
 
 

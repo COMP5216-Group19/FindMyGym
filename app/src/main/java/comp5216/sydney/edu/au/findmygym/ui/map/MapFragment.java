@@ -2,6 +2,7 @@ package comp5216.sydney.edu.au.findmygym.ui.map;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -17,6 +18,8 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -51,6 +54,7 @@ import java.util.List;
 
 import comp5216.sydney.edu.au.findmygym.GymActivity;
 import comp5216.sydney.edu.au.findmygym.R;
+import comp5216.sydney.edu.au.findmygym.databinding.ActivityMainBinding;
 import comp5216.sydney.edu.au.findmygym.databinding.FragmentMapBinding;
 import comp5216.sydney.edu.au.findmygym.model.Gym;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
@@ -65,6 +69,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 	private FragmentMapBinding binding;
 	private SupportMapFragment mMapFragment;
 	private SearchView mSearchView;
+	Context context;
 
 	private FusedLocationProviderClient mFusedLocationProviderClient;
 	private UserData userData = UserData.getInstance();
@@ -77,7 +82,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
 	// A default location (Sydney, Australia) and default zoom to use when location permission is not granted.
 	private final LatLng mDefaultLocation = new LatLng(-33.8523341, 151.2106085);
-	private static final int DEFAULT_ZOOM = 15;
+	private static int DEFAULT_ZOOM = 15;
 	private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
 	private boolean mLocationPermissionGranted = false;
 	private TextView locationTextView;
@@ -87,6 +92,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 	private static final String KEY_LOCATION = "location";
 
 	public ArrayList<String> list = new ArrayList<String>();
+	RadioButton closest, favourite;
 
 
 
@@ -138,36 +144,26 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 			public boolean onQueryTextSubmit(String query) {
 				// on below line we are getting the
 				// location name from search view.
-				String location = mSearchView.getQuery().toString();
+				String name = mSearchView.getQuery().toString();
 
-				// below line is to create a list of address
-				// where we will store the list of all address.
-				List<Address> addressList = null;
 
 				// checking if the entered location is null or not.
-				if (location != null || location.equals("")) {
+				if (name != null || name.equals("")) {
 					// on below line we are creating and initializing a geo coder.
 					Geocoder geocoder = new Geocoder(getActivity());
-					try {
-						// on below line we are getting location from the
-						// location name and adding that location to address list.
-						addressList = geocoder.getFromLocationName(location, 1);
-					} catch (IOException e) {
-						e.printStackTrace();
+
+					for (Marker marker : markers){
+						String title = marker.getTitle();
+						if (title.equals(name)){
+							mMap.animateCamera(CameraUpdateFactory
+									.newLatLngZoom(marker.getPosition(), DEFAULT_ZOOM));
+							Log.d(TAG, "latlong is"+marker.getPosition());
+							Log.d(TAG, "name is"+name);
+							Log.d(TAG, "title is"+title);
+						}
+
 					}
-					// on below line we are getting the location
-					// from our list a first position.
-					Address address = addressList.get(0);
 
-					// on below line we are creating a variable for our location
-					// where we will add our locations latitude and longitude.
-					LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
-
-					// on below line we are adding marker to that position.
-					mMap.addMarker(new MarkerOptions().position(latLng).title(location));
-
-					// below line is to animate camera to that position.
-					mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
 				}
 				return false;
 			}
@@ -242,14 +238,65 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
 		};
 
-//		mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-//			@Override
-//			public boolean onMarkerClick(Marker marker) {
-//				Intent intent = new Intent(getActivity(), GymActivity.class);
-//				startActivity(intent);
-//				return false;
-//			}
-//		});
+		Button filterButton = getView().findViewById(R.id.filter_button);
+
+		filterButton.setOnClickListener(new View.OnClickListener() {
+
+
+			@Override
+			public void onClick(View v) {
+
+				AlertDialog dialog = null;
+
+				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+				LayoutInflater inflater = getActivity().getLayoutInflater();
+				View view = inflater.inflate(R.layout.marker_select, null);
+				builder.setView(view);
+
+				dialog = builder.create();
+				dialog.show();
+				closest = view.findViewById(R.id.radioButton1);
+				favourite = view.findViewById(R.id.radioButton2);
+				Button okButton = view.findViewById(R.id.okButton);
+				Button cancelButton = view.findViewById(R.id.cancelButton);
+				AlertDialog finalDialog = dialog;
+				cancelButton.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						finalDialog.dismiss();
+					}
+				});
+				AlertDialog finalDialog1 = dialog;
+				okButton.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						if (closest.isChecked()) {
+							//hide others and show closet markers
+							//if (view.getId() == R.id.checkBox2){
+
+							for (Marker marker : markers){
+								String title = marker.getTitle();
+								marker.setVisible(false);
+								if (title.equals(findGymName(list.get(closestdistance())))){
+									marker.setVisible(true);
+									DEFAULT_ZOOM=14;
+									mMap.animateCamera(CameraUpdateFactory
+											.newLatLngZoom(marker.getPosition(), DEFAULT_ZOOM));
+								}
+							}
+							finalDialog1.dismiss();
+
+
+						}
+
+					}
+				});
+
+
+			}
+		});
+
+
 //		calculatedistance();
 	}
 
@@ -401,21 +448,21 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 		});
 	}
 
-//	public Integer calculatedistance() {
-//		getDeviceLocation();
-//
-//		for(int i=0; i<10; i++){
-//
-//			Location markerLocation = new Location("");
-//			markerLocation.setLatitude(findGymlat(i));
-//			markerLocation.setLongitude(findGymlong(i));
-//			double distance = mLastKnownLocation.distanceTo(markerLocation);
-//			distancelist.add(distance);
-//
-//		};
-//
-//		return distancelist.indexOf(Collections.min(distancelist));
-//	}
+	public Integer closestdistance() {
+		getDeviceLocation();
+
+		for(int i=0; i<userData.getAllGyms().size(); i++){
+
+			Location markerLocation = new Location("");
+			markerLocation.setLatitude(findGymlat(list.get(i)));
+			markerLocation.setLongitude(findGymlong(list.get(i)));
+			double distance = mLastKnownLocation.distanceTo(markerLocation);
+			distancelist.add(distance);
+
+		};
+
+		return distancelist.indexOf(Collections.min(distancelist));
+	}
 
 //	AlertDialog dialog;
 //	RadioButton closest, member;
