@@ -42,16 +42,14 @@ public class Gym implements Serializable {
     private double longitude;
     private double latitude;
 
-    private double price;
-
-    private Bitmap gymPhoto;
+    private int price;
 
     public Gym(String gymId,
                String gymName,
                List<PersonalTrainer> personalTrainers,
                Calendar openTime,
                Calendar closeTime,
-               double price,
+               int price,
                String address,
                String contact,
                double longitude,
@@ -76,7 +74,7 @@ public class Gym implements Serializable {
                String gymName,
                Calendar openTime,
                Calendar closeTime,
-               double price,
+               int price,
                String address,
                String contact,
                double longitude,
@@ -97,8 +95,7 @@ public class Gym implements Serializable {
 
     public static Gym fromGymData(GymData gymData,
                                   List<PersonalTrainer> trainers,
-                                  List<Review> reviews,
-                                  Bitmap gymPicture) {
+                                  List<Review> reviews) {
         List<String> equipments;
         if (gymData.equipments == null) {
             equipments = new ArrayList<>();
@@ -120,7 +117,6 @@ public class Gym implements Serializable {
                 equipments,
                 reviews
         );
-        gym.setGymPhoto(gymPicture);
         return gym;
     }
 
@@ -160,7 +156,7 @@ public class Gym implements Serializable {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(int price) {
         this.price = price;
     }
 
@@ -170,22 +166,6 @@ public class Gym implements Serializable {
 
     public double getLongitude() {
         return longitude;
-    }
-
-    /**
-     * @return the picture of this gym
-     */
-    public Bitmap getGymPhoto() {
-        return gymPhoto;
-    }
-
-    /**
-     * Sets the picture of this gym.
-     *
-     * @param gymPhoto the image bitmap
-     */
-    public void setGymPhoto(Bitmap gymPhoto) {
-        this.gymPhoto = gymPhoto;
     }
 
     /**
@@ -284,7 +264,7 @@ public class Gym implements Serializable {
         public String picturePath;
         public double longitude;
         public double latitude;
-        public double price;
+        public int price;
         public List<String> trainerIds;
         public List<String> equipments;
         public List<String> reviewIds;

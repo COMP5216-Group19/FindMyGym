@@ -1,7 +1,6 @@
 package comp5216.sydney.edu.au.findmygym.model;
 
 import android.graphics.Bitmap;
-import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
@@ -18,7 +17,7 @@ public class PersonalTrainer implements Serializable {
     private final String name;
 
     private final String trainerId;
-    private double price;
+    private int price;
     private Bitmap avatar;
 
     /**
@@ -26,14 +25,14 @@ public class PersonalTrainer implements Serializable {
      */
     private final List<Timeslot> availableTimes;
 
-    public PersonalTrainer(String trainerId, String name, double price, List<Timeslot> availableTimes) {
+    public PersonalTrainer(String trainerId, String name, int price, List<Timeslot> availableTimes) {
         this.trainerId = trainerId;
         this.name = name;
         this.availableTimes = availableTimes;
         this.price = price;
     }
 
-    public PersonalTrainer(String trainerId, String name, double price) {
+    public PersonalTrainer(String trainerId, String name, int price) {
         this(trainerId, name, price, new ArrayList<>());
     }
 
@@ -65,12 +64,8 @@ public class PersonalTrainer implements Serializable {
         return data;
     }
 
-    public double getPrice() {
+    public int getPrice() {
         return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
     }
 
     /**
@@ -144,7 +139,7 @@ public class PersonalTrainer implements Serializable {
     public static class TrainerData {
         public String name;
         public String trainerId;
-        public double price;
+        public int price;
         public String avatarPath;
         public List<String> availableTimes;
     }
