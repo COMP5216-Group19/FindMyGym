@@ -331,6 +331,7 @@ public class LoginActivity extends BaseActivity
 					Log.d(TAG, "get: KEY_uid" + documentSnapshot.getData().get(userData.KEY_uid));
 					Log.d(TAG, "get: KEY_userName" + documentSnapshot.getData().get(userData.KEY_userName));
 					Log.d(TAG, "get: KEY_userEmail" + documentSnapshot.getData().get(userData.KEY_userEmail));
+					Log.d(TAG, "get: KEY_USER_favourite" + documentSnapshot.getData().get(userData.KEY_USER_favourite));
 					userdataRef.update(userData.KEY_login_last_time, getTimeStamp());
 					long counter = (long) documentSnapshot.getData().get(userData.KEY_login_counter);
 					counter++;
@@ -346,6 +347,7 @@ public class LoginActivity extends BaseActivity
 					userdataMap.put(userData.KEY_login_first_time, getTimeStamp());
 					userdataMap.put(userData.KEY_login_last_time, getTimeStamp());
 					userdataMap.put(userData.KEY_login_counter, 1);
+					userdataMap.put(userData.KEY_USER_favourite,new ArrayList<String>());
 					db.collection("USERS").document(uid).set(userdataMap)
 							.addOnSuccessListener(new OnSuccessListener<Void>()
 							{

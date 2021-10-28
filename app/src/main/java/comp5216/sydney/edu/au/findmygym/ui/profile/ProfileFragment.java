@@ -2,6 +2,7 @@ package comp5216.sydney.edu.au.findmygym.ui.profile;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,12 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -77,7 +84,32 @@ public class ProfileFragment extends Fragment
 		trainerLog = getTrainerLogFromReservations(reservations);
 
 		//TODO: need to change allGyms into firebase databases
-		FavGymAdapter favGymAdapter = new FavGymAdapter();
+		FirebaseFirestore db = FirebaseFirestore.getInstance();
+		DocumentReference ref = db.collection(userData.KEY_USERS).document(userData.getUserId());
+		ref.get()
+				.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>()
+				{
+					@Override
+					public void onComplete(@NonNull Task<DocumentSnapshot> task)
+					{
+						if (task.isSuccessful())
+						{
+							
+							DocumentSnapshot doc = task.getResult();
+							ArrayList<String> favouriteList = (ArrayList) doc.get(userData.KEY_USER_favourite);
+							
+							Log.d(TAG, "Checking "  + " Favourite Gyms in DB"+ favouriteList.toString());
+							UserData.getInstance().setFavouriteGyms(favouriteList);
+							
+						}
+						else
+						{
+							Log.d(TAG, "check favourite gym failed!" );
+						}
+					}
+				});
+		
+		FavGymAdapter favGymAdapter = new FavGymAdapter(this.getContext());
 		Glide.with(this.getContext())
 				.load(userData.getUserAvatarUri())
 				.placeholder(R.drawable.ic_launcher_background)

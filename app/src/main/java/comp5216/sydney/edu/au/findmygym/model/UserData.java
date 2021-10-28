@@ -91,6 +91,8 @@ public class UserData extends LiveData<UserData>
 	public final String KEY_TRAINER_times = "TRAINER_TIMES";
 	public final String KEY_TRAINER_gymId = "TRAINER_GYM_ID";
 	
+	public final String KEY_USER_favourite = "USER_FAVOURITE";
+	
 	public final String KEY_REVIEW_userId = "REVIEW_USER_ID";
 	public final String KEY_REVIEW_gymId = "REVIEW_GYM_ID";
 	public final String KEY_REVIEW_rating = "REVIEW_RATING";
@@ -1635,17 +1637,15 @@ public class UserData extends LiveData<UserData>
 		return this.favouriteGyms;
 	}
 	
-	public void addToFavouriteGyms(String gymId)
+	public void addToFavouriteGym(String gymId)
 	{
 		favouriteGyms.add(gymId);
-		userRef.child(getUserId()).child("favouriteGyms").setValue(favouriteGyms);
 		postValue(this);
 	}
 	
 	public void removeFromFavouriteGyms(String gymId)
 	{
 		favouriteGyms.remove(gymId);
-		userRef.child(getUserId()).child("favouriteGyms").setValue(favouriteGyms);
 		postValue(this);
 	}
 	

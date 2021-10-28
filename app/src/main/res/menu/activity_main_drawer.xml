@@ -28,7 +28,7 @@
                         android:title="@string/menu_profile" />
                 <item
                         android:id="@+id/nav_wallet"
-                        android:icon="@android:drawable/ic_menu_myplaces"
+                        android:icon="@drawable/ic_baseline_account_balance_24"
                         android:title="@string/menu_wallet" />
             </group>
         </menu>

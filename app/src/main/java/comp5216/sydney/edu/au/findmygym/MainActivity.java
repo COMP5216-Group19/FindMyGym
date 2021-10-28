@@ -218,7 +218,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		// 	}
 		// });
 		// initPurchaseRecords();
-		uploadingGymImg();
+		// uploadingGymImg();
 	}
 	public void uploadingGymImg()
 	{

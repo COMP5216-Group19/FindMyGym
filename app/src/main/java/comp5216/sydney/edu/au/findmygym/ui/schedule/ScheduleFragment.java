@@ -15,11 +15,20 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.ArrayList;
 
 import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.databinding.FragmentScheduleBinding;
 import comp5216.sydney.edu.au.findmygym.databinding.FragmentWalletBinding;
+import comp5216.sydney.edu.au.findmygym.model.UserData;
+import comp5216.sydney.edu.au.findmygym.model.callbacks.ListQueryCallback;
 import comp5216.sydney.edu.au.findmygym.ui.wallet.FragmentAdapter;
 import comp5216.sydney.edu.au.findmygym.ui.wallet.WalletViewModel;
 
@@ -85,6 +94,27 @@ public class ScheduleFragment extends Fragment
 
 		tabLayout.addTab(tabLayout.newTab().setText("Booking"));
 		tabLayout.addTab(tabLayout.newTab().setText("History"));
+		UserData userData = UserData.getInstance();
+		
+	
+		
+		
+		userData.getReservationsByUID(userData.getUserId(), new ListQueryCallback()
+		{
+			@Override
+			public void onSucceed(ArrayList list)
+			{
+				Log.d(TAG, "getPurchaseRecordsByUID successfully!"+list.size()+list.toString());
+				// userData.setPurchaseRecords(list);
+			}
+			
+			@Override
+			public void onFailed(Exception e)
+			{
+				Log.e(TAG, e.toString());
+				e.printStackTrace();
+			}
+		});
 
 
 
