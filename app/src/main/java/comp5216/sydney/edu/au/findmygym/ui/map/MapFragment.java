@@ -1,5 +1,6 @@
 package comp5216.sydney.edu.au.findmygym.ui.map;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -57,8 +58,7 @@ import comp5216.sydney.edu.au.findmygym.model.UserData;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.ObjectQueryCallback;
 
 
-public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnInfoWindowLongClickListener
-{
+public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnInfoWindowLongClickListener {
 	private final String TAG = "[MapFragment]";
 	private GoogleMap mMap;
 	private MapViewModel mapViewModel;
@@ -66,183 +66,176 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 	private SupportMapFragment mMapFragment;
 	private SearchView mSearchView;
 	Context context;
-	
+
 	private FusedLocationProviderClient mFusedLocationProviderClient;
 	private UserData userData = UserData.getInstance();
 	public List<Double> distancelist = new ArrayList<Double>();
 	public List<Marker> markers = new ArrayList<>();
-	
+
 	// The geographical location where the device is currently located. That is, the last-known location retrieved by the Fused Location Provider.
 	private Location mLastKnownLocation = new Location("");
 	private CameraPosition mCameraPosition;
-	
+
 	// A default location (Sydney, Australia) and default zoom to use when location permission is not granted.
 	private final LatLng mDefaultLocation = new LatLng(-33.8523341, 151.2106085);
 	private static int DEFAULT_ZOOM = 15;
 	private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
 	private boolean mLocationPermissionGranted = false;
 	private TextView locationTextView;
-	
+
 	// Keys for storing activity state.
 	private static final String KEY_CAMERA_POSITION = "camera_position";
 	private static final String KEY_LOCATION = "location";
-	
+
 	public ArrayList<String> list = new ArrayList<String>();
 	RadioButton closest, favourite;
-	
-	
+
+
 	public View onCreateView(@NonNull LayoutInflater inflater,
-	                         ViewGroup container, Bundle savedInstanceState)
-	{
+							 ViewGroup container, Bundle savedInstanceState) {
 		mapViewModel =
 				new ViewModelProvider(this).get(MapViewModel.class);
-		
+
 		binding = FragmentMapBinding.inflate(inflater, container, false);
 		View root = binding.getRoot();
-		
+
 		final TextView textView = binding.textMap;
-		mapViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>()
-		{
+		mapViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
 			@Override
-			public void onChanged(@Nullable String s)
-			{
+			public void onChanged(@Nullable String s) {
 				textView.setText(s);
 			}
 		});
 		return root;
 	}
-	
+
 	@Override
-	public void onDestroyView()
-	{
+	public void onDestroyView() {
 		super.onDestroyView();
 		binding = null;
 	}
-	
+
 	@Override
-	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState)
-	{
+	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		
+
 		mMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_mapView);
-		if (savedInstanceState != null)
-		{
+		if (savedInstanceState != null) {
 			mLastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
 			mCameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
 		}
 		locationTextView = getView().findViewById(R.id.text_map);
-		
+
 		mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
-		
+
 		SearchView mSearchView = getView().findViewById(R.id.idSearchView);
-		mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener()
-		{
+		mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 			@Override
-			public boolean onQueryTextSubmit(String query)
-			{
+			public boolean onQueryTextSubmit(String query) {
 				// on below line we are getting the
 				// location name from search view.
 				String name = mSearchView.getQuery().toString();
-				
-				
+
+
 				// checking if the entered location is null or not.
-				if (name != null || name.equals(""))
-				{
+				if (name != null || name.equals("")) {
 					// on below line we are creating and initializing a geo coder.
 					Geocoder geocoder = new Geocoder(getActivity());
-					
-					for (Marker marker : markers)
-					{
+
+					for (Marker marker : markers) {
 						String title = marker.getTitle();
-						if (title.equals(name))
-						{
+						if (title.equals(name)) {
 							mMap.animateCamera(CameraUpdateFactory
 									.newLatLngZoom(marker.getPosition(), DEFAULT_ZOOM));
 							Log.d(TAG, "latlong is" + marker.getPosition());
 							Log.d(TAG, "name is" + name);
 							Log.d(TAG, "title is" + title);
 						}
-						
+
 					}
-					
+
 				}
 				return false;
 			}
-			
+
 			@Override
-			public boolean onQueryTextChange(String newText)
-			{
+			public boolean onQueryTextChange(String newText) {
 				return false;
 			}
 		});
 		mMapFragment.getMapAsync(this);
 	}
-	
-	public String findGymName(String id)
-	{
+
+	public String findGymName(String id) {
 		String name = "";
-		if (userData.getAllSimpleGyms() == null)
-		{
+		if (userData.getAllSimpleGyms() == null) {
 			return name;
 		}
-		for (int i = 0; i < userData.getAllSimpleGyms().size(); i++)
-		{
-			if (userData.getAllSimpleGyms().get(i).getGymId().equals(id))
-			{
+		for (int i = 0; i < userData.getAllSimpleGyms().size(); i++) {
+			if (userData.getAllSimpleGyms().get(i).getGymId().equals(id)) {
 				name = userData.getAllSimpleGyms().get(i).getGymName();
 			}
 		}
 		return name;
 	}
-	
-	public String findGymAddress(String id)
-	{
+
+	public String findGymAddress(String id) {
 		String address = "";
-		for (int i = 0; i < userData.getAllSimpleGyms().size(); i++)
-		{
-			if (userData.getAllSimpleGyms().get(i).getGymId().equals(id))
-			{
+		for (int i = 0; i < userData.getAllSimpleGyms().size(); i++) {
+			if (userData.getAllSimpleGyms().get(i).getGymId().equals(id)) {
 				address = userData.getAllSimpleGyms().get(i).getAddress();
 			}
 		}
 		return address;
 	}
-	
-	public double findGymlat(String id)
-	{
+
+	public double findGymlat(String id) {
 		double latitude = 0;
-		for (int i = 0; i < userData.getAllSimpleGyms().size(); i++)
-		{
-			if (userData.getAllSimpleGyms().get(i).getGymId().equals(id))
-			{
+		for (int i = 0; i < userData.getAllSimpleGyms().size(); i++) {
+			if (userData.getAllSimpleGyms().get(i).getGymId().equals(id)) {
 				latitude = userData.getAllSimpleGyms().get(i).getLatitude();
 			}
 		}
 		return latitude;
 	}
-	
-	public double findGymlong(String id)
-	{
+
+	public double findGymlong(String id) {
 		double longitude = 0;
-		for (int i = 0; i < userData.getAllSimpleGyms().size(); i++)
-		{
-			if (userData.getAllSimpleGyms().get(i).getGymId().equals(id))
-			{
+		for (int i = 0; i < userData.getAllSimpleGyms().size(); i++) {
+			if (userData.getAllSimpleGyms().get(i).getGymId().equals(id)) {
 				longitude = userData.getAllSimpleGyms().get(i).getLongitude();
 			}
 		}
 		return longitude;
 	}
-	
-	
+
+
 	@Override
-	public void onMapReady(GoogleMap googleMap)
-	{
+	public void onMapReady(GoogleMap googleMap) {
 		mMap = googleMap;
 		getLocationPermission();
 		updateLocationUI();
 		getDeviceLocation();
-		mMap.setMyLocationEnabled(true);
+		if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) !=
+				PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(),
+				Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+			// TODO: Consider calling
+			//    ActivityCompat#requestPermissions
+			// here to request the missing permissions, and then overriding
+			//   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+			//                                          int[] grantResults)
+			// to handle the case where the user grants the permission. See the documentation
+			// for ActivityCompat#requestPermissions for more details.
+			ActivityCompat.requestPermissions(getActivity(),
+					new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+					PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+			mMap.moveCamera(CameraUpdateFactory
+					.newLatLngZoom(mDefaultLocation, 12));
+		}else{
+			mMap.setMyLocationEnabled(true);
+		}
+
+
 		mMap.setOnInfoWindowLongClickListener(this);
 
 		if (userData.getAllSimpleGyms() == null) return;
