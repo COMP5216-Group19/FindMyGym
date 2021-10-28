@@ -1,5 +1,6 @@
 package comp5216.sydney.edu.au.findmygym.ui.gym;
 
+import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -23,6 +24,7 @@ import comp5216.sydney.edu.au.findmygym.model.Reservation;
 import comp5216.sydney.edu.au.findmygym.model.Review;
 import comp5216.sydney.edu.au.findmygym.model.Timeslot;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
+import comp5216.sydney.edu.au.findmygym.model.callbacks.ObjectQueryCallback;
 
 public class GymViewModel extends ViewModel {
     private static final String TAG = "[GymViewModel]";
@@ -112,7 +114,9 @@ public class GymViewModel extends ViewModel {
      *
      * @param reservation the reservation to be made
      */
-    public void makeReservation(Reservation reservation, TrainerReservation trainerReservation) {
+    public void makeReservation(Context context,
+                                Reservation reservation,
+                                TrainerReservation trainerReservation) {
         UserData userData = UserData.getInstance();
         if (reservation.getPrice() > 0) {
             PurchaseRecord pr = new PurchaseRecord(
@@ -122,9 +126,18 @@ public class GymViewModel extends ViewModel {
                     gym.getGymId(),
                     reservation.getSelectedTimeSlot().getBeginTime());
             userData.addPurchaseRecord(pr);
-            userData.addPurchaseRecordToDatabase(pr);
         }
-        userData.addReservation(reservation);
+        userData.addReservation(reservation, new ObjectQueryCallback() {
+            @Override
+            public void onSucceed(Object object) {
+                Toast.makeText(context, R.string.gym_reserve_success, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailed(Exception e) {
+
+            }
+        });
         if (trainerReservation != null) {
             userData.removeTrainerTimeslot(trainerReservation.trainer.getTrainerId(),
                     trainerReservation.timeslot);

@@ -236,7 +236,8 @@ public class GymActivity extends AppCompatActivity {
                              trainerRsv == null ? null : trainerRsv.trainer.getTrainerId(),
                              mViewModel.getTotalPrice(),
                              mViewModel.getSelectedGymTimeslot());
-                     mViewModel.makeReservation(reservation, trainerRsv);
+                     mViewModel.makeReservation(this, reservation, trainerRsv);
+                     finish();
                  })
                  .setNegativeButton(R.string.cancel, (dialog, which) -> {
                      // Nothing happens

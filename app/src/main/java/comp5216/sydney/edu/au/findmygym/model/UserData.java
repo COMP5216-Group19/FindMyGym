@@ -421,8 +421,12 @@ public class UserData extends LiveData<UserData>
 		});
 
 	}
+
+	public void addReservation(Reservation reservation) {
+		addReservation(reservation, null);
+	}
 	
-	public void addReservation(Reservation reservation)
+	public void addReservation(Reservation reservation, ObjectQueryCallback callback)
 	{
 		Map<String, Object> map = new HashMap<>();
 		map.put(this.KEY_RES_ID_user, reservation.getUserId());
@@ -443,6 +447,10 @@ public class UserData extends LiveData<UserData>
 						// importCardsFromDB();
 						Log.d(TAG, "Add Reservation Successfully: " + documentReference.getId());
 						reservation.setRsvId(documentReference.getId());
+
+						if (callback != null) {
+							callback.onSucceed(null);
+						}
 						comp5216.sydney.edu.au.findmygym.model.UserData.getInstance().reservations.add(reservation);
 						comp5216.sydney.edu.au.findmygym.model.UserData.getInstance().post();
 					}
@@ -454,6 +462,9 @@ public class UserData extends LiveData<UserData>
 					{
 						Log.d(TAG, "Add Reservation Failed: " + e.toString());
 						e.printStackTrace();
+						if (callback != null) {
+							callback.onFailed(null);
+						}
 					}
 				});
 	}
