@@ -1,13 +1,13 @@
 package comp5216.sydney.edu.au.findmygym.model;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Message;
 import android.se.omapi.Session;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -26,36 +26,23 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayOutputStream;
-import java.lang.reflect.Array;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
 
 import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.Utils.ImageUtil;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.GymQueryCallback;
-import comp5216.sydney.edu.au.findmygym.model.callbacks.ReviewQueryCallback;
+import comp5216.sydney.edu.au.findmygym.model.callbacks.ObjectQueryCallback;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.TrainerQueryCallback;
 import comp5216.sydney.edu.au.findmygym.ui.gym.GymViewModel;
 
@@ -262,58 +249,72 @@ public class UserData extends LiveData<UserData>
 	}
 	
 	
-	public PersonalTrainer getTrainerByID(String ID) throws ExecutionException, InterruptedException
+	public void getTrainerByID(String ID, ObjectQueryCallback callback)
 	{
 		
-		CompletableFuture<PersonalTrainer> future = new CompletableFuture<>();
-		new Thread(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				String mTag = "[getTrainerByID]";
-				FirebaseFirestore db = FirebaseFirestore.getInstance();
-				DocumentReference gymRef = db.collection(comp5216.sydney.edu.au.findmygym.model.UserData.getInstance().KEY_TRAINERS).document(ID);
-				final PersonalTrainer[] personalTrainer = {null};
-				final boolean[] flag = {true};
-				gymRef.get()
-						.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>()
+		String mTag = "[getTrainerByID]";
+		FirebaseFirestore db = FirebaseFirestore.getInstance();
+		DocumentReference gymRef = db.collection(comp5216.sydney.edu.au.findmygym.model.UserData.getInstance().KEY_TRAINERS).document(ID);
+		final PersonalTrainer[] personalTrainer = {null};
+		final boolean[] flag = {true};
+		gymRef.get()
+				.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>()
+				{
+					@Override
+					public void onComplete(@NonNull Task<DocumentSnapshot> task)
+					{
+						Log.d(mTag, "getTrainerByIDonComplete: ");
+						if (task.isSuccessful())
 						{
-							@Override
-							public void onComplete(@NonNull Task<DocumentSnapshot> task)
+							try
 							{
 								Log.d(mTag, "getTrainerByIDonComplete: ");
-								if (task.isSuccessful())
+								String name = (String) task.getResult().get(KEY_TRAINER_name);
+								int price = Math.toIntExact((Long) task.getResult().get(KEY_TRAINER_price));
+								ArrayList<String> times = (ArrayList) task.getResult().get(KEY_TRAINER_times);
+								ArrayList<Timeslot> timeslots = new ArrayList<>();
+								for (String time : times)
 								{
-									Log.d(mTag, "getTrainerByIDonComplete: ");
-									String name = (String) task.getResult().get(KEY_TRAINER_name);
-									int price = Math.toIntExact((Long) task.getResult().get(KEY_TRAINER_price));
-									ArrayList<String> times = (ArrayList) task.getResult().get(KEY_TRAINER_times);
-									ArrayList<Timeslot> timeslots = new ArrayList<>();
-									for (String time : times)
-									{
-										timeslots.add(Timeslot.fromDatabaseString(time));
-									}
-									Log.d(TAG, "name: " + name);
-									Log.d(TAG, "price: " + price);
-									Log.d(TAG, "Timeslot: " + timeslots);
-									personalTrainer[0] = new PersonalTrainer(ID, name, price, timeslots);
-									flag[0] = false;
-									Log.d(TAG, "getTrainerByID successfully!");
-									future.complete(personalTrainer[0]);
+									timeslots.add(Timeslot.fromDatabaseString(time));
 								}
-								else
-								{
-									flag[0] = false;
-									Log.d(TAG, "getTrainerByID failed!");
-									future.complete(personalTrainer[0]);
-								}
+								Log.d(TAG, "name: " + name);
+								Log.d(TAG, "price: " + price);
+								Log.d(TAG, "Timeslot: " + timeslots);
+								personalTrainer[0] = new PersonalTrainer(ID, name, price, timeslots);
+								Log.d(TAG, "getTrainerByID successfully!" + ID);
+								callback.onSucceed(personalTrainer[0]);
+							} catch (Exception e)
+							{
+								callback.onFailed(e);
 							}
-						});
-			}
-		}).start();
-		return future.get();
+							
+							
+						}
+						else
+						{
+							Log.d(TAG, "getTrainerByID failed!" + ID);
+							// callback.onSucceed(personalTrainer[0]);
+						}
+					}
+				});
 	}
+	
+	private Handler mHandler = new Handler()
+	{
+		@Override
+		public void handleMessage(Message msg)
+		{
+			super.handleMessage(msg);
+			switch (msg.what)
+			{
+				case 1:
+					Log.d(TAG, "handleMessage: getTrainerByID Successfully");
+				default:
+					Log.d(TAG, "handleMessage: getTrainerByID Failed");
+					break;
+			}
+		}
+	};
 	
 	private void loadAllGyms()
 	{
@@ -827,30 +828,40 @@ public class UserData extends LiveData<UserData>
 	{
 		// List<PersonalTrainer> trainers = new ArrayList<>();
 		// List<Review> reviews = new ArrayList<>();
-		// for (String tid : gymData.trainerIds) {
-		// 	findTrainerById(tid, new TrainerQueryCallback() {
+		// for (String tid : gymData.trainerIds)
+		// {
+		// 	findTrainerById(tid, new TrainerQueryCallback()
+		// 	{
 		// 		@Override
-		// 		public void onSucceed(PersonalTrainer trainer) {
+		// 		public void onSucceed(PersonalTrainer trainer)
+		// 		{
 		// 			trainers.add(trainer);
 		// 			allTrainers.add(trainer);
-		// 			if (trainers.size() == gymData.trainerIds.size()) {
+		// 			if (trainers.size() == gymData.trainerIds.size())
+		// 			{
 		// 				// Last trainer has been added, ready to open
-		// 				if (gymData.reviewIds != null) {
-		// 					for (String rid : gymData.reviewIds) {
+		// 				if (gymData.reviewIds != null)
+		// 				{
+		// 					for (String rid : gymData.reviewIds)
+		// 					{
 		// 						// todo
 		// 					}
 		// 				}
-		// 				if (gymData.picturePath == null) {
+		// 				if (gymData.picturePath == null)
+		// 				{
 		// 					Gym gym = Gym.fromGymData(gymData, trainers, reviews, null);
 		// 					callback.onSucceed(gym);
-		// 				} else {
+		// 				}
+		// 				else
+		// 				{
 		// 					// todo
 		// 				}
 		// 			}
 		// 		}
 		//
 		// 		@Override
-		// 		public void onFailed(Exception exception) {
+		// 		public void onFailed(Exception exception)
+		// 		{
 		// 			Log.e(TAG, Arrays.toString(exception.getStackTrace()));
 		// 		}
 		// 	});

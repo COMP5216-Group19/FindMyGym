@@ -130,8 +130,10 @@ public class PersonalTrainer implements Serializable {
     @NonNull
     @Override
     public String toString() {
-        return "PersonalTrainer{" +
-                "name='" + name + '\'' +
+        return "PersonalTrainer{ " +
+                " ID='"+ this.trainerId+"' "+
+                " name='" + name +"' "+
+                " price='" + price+"' "+
                 ", availableTimes=" + availableTimes +
                 '}';
     }

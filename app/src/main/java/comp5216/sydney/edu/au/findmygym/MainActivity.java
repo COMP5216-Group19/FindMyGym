@@ -75,6 +75,7 @@ import comp5216.sydney.edu.au.findmygym.model.Gym;
 import comp5216.sydney.edu.au.findmygym.model.PersonalTrainer;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.GymQueryCallback;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
+import comp5216.sydney.edu.au.findmygym.model.callbacks.ObjectQueryCallback;
 import comp5216.sydney.edu.au.findmygym.ui.map.MapFragment;
 import comp5216.sydney.edu.au.findmygym.ui.profile.ProfileFragment;
 import comp5216.sydney.edu.au.findmygym.ui.schedule.ScheduleFragment;
@@ -143,17 +144,23 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		// UserData.uploadingGymImg();
 		userData.getGymByID("8Pp4nlV5Fc3XW06BXkhV");
 		
-		try
+		userData.getTrainerByID("8tQCqe4ZECfRHolAejCW 1", new ObjectQueryCallback()
 		{
-			PersonalTrainer personalTrainer = userData.getTrainerByID("8tQCqe4ZECfRHolAejCW");
-			Log.e(TAG, "onCreate: " + personalTrainer.toString() );
-		} catch (ExecutionException e)
-		{
-			e.printStackTrace();
-		} catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		}
+			@Override
+			public void onSucceed(Object object)
+			{
+			
+				Log.d(TAG, "onCreate: " + ((PersonalTrainer)object).toString() );
+			}
+			
+			@Override
+			public void onFailed(Exception e)
+			{
+				Log.e(TAG,e.toString());
+				e.printStackTrace();
+			}
+			
+		});
 		
 		
 	}
@@ -211,7 +218,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
 		// Toast.makeText(this, item.getItemId(), Toast.LENGTH_SHORT).show();
-		Log.e(TAG, "onOptionsItemSelected:" + String.valueOf(item.getItemId()));
+		Log.d(TAG, "onOptionsItemSelected:" + String.valueOf(item.getItemId()));
 		
 		switch (item.getItemId())
 		{
@@ -260,7 +267,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 			@Override
 			public void onChanged(UserData userData)
 			{
-				Log.e(TAG, "===========> userData changed");
+				Log.d(TAG, "===========> userData changed");
 				TextView navUsername = (TextView) headerView.findViewById(R.id.header_userName);
 				navUsername.setText(userData.getUserName());
 				
@@ -279,7 +286,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 							.into(navAvatar);
 				} catch (Exception e)
 				{
-					Log.e(TAG, "updateUserdata: " + e.toString());
+					Log.d(TAG, "updateUserdata: " + e.toString());
 					e.printStackTrace();
 					Bitmap tempAvatar = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.diana);
 					userData.setUserAvatar(tempAvatar);
