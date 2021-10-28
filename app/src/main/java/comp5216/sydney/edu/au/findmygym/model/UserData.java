@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 
 import comp5216.sydney.edu.au.findmygym.R;
+import comp5216.sydney.edu.au.findmygym.Utils.ImageUtil;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.GymQueryCallback;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.ReviewQueryCallback;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.TrainerQueryCallback;
@@ -151,13 +152,26 @@ public class UserData extends LiveData<UserData>
 				if (UserData == null)
 				{
 					UserData = new UserData();
-//					UserData.addMockGym();
 				}
 			}
 		}
 		return UserData;
 	}
 
+	public static void uploadingGymImg(){
+		ImageUtil.uploadImage("Fitness Second St Leonards",R.drawable.gym1, UserData.mContext);
+		ImageUtil.uploadImage(  "Fitness Second North Sydney",R.drawable.gym2, UserData.mContext);
+		ImageUtil.uploadImage(  "Fitness Second St Leonards",R.drawable.gym3, UserData.mContext);
+		ImageUtil.uploadImage(  "Minus Fitness Crows Nest",R.drawable.gym4, UserData.mContext);
+		ImageUtil.uploadImage(  "Minus Fitness Gym Chatswood",R.drawable.gym5, UserData.mContext);
+		ImageUtil.uploadImage(  "Minus Fitness Market Street",R.drawable.gym6, UserData.mContext);
+		ImageUtil.uploadImage(  "Minus Fitness Waterloo",R.drawable.gym7, UserData.mContext);
+		ImageUtil.uploadImage(  "Notime Fitness City",R.drawable.gym8, UserData.mContext);
+		ImageUtil.uploadImage(  "Notime Fitness City",R.drawable.gym9, UserData.mContext);
+		ImageUtil.uploadImage(  "Sliver's Gym",R.drawable.gym10, UserData.mContext);
+		
+	}
+	
 	// private void addMockGyms(){
 	// 	Map<String, Object> newGyms = new HashMap<>();
 	// 	newGyms.put(this.KEY_GYM_name, "Fitness Second Bond St");

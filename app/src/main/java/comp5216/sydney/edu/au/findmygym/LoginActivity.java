@@ -4,9 +4,12 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
@@ -121,10 +124,6 @@ public class LoginActivity extends BaseActivity
 		// // While the file names are the same, the references point to different files
 		// mountainsRef.getName().equals(mountainImagesRef.getName());    // true
 		// mountainsRef.getPath().equals(mountainImagesRef.getPath());    // false
-		
-		// uploadImage_Original("azi", R.drawable.azi);
-		// uploadImage_Reduced("ybb", R.drawable.ybb);
-		ImageUtil.uploadImage("mea", R.drawable.mea, mContext);
 		
 	}
 	
@@ -381,5 +380,7 @@ public class LoginActivity extends BaseActivity
 		// }
 		return new Timestamp(new Date());
 	}
+	
+	
 
 }
