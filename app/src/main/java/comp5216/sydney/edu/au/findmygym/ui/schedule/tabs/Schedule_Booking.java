@@ -36,7 +36,7 @@ import comp5216.sydney.edu.au.findmygym.ui.schedule.tabs.BookingAdapter;
 
 public class Schedule_Booking extends Fragment
 {
-    private final String TAG = "[Schedule_Booking]";
+    private final String TAG = " ";
     Context mContext;
     RecyclerView recyclerView;
     BookingAdapter historyAdapter;
