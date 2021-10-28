@@ -61,10 +61,7 @@ public class PersonalTrainer implements Serializable {
         data.name = name;
         data.price = price;
         data.avatarPath = avatarPath;
-        data.availableTimes = new ArrayList<>();
-        for (Timeslot ts : availableTimes) {
-            data.availableTimes.add(ts.toDatabaseString());
-        }
+        data.availableTimes = getAvailableTimesDbStrings();
         return data;
     }
 
@@ -114,12 +111,20 @@ public class PersonalTrainer implements Serializable {
         return availableTimes;
     }
 
+    public List<String> getAvailableTimesDbStrings() {
+        List<String> list = new ArrayList<>();
+        for (Timeslot ts : availableTimes) {
+            list.add(ts.toDatabaseString());
+        }
+        return list;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PersonalTrainer that = (PersonalTrainer) o;
-        return trainerId == that.trainerId && Objects.equals(name, that.name);
+        return trainerId.equals(that.trainerId) && Objects.equals(name, that.name);
     }
 
     @Override

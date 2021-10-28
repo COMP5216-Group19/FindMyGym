@@ -73,6 +73,8 @@
     <string name="gym_rsv_null_error">Error: reservation is null</string>
     <string name="gym_no_trainer_avail">No coach available in given time period</string>
 
+    <string name="gym_reserve_success">Make reservation success</string>
+
     <string name="gym_start_time">Pick a start time</string>
     <string name="gym_end_time">Pick an end time</string>
 

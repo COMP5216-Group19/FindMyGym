@@ -1,6 +1,7 @@
 package comp5216.sydney.edu.au.findmygym.ui.gym;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.lifecycle.ViewModel;
 
@@ -8,18 +9,16 @@ import com.wdullaer.materialdatetimepicker.time.Timepoint;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.text.ParseException;
+import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
-import comp5216.sydney.edu.au.findmygym.model.CalendarUtil;
+import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.model.Gym;
 import comp5216.sydney.edu.au.findmygym.model.PersonalTrainer;
 import comp5216.sydney.edu.au.findmygym.model.PurchaseRecord;
 import comp5216.sydney.edu.au.findmygym.model.Reservation;
-import comp5216.sydney.edu.au.findmygym.model.Review;
 import comp5216.sydney.edu.au.findmygym.model.Timeslot;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
 
@@ -37,14 +36,15 @@ public class GymViewModel extends ViewModel {
     double gymPrice;
     double trainerPrice;
     List<PersonalTrainer> allPersonalTrainers;
-    private Calendar now = Calendar.getInstance();
-    private final Calendar today = beginOfADay(now);
     /**
      * Whether the current user has came to this gym.
      */
     boolean arrivedByThisUser;
+    private Calendar now = Calendar.getInstance();
+    private final Calendar today = beginOfADay(now);
     private Gym gym;
     private GymInfoFragment infoFragment;
+    GymRsvFragment rsvFragment;
 
     public GymViewModel() {
         // TODO: get data
@@ -112,16 +112,43 @@ public class GymViewModel extends ViewModel {
      * @param reservation the reservation to be made
      */
     public void makeReservation(Reservation reservation) {
-        UserData.getInstance().postNewReservation(reservation);
+        UserData userData = UserData.getInstance();
         if (reservation.getPrice() > 0) {
             PurchaseRecord pr = new PurchaseRecord(
                     reservation.getPrice(),
                     UserData.getInstance().findGymById(reservation.getGymId()).getGymName(),
                     reservation.getSelectedTimeSlot().getBeginTime(),
                     null);
-            UserData.getInstance().addPurchaseRecord(pr);
-            UserData.getInstance().addPurchaseRecordToDatabase(pr);
+            userData.addPurchaseRecord(pr);
+            userData.addPurchaseRecordToDatabase(pr);
         }
+        List<Reservation> reservations = userData.getReservations();
+        reservations.add(reservation);
+        List<Reservation.ReservationData> rds = new ArrayList<>();
+        for (Reservation rsv : reservations) {
+            rds.add(rsv.toData());
+        }
+        userData.getUserRef().child("reservations").setValue(rds)
+                .addOnSuccessListener(unused -> {
+                    Log.d(TAG, "Uploaded new reservation");
+                    if (reservation.getTrainerId() != null) {
+                        Log.d(TAG, "Updating trainer timeslots");
+                        PersonalTrainer trainer = userData.findGymById(reservation.getGymId())
+                                .findTrainerById(reservation.getTrainerId());
+                        String timeDbString = reservation.getSelectedTimeSlot().toDatabaseString();
+                        trainer.getAvailableTimes()
+                                .removeIf(timeslot ->
+                                        timeslot.toDatabaseString().equals(timeDbString));
+                        userData.getTrainersRef()
+                                .child(reservation.getTrainerId()).child("availableTime")
+                                .setValue(trainer.getAvailableTimesDbStrings());
+                    }
+                    Toast.makeText(rsvFragment.getContext(),
+                            rsvFragment.getContext().getString(R.string.gym_reserve_success),
+                            Toast.LENGTH_LONG).show();
+                }).addOnFailureListener(e -> {
+            Log.e(TAG, "Failed to upload new reservation", e);
+        });
     }
 
     /**

@@ -761,24 +761,12 @@ public class UserData extends LiveData<UserData>
 		}).addOnFailureListener(callback::onFailed);
 	}
 
-	public void postNewReservation(Reservation reservation) {
-		userRef.child(getUserId()).child(reservation.getRsvId()).setValue(reservation.toData())
-				.addOnSuccessListener(unused -> {
-					Log.d(TAG, "Uploaded new reservation");
-					if (reservation.getTrainerId() != null) {
-						Log.d(TAG, "Updating trainer timeslots");
-						PersonalTrainer trainer = findGymById(reservation.getGymId())
-								.findTrainerById(reservation.getTrainerId());
-						String timeDbString = reservation.getSelectedTimeSlot().toDatabaseString();
-						trainer.getAvailableTimes()
-								.removeIf(timeslot ->
-										timeslot.toDatabaseString().equals(timeDbString));
-						trainersRef.child(reservation.getTrainerId()).child("availableTime")
-								.setValue(trainer.getAvailableTimes());
-					}
-				}).addOnFailureListener(e -> {
-					Log.e(TAG, "Failed to upload new reservation", e);
-		});
+	public DatabaseReference getUserRef() {
+		return userRef;
+	}
+
+	public DatabaseReference getTrainersRef() {
+		return trainersRef;
 	}
 
 	/**
