@@ -151,12 +151,12 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
 
     private void updatePrices() {
         gymPriceText.setText(recyclerView.getContext()
-                .getString(R.string.gym_money_fmt, mViewModel.gymPrice));
+                .getString(R.string.gym_money_fmt, (double) mViewModel.gymPrice / 100));
         trainerPriceText.setText(recyclerView.getContext()
-                .getString(R.string.gym_money_fmt, mViewModel.trainerPrice));
+                .getString(R.string.gym_money_fmt, (double) mViewModel.trainerPrice / 100));
         totalPriceText.setText(recyclerView.getContext()
                 .getString(R.string.gym_money_fmt,
-                        mViewModel.gymPrice + mViewModel.trainerPrice));
+                        (double) mViewModel.getTotalPrice() / 100));
     }
 
     @NonNull
