@@ -19,9 +19,14 @@ public class Reservation implements Serializable {
     private String userId;
     private int price;
     private Timeslot timeslot;
-
+    
+    public void setRsvId(String rsvId)
+    {
+        this.rsvId = rsvId;
+    }
+    
     @SuppressLint("DefaultLocale")
-    public Reservation(String userId, String gymId, String trainerId, int price,
+    public Reservation(String rsvId, String userId, String gymId, String trainerId, int price,
                        Timeslot timeslot) {
         this.userId = userId;
         this.gymId = gymId;
@@ -29,15 +34,28 @@ public class Reservation implements Serializable {
         this.timeslot = timeslot;
         this.price = price;
 
-        this.rsvId = String.format("%s+%s+%s", userId, gymId, timeslot.toDatabaseString());
+        this.rsvId = rsvId;
     }
-
-    public static Reservation fromData(ReservationData data) {
-        return new Reservation(data.userId, data.gymId,
-                data.trainerId.isEmpty() ? null : data.trainerId,
-                data.price,
-                Timeslot.fromDatabaseString(data.timeslot));
+    
+    @Override
+    public String toString()
+    {
+        return "Reservation{" +
+                "rsvId='" + rsvId + '\'' +
+                ", trainerId='" + trainerId + '\'' +
+                ", gymId='" + gymId + '\'' +
+                ", userId='" + userId + '\'' +
+                ", price=" + price +
+                ", timeslot=" + timeslot +
+                '}';
     }
+    
+    // public static Reservation fromData(ReservationData data) {
+    //     return new Reservation(data.userId, data.gymId,
+    //             data.trainerId.isEmpty() ? null : data.trainerId,
+    //             data.price,
+    //             Timeslot.fromDatabaseString(data.timeslot));
+    // }
 
     public ReservationData toData() {
         ReservationData data = new ReservationData();

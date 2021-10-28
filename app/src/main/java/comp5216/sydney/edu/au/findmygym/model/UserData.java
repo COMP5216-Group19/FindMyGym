@@ -27,6 +27,8 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -43,6 +45,7 @@ import java.util.concurrent.CompletableFuture;
 import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.Utils.ImageUtil;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.GymQueryCallback;
+import comp5216.sydney.edu.au.findmygym.model.callbacks.ListQueryCallback;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.ObjectQueryCallback;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.TrainerQueryCallback;
 import comp5216.sydney.edu.au.findmygym.ui.gym.GymViewModel;
@@ -56,6 +59,7 @@ public class UserData extends LiveData<UserData>
 	public final String KEY_CARDS = "CARDS";
 	public final String KEY_USERS = "USERS";
 	public final String KEY_TRAINERS = "TRAINERS";
+	public final String KEY_RESERVATION = "RESERVATION";
 	
 	public final String KEY_uid = "UID";
 	public final String KEY_userName = "USERNAME";
@@ -78,6 +82,12 @@ public class UserData extends LiveData<UserData>
 	public final String KEY_GYM_equipments = "GYM_EQUIPMENTS";
 	public final String KEY_GYM_trainers = "GYM_TRAINERS";
 	public final String KEY_GYM_reviews = "GYM_REVIEWS";
+	
+	public final String KEY_RES_ID_user = "KEY_RES_ID_USER";
+	public final String KEY_RES_ID_gym = "KEY_RES_ID_GYM";
+	public final String KEY_RES_ID_trainer = "KEY_RES_ID_TRAINER";
+	public final String KEY_RES_price = "KEY_RES_PRICE";
+	public final String KEY_RES_timeSlot = "KEY_RES_TIMESLOT";
 	
 	public final String KEY_TRAINER_name = "TRAINER_NAME";
 	public final String KEY_TRAINER_price = "TRAINER_PRICE";
@@ -216,6 +226,120 @@ public class UserData extends LiveData<UserData>
 					{
 						Log.d(TAG, "Add mocked gyms Failed: " + e.toString());
 						e.printStackTrace();
+					}
+				});
+	}
+	
+	
+	public void addReservation(Reservation reservation)
+	{
+		Map<String, Object> map = new HashMap<>();
+		map.put(this.KEY_RES_ID_user, reservation.getUserId());
+		map.put(this.KEY_RES_ID_gym, reservation.getGymId());
+		map.put(this.KEY_RES_ID_trainer, reservation.getTrainerId());
+		map.put(this.KEY_RES_price, reservation.getPrice());
+		map.put(this.KEY_RES_timeSlot, reservation.getSelectedTimeSlot().toDatabaseString());
+		
+		FirebaseFirestore db = FirebaseFirestore.getInstance();
+		CollectionReference reference = db.collection(KEY_RESERVATION);
+		reference.add(map)
+				// cardsRef.add(new CreditCard())
+				.addOnSuccessListener(new OnSuccessListener<DocumentReference>()
+				{
+					@Override
+					public void onSuccess(DocumentReference documentReference)
+					{
+						// importCardsFromDB();
+						Log.d(TAG, "Add Reservation Successfully: " + documentReference.getId());
+						reservation.setRsvId(documentReference.getId());
+						comp5216.sydney.edu.au.findmygym.model.UserData.getInstance().reservations.add(reservation);
+						
+					}
+				})
+				.addOnFailureListener(new OnFailureListener()
+				{
+					@Override
+					public void onFailure(@NonNull Exception e)
+					{
+						Log.d(TAG, "Add Reservation Failed: " + e.toString());
+						e.printStackTrace();
+					}
+				});
+	}
+	
+	
+	public void getReservationByID(String ID, ObjectQueryCallback callback)
+	{
+		String mTag = "[getTrainerByID]";
+		FirebaseFirestore db = FirebaseFirestore.getInstance();
+		DocumentReference gymRef = db.collection(getInstance().KEY_RESERVATION).document(ID);
+		final Reservation[] reservations = {null};
+		gymRef.get()
+				.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>()
+				{
+					@Override
+					public void onComplete(@NonNull Task<DocumentSnapshot> task)
+					{
+						if (task.isSuccessful())
+						{
+							try
+							{
+								Log.d(mTag, "getReservationByID DonComplete: ");
+								DocumentSnapshot result = task.getResult();
+								reservations[0] = new Reservation(result.getId(), (String) result.get(KEY_RES_ID_user), (String) result.get(KEY_RES_ID_gym), (String) result.get(KEY_RES_ID_trainer),
+										Math.toIntExact((long) result.get(KEY_RES_price)), Timeslot.fromDatabaseString((String) result.get(KEY_RES_timeSlot)));
+								Log.d(TAG, "getTrainerByID successfully!" + ID);
+								callback.onSucceed(reservations[0]);
+							} catch (Exception e)
+							{
+								callback.onFailed(e);
+							}
+						}
+						else
+						{
+							Log.d(TAG, "getTrainerByID failed!" + ID);
+						}
+					}
+				});
+	}
+	
+	
+	public void getReservationsByUID(String UID, ListQueryCallback callback)
+	{
+		String mTag = "[getTrainerByID]";
+		FirebaseFirestore db = FirebaseFirestore.getInstance();
+		CollectionReference ref = db.collection(getInstance().KEY_RESERVATION);
+		final Reservation[] reservations = {null};
+		ref.whereEqualTo(KEY_RES_ID_user, getUserId()).get()
+				.addOnCompleteListener(new OnCompleteListener<QuerySnapshot>()
+				{
+					@Override
+					public void onComplete(@NonNull Task<QuerySnapshot> task)
+					{
+						if (task.isSuccessful())
+						{
+							try
+							{
+								ArrayList<Reservation> reservationList = new ArrayList<>();
+								Log.d(TAG, "Found " + task.getResult().getDocuments().size() + " Reservations in DB");
+								for (QueryDocumentSnapshot document : task.getResult())
+								{
+									reservations[0] = new Reservation(document.getId(), (String) document.get(KEY_RES_ID_user), (String) document.get(KEY_RES_ID_gym), (String) document.get(KEY_RES_ID_trainer),
+											Math.toIntExact((long) document.get(KEY_RES_price)), Timeslot.fromDatabaseString((String) document.get(KEY_RES_timeSlot)));
+									reservationList.add(reservations[0]);
+								}
+								Log.d(TAG, "getReservationByUID successfully!" + UID);
+								comp5216.sydney.edu.au.findmygym.model.UserData.getInstance().reservations = reservationList;
+								callback.onSucceed(reservationList);
+							} catch (Exception e)
+							{
+								callback.onFailed(e);
+							}
+						}
+						else
+						{
+							Log.d(TAG, "getTrainerByID failed!" + UID);
+						}
 					}
 				});
 	}
@@ -489,63 +613,63 @@ public class UserData extends LiveData<UserData>
 	
 	private void addMockUser()
 	{
-		Reservation rev1 = new Reservation(
-				getUserId(),
-				"Minus Fitness Gym Chatswood",
-				null,
-				20,
-				new Timeslot(CalendarUtil.stringToCalendar("2021-10-28 10:00"), 60)
-		);
-		Reservation rev2 = new Reservation(
-				getUserId(),
-				"Fitness Second St Leonards",
-				"Tom",
-				52,
-				new Timeslot(CalendarUtil.stringToCalendar("2021-10-22 09:00"), 60)
-		);
-		Reservation rev3 = new Reservation(
-				getUserId(),
-				"Fitness Second St Leonards",
-				"Jerry",
-				56,
-				new Timeslot(CalendarUtil.stringToCalendar("2021-10-23 11:00"), 120)
-		);
-		
-		UserDataContent udc = new UserDataContent();
-		udc.reservations = new ArrayList<>();
-		for (Reservation rsv : new Reservation[]{rev1, rev2, rev3})
-		{
-			udc.reservations.add(rsv.toData());
-		}
-		
-		Map<String, String> mem1 = new HashMap<>();
-		mem1.put("gymID", "Minus Fitness Gym Chatswood");
-		mem1.put("title", "Yearly plan");
-		mem1.put("startTime", "2021-05-09 00:00");
-		mem1.put("endTime", "2022-05-08 23:59");
-		
-		Map<String, String> mem2 = new HashMap<>();
-		mem2.put("gymID", "Minus Fitness Crows Nest");
-		mem2.put("title", "Yearly plan");
-		mem2.put("startTime", "2021-08-16 00:00");
-		mem2.put("endTime", "2022-08-15 23:59");
-		
-		udc.memberships = new ArrayList<>();
-		udc.memberships.add(mem1);
-		udc.memberships.add(mem2);
-		
-		udc.favouriteGyms = new ArrayList<>();
-		udc.favouriteGyms.add("Minus Fitness Gym Chatswood");
-		udc.favouriteGyms.add("Minus Fitness Crows Nest");
-		udc.favouriteGyms.add("Fitness Second Bond St");
-		
-		userRef.setValue(udc).addOnSuccessListener(unused ->
-		{
-			addUserInfoChangeListener();
-		}).addOnFailureListener(e ->
-		{
-			Log.e(TAG, "Failed to add mock user", e);
-		});
+		// Reservation rev1 = new Reservation(
+		// 		getUserId(),
+		// 		"Minus Fitness Gym Chatswood",
+		// 		null,
+		// 		20,
+		// 		new Timeslot(CalendarUtil.stringToCalendar("2021-10-28 10:00"), 60)
+		// );
+		// Reservation rev2 = new Reservation(
+		// 		getUserId(),
+		// 		"Fitness Second St Leonards",
+		// 		"Tom",
+		// 		52,
+		// 		new Timeslot(CalendarUtil.stringToCalendar("2021-10-22 09:00"), 60)
+		// );
+		// Reservation rev3 = new Reservation(
+		// 		getUserId(),
+		// 		"Fitness Second St Leonards",
+		// 		"Jerry",
+		// 		56,
+		// 		new Timeslot(CalendarUtil.stringToCalendar("2021-10-23 11:00"), 120)
+		// );
+		//
+		// UserDataContent udc = new UserDataContent();
+		// udc.reservations = new ArrayList<>();
+		// for (Reservation rsv : new Reservation[]{rev1, rev2, rev3})
+		// {
+		// 	udc.reservations.add(rsv.toData());
+		// }
+		//
+		// Map<String, String> mem1 = new HashMap<>();
+		// mem1.put("gymID", "Minus Fitness Gym Chatswood");
+		// mem1.put("title", "Yearly plan");
+		// mem1.put("startTime", "2021-05-09 00:00");
+		// mem1.put("endTime", "2022-05-08 23:59");
+		//
+		// Map<String, String> mem2 = new HashMap<>();
+		// mem2.put("gymID", "Minus Fitness Crows Nest");
+		// mem2.put("title", "Yearly plan");
+		// mem2.put("startTime", "2021-08-16 00:00");
+		// mem2.put("endTime", "2022-08-15 23:59");
+		//
+		// udc.memberships = new ArrayList<>();
+		// udc.memberships.add(mem1);
+		// udc.memberships.add(mem2);
+		//
+		// udc.favouriteGyms = new ArrayList<>();
+		// udc.favouriteGyms.add("Minus Fitness Gym Chatswood");
+		// udc.favouriteGyms.add("Minus Fitness Crows Nest");
+		// udc.favouriteGyms.add("Fitness Second Bond St");
+		//
+		// userRef.setValue(udc).addOnSuccessListener(unused ->
+		// {
+		// 	addUserInfoChangeListener();
+		// }).addOnFailureListener(e ->
+		// {
+		// 	Log.e(TAG, "Failed to add mock user", e);
+		// });
 	}
 	
 	public void addMockGymsToDatabase()
@@ -735,14 +859,15 @@ public class UserData extends LiveData<UserData>
 		allGyms.add(gym7);
 		allGyms.add(gym8);
 		allGyms.add(gym9);
-
-		for (Gym gym : allGyms) {
+		
+		for (Gym gym : allGyms)
+		{
 			addGymToDatabase(gym);
 		}
-//		for (PersonalTrainer personalTrainer : allTrainers) {
-//			addTrainerToDatabase(personalTrainer);
-//		}
-//		addReviewToDb(allReviews);
+		//		for (PersonalTrainer personalTrainer : allTrainers) {
+		//			addTrainerToDatabase(personalTrainer);
+		//		}
+		//		addReviewToDb(allReviews);
 		
 		//		for (Gym gym : allGyms) {
 		//			addGymToDatabase(gym);
@@ -1074,81 +1199,81 @@ public class UserData extends LiveData<UserData>
 	{
 		this.firebaseUser = firebaseUser;
 		
-		userSignIn();
+		// userSignIn();
 		
 		//		userRsvRef = userRef.child("reservations");
 		
 		postValue(this);
 	}
 	
-	private void userSignIn()
-	{
-		userRef = dbRef.child("users").child(getUserId());
-		// Check if the user's info is in firebase
-		userRef.get().addOnCompleteListener(task ->
-		{
-			DataSnapshot snapshot = task.getResult();
-			UserDataContent udc = snapshot.getValue(UserDataContent.class);
-			if (udc == null)
-			{
-				// First time login
-				addMockUser();
-			}
-			else
-			{
-				addUserInfoChangeListener();
-			}
-		});
-	}
+	// private void userSignIn()
+	// {
+	// 	userRef = dbRef.child("users").child(getUserId());
+	// 	// Check if the user's info is in firebase
+	// 	userRef.get().addOnCompleteListener(task ->
+	// 	{
+	// 		DataSnapshot snapshot = task.getResult();
+	// 		UserDataContent udc = snapshot.getValue(UserDataContent.class);
+	// 		if (udc == null)
+	// 		{
+	// 			// First time login
+	// 			addMockUser();
+	// 		}
+	// 		else
+	// 		{
+	// 			addUserInfoChangeListener();
+	// 		}
+	// 	});
+	// }
 	
-	private void addUserInfoChangeListener()
-	{
-		userRef.addValueEventListener(new ValueEventListener()
-		{
-			@Override
-			public void onDataChange(@NonNull DataSnapshot snapshot)
-			{
-				UserDataContent udc = snapshot.getValue(UserDataContent.class);
-				if (udc == null)
-				{
-					Log.d(TAG, "User is null");
-					return;
-				}
-				reservations = new ArrayList<>();
-				if (udc.reservations != null)
-				{
-					for (Reservation.ReservationData rd : udc.reservations)
-					{
-						reservations.add(Reservation.fromData(rd));
-					}
-				}
-				memberships = new ArrayList<>();
-				if (udc.memberships != null)
-				{
-					for (Map<String, String> map : udc.memberships)
-					{
-						Membership mem = new Membership(map.get("gymID"),
-								map.get("title"),
-								null,
-								CalendarUtil.stringToCalendar(map.get("startTime")),
-								CalendarUtil.stringToCalendar(map.get("endTime")));
-						memberships.add(mem);
-					}
-				}
-				favouriteGyms = new ArrayList<>();
-				if (udc.favouriteGyms != null)
-				{
-					favouriteGyms.addAll(udc.favouriteGyms);
-				}
-			}
-			
-			@Override
-			public void onCancelled(@NonNull DatabaseError error)
-			{
-			
-			}
-		});
-	}
+	// private void addUserInfoChangeListener()
+	// {
+	// 	userRef.addValueEventListener(new ValueEventListener()
+	// 	{
+	// 		@Override
+	// 		public void onDataChange(@NonNull DataSnapshot snapshot)
+	// 		{
+	// 			UserDataContent udc = snapshot.getValue(UserDataContent.class);
+	// 			if (udc == null)
+	// 			{
+	// 				Log.d(TAG, "User is null");
+	// 				return;
+	// 			}
+	// 			reservations = new ArrayList<>();
+	// 			if (udc.reservations != null)
+	// 			{
+	// 				for (Reservation.ReservationData rd : udc.reservations)
+	// 				{
+	// 					reservations.add(Reservation.fromData(rd));
+	// 				}
+	// 			}
+	// 			memberships = new ArrayList<>();
+	// 			if (udc.memberships != null)
+	// 			{
+	// 				for (Map<String, String> map : udc.memberships)
+	// 				{
+	// 					Membership mem = new Membership(map.get("gymID"),
+	// 							map.get("title"),
+	// 							null,
+	// 							CalendarUtil.stringToCalendar(map.get("startTime")),
+	// 							CalendarUtil.stringToCalendar(map.get("endTime")));
+	// 					memberships.add(mem);
+	// 				}
+	// 			}
+	// 			favouriteGyms = new ArrayList<>();
+	// 			if (udc.favouriteGyms != null)
+	// 			{
+	// 				favouriteGyms.addAll(udc.favouriteGyms);
+	// 			}
+	// 		}
+	//
+	// 		@Override
+	// 		public void onCancelled(@NonNull DatabaseError error)
+	// 		{
+	//
+	// 		}
+	// 	});
+	// }
 	
 	public String getUserName()
 	{

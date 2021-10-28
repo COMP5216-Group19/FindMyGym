@@ -218,19 +218,19 @@ public class GymActivity extends AppCompatActivity {
 
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.gym_confirm_rsv)
-                .setMessage(R.string.gym_confirm_rsv)
-                .setPositiveButton(R.string.confirm, (dialog, which) -> {
-                    Reservation reservation = new Reservation(
-                            UserData.getInstance().getUserId(),
-                            mViewModel.getGym().getGymId(),
-                            trainerRsv == null ? null : trainerRsv.trainer.getTrainerId(),
-                            mViewModel.getTotalPrice(),
-                            mViewModel.getSelectedGymTimeslot());
-                    mViewModel.makeReservation(reservation);
-                })
-                .setNegativeButton(R.string.cancel, (dialog, which) -> {
-                    // Nothing happens
-                });
+                .setMessage(R.string.gym_confirm_rsv);
+                // .setPositiveButton(R.string.confirm, (dialog, which) -> {
+                //     Reservation reservation = new Reservation(
+                //             UserData.getInstance().getUserId(),
+                //             mViewModel.getGym().getGymId(),
+                //             trainerRsv == null ? null : trainerRsv.trainer.getTrainerId(),
+                //             mViewModel.getTotalPrice(),
+                //             mViewModel.getSelectedGymTimeslot());
+                //     mViewModel.makeReservation(reservation);
+                // })
+                // .setNegativeButton(R.string.cancel, (dialog, which) -> {
+                //     // Nothing happens
+                // });
         builder.create().show();
     }
 

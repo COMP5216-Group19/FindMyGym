@@ -6,9 +6,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -17,7 +14,6 @@ import android.view.View;
 import android.view.Menu;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,20 +25,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 
 import androidx.annotation.NonNull;
@@ -62,19 +45,14 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager2.widget.ViewPager2;
 
-import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
-import comp5216.sydney.edu.au.findmygym.Utils.ImageUtil;
 import comp5216.sydney.edu.au.findmygym.databinding.ActivityMainBinding;
-import comp5216.sydney.edu.au.findmygym.model.Gym;
-import comp5216.sydney.edu.au.findmygym.model.PersonalTrainer;
-import comp5216.sydney.edu.au.findmygym.model.callbacks.GymQueryCallback;
+import comp5216.sydney.edu.au.findmygym.model.Reservation;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
+import comp5216.sydney.edu.au.findmygym.model.callbacks.ListQueryCallback;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.ObjectQueryCallback;
 import comp5216.sydney.edu.au.findmygym.ui.map.MapFragment;
 import comp5216.sydney.edu.au.findmygym.ui.profile.ProfileFragment;
@@ -141,27 +119,63 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		setFabListener();
 		setSupportActionBar(binding.appBarMain.toolbar);
 		userData.setContext(mContext);
+		
+		//TEST AREA
+		
 		// UserData.uploadingGymImg();
-		userData.getGymByID("8Pp4nlV5Fc3XW06BXkhV");
+		// userData.getGymByID("8Pp4nlV5Fc3XW06BXkhV");
+		//
+		// userData.getTrainerByID("8tQCqe4ZECfRHolAejCW", new ObjectQueryCallback()
+		// {
+		// 	@Override
+		// 	public void onSucceed(Object object)
+		// 	{
+		//
+		// 		Log.d(TAG, "DBTEST: " + ((PersonalTrainer)object).toString() );
+		// 	}
+		//
+		// 	@Override
+		// 	public void onFailed(Exception e)
+		// 	{
+		// 		Log.e(TAG,e.toString());
+		// 		e.printStackTrace();
+		// 	}
+		//
+		// });
+		String gym_id_1 = "8Pp4nlV5Fc3XW06BXkhV";//Minus Fitness Waterloo
 		
-		userData.getTrainerByID("8tQCqe4ZECfRHolAejCW 1", new ObjectQueryCallback()
-		{
-			@Override
-			public void onSucceed(Object object)
-			{
-			
-				Log.d(TAG, "onCreate: " + ((PersonalTrainer)object).toString() );
-			}
-			
-			@Override
-			public void onFailed(Exception e)
-			{
-				Log.e(TAG,e.toString());
-				e.printStackTrace();
-			}
-			
-		});
+		// userData.addReservation(new Reservation(null,userData.getUserId(),gym_id_1,null, 500,new Timeslot(Calendar.getInstance(),120)));
+		// userData.getReservationByID("A58BwZ0Ck53NlC35ND60", new ObjectQueryCallback()
+		// {
+		// 	@Override
+		// 	public void onSucceed(Object object)
+		// 	{
+		// 		Log.d(TAG, "DBTEST: " + ((Reservation)object).toString() );
+		// 	}
+		//
+		// 	@Override
+		// 	public void onFailed(Exception e)
+		// 	{
+		// 		Log.e(TAG,e.toString());
+		// 		e.printStackTrace();
+		// 	}
+		// });
 		
+		// userData.getReservationsByUID(UserData.getInstance().getUserId(),new ListQueryCallback()
+		// {
+		// 	@Override
+		// 	public void onSucceed(ArrayList list)
+		// 	{
+		// 		Log.d(TAG, "DBTEST: " + list.toString() );
+		// 	}
+		//
+		// 	@Override
+		// 	public void onFailed(Exception e)
+		// 	{
+		// 		Log.e(TAG,e.toString());
+		// 		e.printStackTrace();
+		// 	}
+		// });
 		
 	}
 	
