@@ -39,7 +39,7 @@ import comp5216.sydney.edu.au.findmygym.ui.schedule.tabs.HistoryAdapter;
 
 public class Schedule_History extends Fragment
 {
-    private final String TAG = "[Schedule_History]";
+    private final String TAG = " ";
     Context mContext;
     RecyclerView recyclerView;
     HistoryAdapter historyAdapter;
