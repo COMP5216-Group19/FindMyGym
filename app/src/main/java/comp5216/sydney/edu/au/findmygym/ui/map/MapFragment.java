@@ -224,6 +224,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 		getDeviceLocation();
 		mMap.setMyLocationEnabled(true);
 		mMap.setOnInfoWindowLongClickListener(this);
+
+		if (userData.getAllGyms() == null) return;
 		for (int i = 0; i < userData.getAllGyms().size(); i++){
 			list.add(userData.getAllGyms().get(i).getGymId());
 		}

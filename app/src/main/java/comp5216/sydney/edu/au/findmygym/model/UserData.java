@@ -751,8 +751,14 @@ public class UserData extends LiveData<UserData>
 					Log.d(TAG, "Uploaded new reservation");
 					if (reservation.getTrainerId() != null) {
 						Log.d(TAG, "Updating trainer timeslots");
-//						trainersRef.child(reservation.getTrainerId()).child("availableTime")
-//								.equalTo()
+						PersonalTrainer trainer = findGymById(reservation.getGymId())
+								.findTrainerById(reservation.getTrainerId());
+						String timeDbString = reservation.getSelectedTimeSlot().toDatabaseString();
+						trainer.getAvailableTimes()
+								.removeIf(timeslot ->
+										timeslot.toDatabaseString().equals(timeDbString));
+						trainersRef.child(reservation.getTrainerId()).child("availableTime")
+								.setValue(trainer.getAvailableTimes());
 					}
 				}).addOnFailureListener(e -> {
 					Log.e(TAG, "Failed to upload new reservation", e);
