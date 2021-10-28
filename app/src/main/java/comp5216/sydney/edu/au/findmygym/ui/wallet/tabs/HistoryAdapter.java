@@ -62,7 +62,7 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder>
 	{
 		Log.d(TAG, "onBindViewHolder: "+this.getItemCount());
 		
-		String gymID = userData.getMemberships().get(position).getGymID();
+		String gymID = userData.getPurchaseRecords().get(position).getGymId();
 		holder.tv_title.setText(userData.getPurchaseRecords().get(position).getGymId());
 		holder.tv_description.setText(userData.getPurchaseRecords().get(position).getTimeStr());
 		holder.tv_cost.setText(userData.getPurchaseRecords().get(position).getCostStr());
@@ -73,7 +73,7 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder>
 			public void onSucceed(Object object)
 			{
 				Gym gym = (Gym) object;
-				ImageUtil.loadImage(gym.getGymName(), holder.giv_image, context);
+				ImageUtil.loadImage(gymID, holder.giv_image, context);
 				holder.tv_title.setText(gym.getGymName());
 			}
 			
@@ -150,8 +150,6 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder>
 														.changeAlertType(SweetAlertDialog.ERROR_TYPE);
 											}
 										});
-								
-								
 							}
 						})
 						.show();
@@ -165,6 +163,7 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder>
 	@Override
 	public int getItemCount()
 	{
+		Log.d(TAG, "TEST: getItemCount()"+userData.getPurchaseRecords().size());
 		return userData.getPurchaseRecords().size();
 	}
 	

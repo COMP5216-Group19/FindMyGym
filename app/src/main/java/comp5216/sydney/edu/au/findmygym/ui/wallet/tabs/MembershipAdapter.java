@@ -59,7 +59,7 @@ public class MembershipAdapter extends RecyclerView.Adapter<MembershipAdapter.Vi
 			public void onSucceed(Object object)
 			{
 				Gym gym = (Gym) object;
-				ImageUtil.loadImage(gym.getGymName(), holder.image, context);
+				ImageUtil.loadImage(gymID, holder.image, context);
 				holder.title.setText(gym.getGymName());
 			}
 

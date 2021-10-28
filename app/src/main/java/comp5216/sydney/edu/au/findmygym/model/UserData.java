@@ -191,19 +191,7 @@ public class UserData extends LiveData<UserData>
 		postValue(this);
 	}
 	
-	public static void uploadingGymImg()
-	{
-		ImageUtil.uploadImage("Fitness Second St Leonards", R.drawable.gym1, UserData.mContext);
-		ImageUtil.uploadImage("Fitness Second North Sydney", R.drawable.gym2, UserData.mContext);
-		ImageUtil.uploadImage("Notime Fitness North Sydey", R.drawable.gym3, UserData.mContext);
-		ImageUtil.uploadImage("Minus Fitness Crows Nest", R.drawable.gym4, UserData.mContext);
-		ImageUtil.uploadImage("Minus Fitness Gym Chatswood", R.drawable.gym5, UserData.mContext);
-		ImageUtil.uploadImage("Minus Fitness Market Street", R.drawable.gym6, UserData.mContext);
-		ImageUtil.uploadImage("Minus Fitness Waterloo", R.drawable.gym7, UserData.mContext);
-		ImageUtil.uploadImage("Notime Fitness City", R.drawable.gym8, UserData.mContext);
-		ImageUtil.uploadImage("Fitness Second Bond St", R.drawable.gym9, UserData.mContext);
-		ImageUtil.uploadImage("Sliver's Gym", R.drawable.gym10, UserData.mContext);
-	}
+
 	
 	
 	private void addMockGyms()
@@ -244,6 +232,12 @@ public class UserData extends LiveData<UserData>
 				});
 	}
 	
+	public void addPurchaseRecordToList(PurchaseRecord purchaseRecord)
+	{
+		this.purchaseRecords.add(purchaseRecord);
+		sortPurchaseRecords();
+		postValue(this);
+	}
 	
 	public void addPurchaseRecord(PurchaseRecord purchaseRecord)
 	{
@@ -262,10 +256,10 @@ public class UserData extends LiveData<UserData>
 					public void onSuccess(DocumentReference documentReference)
 					{
 						Log.d(TAG, "Add PurchaseRecord Successfully: " + documentReference.getId());
+						Log.d(TAG, "onSuccess: Before add"+comp5216.sydney.edu.au.findmygym.model.UserData.getInstance().getPurchaseRecords().size());
 						purchaseRecord.setID(documentReference.getId());
-						comp5216.sydney.edu.au.findmygym.model.UserData.getInstance().purchaseRecords.add(purchaseRecord);
-						sortPurchaseRecords();
-						comp5216.sydney.edu.au.findmygym.model.UserData.getInstance().post();
+						comp5216.sydney.edu.au.findmygym.model.UserData.getInstance().addPurchaseRecordToList(purchaseRecord);
+						Log.d(TAG, "onSuccess: After add"+comp5216.sydney.edu.au.findmygym.model.UserData.getInstance().getPurchaseRecords().size());
 					}
 				})
 				.addOnFailureListener(new OnFailureListener()
@@ -305,8 +299,7 @@ public class UserData extends LiveData<UserData>
 									));
 								}
 								Log.d(TAG, "getMembershipsByUID successfully!" + UID);
-								comp5216.sydney.edu.au.findmygym.model.UserData.getInstance().purchaseRecords = purchaseRecords;
-								comp5216.sydney.edu.au.findmygym.model.UserData.getInstance().post();
+								comp5216.sydney.edu.au.findmygym.model.UserData.getInstance().setPurchaseRecords(purchaseRecords);
 								callback.onSucceed(purchaseRecords);
 							} catch (Exception e)
 							{
