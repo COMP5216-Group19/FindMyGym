@@ -2,7 +2,6 @@ package comp5216.sydney.edu.au.findmygym.ui.gym;
 
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
@@ -21,8 +20,6 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -150,7 +147,7 @@ public class GymInfoFragment extends Fragment {
         if (avatar != null) {
             avatarView.setImageBitmap(avatar);
         }
-        userNameText.setText(review.getUserName());
+        userNameText.setText(review.getUserId());
         ratingBar.setRating(review.getRating());
         timeText.setText(dateFormat.format(review.getDateTime().getTime()));
         commentText.setText(review.getComments());

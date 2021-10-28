@@ -7,46 +7,49 @@ import java.util.Calendar;
 
 import javax.annotation.Nullable;
 
-import comp5216.sydney.edu.au.findmygym.R;
-
 /**
  * A class that represents a review item.
  */
 public class Review implements Serializable {
 
     private String reviewId;
+    private String gymId;
     public int rating;
-    private String userName;
+    private String userId;
     private Bitmap userAvatar;
     private String comments;
     private Calendar dateTime;
 
-    public Review(String userName, Bitmap userAvatar, int rating, String comments,
+    public Review(String userId, String gymId, int rating, String comments,
                   Calendar dateTime) {
-        this.userName = userName;
-        this.userAvatar = userAvatar;
+        this.userId = userId;
+        this.gymId = gymId;
         this.rating = rating;
         this.comments = comments;
         this.dateTime = dateTime;
 
         // Potential bug: two users with same name post reviews at a same millisecond
-        this.reviewId = String.format("%s+%s", userName, CalendarUtil.calendarToString(dateTime));
+        this.reviewId = String.format("%s+%s", userId, CalendarUtil.calendarToString(dateTime));
     }
 
-    public static Review fromData(ReviewData data, Bitmap userAvatar) {
-        return new Review(
-                data.userName,
-                userAvatar,
-                data.rating,
-                data.comments,
-                CalendarUtil.stringToCalendar(data.dateTime)
-        );
+    public String getGymId() {
+        return gymId;
     }
+
+//    public static Review fromData(ReviewData data, Bitmap userAvatar) {
+//        return new Review(
+//                data.userName,
+//                userAvatar,
+//                data.rating,
+//                data.comments,
+//                CalendarUtil.stringToCalendar(data.dateTime)
+//        );
+//    }
 
     public ReviewData toData(String avatarPath) {
         ReviewData data = new ReviewData();
         data.avatarPath = avatarPath;
-        data.userName = userName;
+        data.userName = userId;
         data.rating = rating;
         data.dateTime = CalendarUtil.calendarToString(dateTime);
         data.comments = comments;
@@ -68,8 +71,8 @@ public class Review implements Serializable {
     /**
      * @return the name of the user who wrote this review
      */
-    public String getUserName() {
-        return userName;
+    public String getUserId() {
+        return userId;
     }
 
     /**

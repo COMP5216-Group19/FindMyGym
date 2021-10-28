@@ -160,7 +160,13 @@ public class GymViewModel extends ViewModel {
     public void postReview() {
         String text = infoFragment.getReview();
         int rating = infoFragment.getRating();
-        // TODO: 评论
+        UserData.getInstance().addReview(
+                new Review(UserData.getInstance().getUserId(),
+                        gym.getGymId(),
+                        rating,
+                        text,
+                        Calendar.getInstance())
+        );
     }
 
     private void generateValuesByGym() {

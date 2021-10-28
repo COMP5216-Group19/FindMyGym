@@ -34,7 +34,7 @@ public class GymActivity extends AppCompatActivity {
     public boolean isFavourite;
     Context mContext;
     GymViewModel mViewModel;
-    private MenuItem favouriteItem;
+    private Menu optionsMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +46,9 @@ public class GymActivity extends AppCompatActivity {
         mViewModel.setGym((Gym) getIntent().getSerializableExtra("gym"));
 
         isFavourite = mViewModel.getGym().isFavourite();
-        if (favouriteItem != null) {
+        if (optionsMenu != null) {
             Log.d(TAG, "onCreateOptionsMenu called first");
-            onOptionsItemSelected(favouriteItem);
+//            onOptionsItemSelected(optionsMenu);
         } else {
             Log.d(TAG, "favourite item still null");
         }
@@ -63,12 +63,15 @@ public class GymActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         boolean b = super.onCreateOptionsMenu(menu);
-        favouriteItem = menu.findItem(R.id.action_favourite);
+        optionsMenu = menu;
 
-        if (mViewModel != null) {
-            Log.d(TAG, "onCreate called first");
-            updateFavouriteItemIcon(favouriteItem);
-        }
+        System.out.println(menu);
+        System.out.println(optionsMenu);
+
+//        if (mViewModel != null) {
+//            Log.d(TAG, "onCreate called first");
+//            updateFavouriteItemIcon(optionsMenu.f);
+//        }
 
         return b;
     }

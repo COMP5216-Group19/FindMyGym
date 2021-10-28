@@ -16,6 +16,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -81,6 +82,12 @@ public class UserData extends LiveData<UserData>
 	public final String KEY_TRAINER_name = "TRAINER_NAME";
 	public final String KEY_TRAINER_price = "TRAINER_PRICE";
 	public final String KEY_TRAINER_times = "TRAINER_TIMES";
+
+	public final String KEY_REVIEW_userId = "REVIEW_USER_ID";
+	public final String KEY_REVIEW_gymId = "REVIEW_GYM_ID";
+	public final String KEY_REVIEW_rating = "REVIEW_RATING";
+	public final String KEY_REVIEW_comments = "REVIEW_COMMENTS";
+	public final String KEY_REVIEW_dateTime = "REVIEW_DATE_TIME";
 	
 	public final String URL_STORAGE_ORIGINAL_IMAGE = "gs://findmygym-e9f2e.appspot.com/Original/";
 	public final String URL_STORAGE_REDUCED_IMAGE = "gs://findmygym-e9f2e.appspot.com/Reduced/";
@@ -1362,5 +1369,25 @@ public class UserData extends LiveData<UserData>
 	public boolean isSuccessful()
 	{
 		return isSuccessful && downloadFinished;
+	}
+
+	public void addReview(Review review) {
+		Map<String, Object> map = new HashMap<>();
+		map.put(KEY_REVIEW_gymId, review.getGymId());
+		map.put(KEY_REVIEW_dateTime, new Timestamp(review.getDateTime().getTime()));
+		map.put(KEY_REVIEW_rating, review.getRating());
+		map.put(KEY_REVIEW_comments, review.getComments());
+		map.put(KEY_REVIEW_userId, review.getUserId());
+
+		FirebaseFirestore db = FirebaseFirestore.getInstance();
+		CollectionReference reviewsRef = db.collection("REVIEWS");
+		reviewsRef.add(map)
+				.addOnSuccessListener(documentReference -> {
+					Log.d(TAG, "Add review successfully: " + documentReference.getId());
+				})
+				.addOnFailureListener(e -> {
+					Log.d(TAG, "Add review Failed: " + e.toString());
+					e.printStackTrace();
+				});
 	}
 }
