@@ -202,6 +202,7 @@ public class ProfileFragment extends Fragment
 		for (Reservation rev: reservations) {
 			Integer eachBeginTime = Integer.parseInt(sdf.format(rev.getSelectedTimeSlot().getBeginTime().getTime()));
 			Integer eachLength = rev.getSelectedTimeSlot().getLengthMinutes();
+			if (eachLength <= 0) eachLength = 0;
 			if (exLog.containsKey(eachBeginTime)) {
 				exLog.put(eachBeginTime, exLog.get(eachBeginTime) + eachLength);
 			} else {
