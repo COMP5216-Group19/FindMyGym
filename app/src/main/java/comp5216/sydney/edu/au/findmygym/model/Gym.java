@@ -254,6 +254,14 @@ public class Gym implements Serializable {
         return reviews;
     }
 
+    public Calendar getTodayCloseTime() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, closeTime.get(Calendar.HOUR_OF_DAY));
+        calendar.set(Calendar.MINUTE, closeTime.get(Calendar.MINUTE));
+        calendar.get(Calendar.HOUR);
+        return closeTime;
+    }
+
     public static class GymData {
         public String gymId;
         public String name;

@@ -34,6 +34,7 @@ public class GymViewModel extends ViewModel {
      * Store it here for simplifying the accessing from GymActivity
      */
     TrainerListAdapter trainerListAdapter;
+    private Calendar minSelectableDate;
     Calendar selectedDate;
     Timepoint beginTime;
     Timepoint endTime;
@@ -163,21 +164,27 @@ public class GymViewModel extends ViewModel {
         gymPrice = gym.getPrice();
         visitedByThisUser = UserData.getInstance().hasBeenToGym(gym.getGymId());
 
-        Calendar oneHourLater = (Calendar) now.clone();
-        oneHourLater.add(Calendar.HOUR_OF_DAY, 1);
-        if (oneHourLater.compareTo(gym.getCloseTime()) >= 0) {
+        if (now.after(gym.getTodayCloseTime())) {
+            Log.d(TAG, "Closed!");
             // Already closed or nearly closed
-            selectedDate = (Calendar) today.clone();
-            selectedDate.add(Calendar.DAY_OF_MONTH, 1);
+            selectedDate = (Calendar) now.clone();
+            selectedDate.add(Calendar.DATE, 1);
+            selectedDate.get(Calendar.DATE);
+            Log.d(TAG, "Date is " + selectedDate.get(Calendar.DATE));
             beginTime = new Timepoint(gym.getOpenTime().get(Calendar.HOUR_OF_DAY),
                     gym.getOpenTime().get(Calendar.MINUTE));
         } else {
-            selectedDate = (Calendar) today.clone();
+            selectedDate = (Calendar) now.clone();
             beginTime = new Timepoint(now.get(Calendar.HOUR_OF_DAY),
                     now.get(Calendar.MINUTE));
         }
+        minSelectableDate = (Calendar) selectedDate.clone();
         endTime = new Timepoint(gym.getCloseTime().get(Calendar.HOUR_OF_DAY),
                 gym.getCloseTime().get(Calendar.MINUTE));
+    }
+
+    public Calendar getMinSelectableDate() {
+        return minSelectableDate;
     }
 
     /**
