@@ -64,7 +64,7 @@ public class Schedule_Booking extends Fragment
         Bitmap bitmap4 = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.fitness_gym_example_1484x983);
         Bitmap bitmap5 = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.fitness_gym_example_1484x983);
         List<Bitmap> bitmapList = Arrays.asList(bitmap1,bitmap2,bitmap3,bitmap4,bitmap5);
-
+    
         for (int i = 0; i < userData.getReservations().size(); i++)
         {
             Calendar now =  Calendar.getInstance();
@@ -73,20 +73,22 @@ public class Schedule_Booking extends Fragment
             String gymId = userData.getReservations().get(i).getGymId();
             System.out.println(gymId);
             Gym gym = userData.findGymById(gymId);
-            String gymName = gym.getGymName();
+            if (gym != null) {
+                String gymName = gym.getGymName();
 
-            //get Trainer name by id
-            String trainerId = userData.getReservations().get(i).getTrainerId();
-            PersonalTrainer tra = gym.findTrainerById(trainerId);
-            String trainerName = tra == null ? "" : tra.getName();
+                //get Trainer name by id
+                String trainerId = userData.getReservations().get(i).getTrainerId();
+                PersonalTrainer tra = gym.findTrainerById(trainerId);
+                String trainerName = tra == null ? "" : tra.getName();
 
-            // get reservation start time
-            Timeslot reservationDate = userData.getReservations().get(i).getSelectedTimeSlot();
-            Calendar reservationDateT = reservationDate.getBeginTime();
+                // get reservation start time
+                Timeslot reservationDate = userData.getReservations().get(i).getSelectedTimeSlot();
+                Calendar reservationDateT = reservationDate.getBeginTime();
 
 
-            if (reservationDateT.after(now)) {
-                bookList.add(new ScheduleList(gymName,trainerName, reservationDateT, getRandomItem(bitmapList)));
+                if (reservationDateT.after(now)) {
+                    bookList.add(new ScheduleList(gymName, trainerName, reservationDateT, getRandomItem(bitmapList)));
+                }
             }
         }
 

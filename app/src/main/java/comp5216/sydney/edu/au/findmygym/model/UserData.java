@@ -27,6 +27,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -76,6 +77,7 @@ public class UserData extends LiveData<UserData>
 	private Context mContext;
 
 	private boolean isSuccessful = false;
+	private boolean downloadFinished = false;
 
 	// This list will load when launching this app
 	// Displays these gyms on map
@@ -130,17 +132,31 @@ public class UserData extends LiveData<UserData>
 		allGyms = new ArrayList<>();
 		allTrainers = new ArrayList<>();
 		gymsRef.get().addOnSuccessListener(dataSnapshot -> {
+			List<Gym.GymData> gymDataList = new ArrayList<>();
 			for (DataSnapshot ds : dataSnapshot.getChildren()) {
 				Gym.GymData gd = ds.getValue(Gym.GymData.class);
 				if (gd != null) {
-					if (gd.trainerIds == null) {
-						gd.trainerIds = new ArrayList<>();
-					}
+					gymDataList.add(gd);
+				} else {
+					Log.e(TAG, "null gym");
+				}
+			}
+
+			for (Gym.GymData gd : gymDataList) {
+				if (gd.trainerIds == null) {
+					allGyms.add(Gym.fromGymData(gd, new ArrayList<>(),
+							new ArrayList<>(), null));
+				} else {
 					// Then query trainers of this gym
 					populateTrainersOfGym(gd, new GymQueryCallback() {
 						@Override
 						public void onSucceed(Gym gym) {
 							allGyms.add(gym);
+							Log.d(TAG, "Downloaded gym " + gym.getGymId());
+							if (allGyms.size() == gymDataList.size()) {
+								downloadFinished = true;
+								Log.d(TAG, "All gyms downloaded!");
+							}
 						}
 
 						@Override
@@ -151,7 +167,7 @@ public class UserData extends LiveData<UserData>
 				}
 			}
 		}).addOnFailureListener(e -> {
-			Log.e(TAG, Arrays.toString(e.getStackTrace()));
+			Log.e(TAG, "Gym download error", e);
 		});
 	}
 
@@ -254,20 +270,23 @@ public class UserData extends LiveData<UserData>
 	private void addMockUser() {
 		Reservation rev1 = new Reservation(
 				getUserId(),
-				"1",
+				"Minus Fitness Gym Chatswood",
 				null,
+				20,
 				new Timeslot(CalendarUtil.stringToCalendar("2021-10-28 10:00"), 60)
 		);
 		Reservation rev2 = new Reservation(
 				getUserId(),
-				"2",
-				"3",
+				"Fitness Second St Leonards",
+				"Tom",
+				52,
 				new Timeslot(CalendarUtil.stringToCalendar("2021-10-22 09:00"), 60)
 		);
 		Reservation rev3 = new Reservation(
 				getUserId(),
-				"2",
-				"4",
+				"Fitness Second St Leonards",
+				"Jerry",
+				56,
 				new Timeslot(CalendarUtil.stringToCalendar("2021-10-23 11:00"), 120)
 		);
 
@@ -276,6 +295,28 @@ public class UserData extends LiveData<UserData>
 		for (Reservation rsv : new Reservation[]{rev1, rev2, rev3}) {
 			udc.reservations.add(rsv.toData());
 		}
+
+		Map<String, String> mem1 = new HashMap<>();
+		mem1.put("gymID", "Minus Fitness Gym Chatswood");
+		mem1.put("title", "Yearly plan");
+		mem1.put("startTime", "2021-05-09 00:00");
+		mem1.put("endTime", "2022-05-08 23:59");
+
+		Map<String, String> mem2 = new HashMap<>();
+		mem2.put("gymID", "Minus Fitness Crows Nest");
+		mem2.put("title", "Yearly plan");
+		mem2.put("startTime", "2021-08-16 00:00");
+		mem2.put("endTime", "2022-08-15 23:59");
+
+		udc.memberships = new ArrayList<>();
+		udc.memberships.add(mem1);
+		udc.memberships.add(mem2);
+
+		udc.favouriteGyms = new ArrayList<>();
+		udc.favouriteGyms.add("Minus Fitness Gym Chatswood");
+		udc.favouriteGyms.add("Minus Fitness Crows Nest");
+		udc.favouriteGyms.add("Fitness Second Bond St");
+
 		userRef.setValue(udc).addOnSuccessListener(unused -> {
 			addUserInfoChangeListener();
 		}).addOnFailureListener(e -> {
@@ -424,6 +465,8 @@ public class UserData extends LiveData<UserData>
 				151.2102227,
 				-33.8706586
 		);
+		addMockTrainersInThisWeek(allTrainers, gym8, "Jenny", "Jenny", 30.0);
+
 		Gym gym9 = new Gym(
 				"Sliver's Gym",
 				"Sliver's Gym",
@@ -435,6 +478,8 @@ public class UserData extends LiveData<UserData>
 				151.2052855,
 				-33.8334692
 		);
+		addMockTrainersInThisWeek(allTrainers, gym9, "Nofe", "Nofe", 18.0);
+
 		randomAddEquipment(gym0);
 		randomAddEquipment(gym1);
 		randomAddEquipment(gym2);
@@ -556,7 +601,10 @@ public class UserData extends LiveData<UserData>
 	}
 
 	public Gym findGymById(String gymId) {
+		Log.d(TAG, "Looking for id " + gymId);
+		Log.d(TAG, allGyms.toString());
 		for (Gym gym : allGyms) {
+			Log.d(TAG, "Scanning " + gym.getGymId());
 			if (gymId.equals(gym.getGymId())) {
 				return gym;
 			}
@@ -580,15 +628,6 @@ public class UserData extends LiveData<UserData>
 				// todo
 			}
 		}).addOnFailureListener(callback::onFailed);
-	}
-
-	public void findReviewById(String reviewId, ReviewQueryCallback callback) {
-
-	}
-
-	@Deprecated
-	public PersonalTrainer findTrainerById(String trainerId) {
-		return null;
 	}
 
 	public void postNewReservation(Reservation reservation) {
@@ -788,6 +827,21 @@ public class UserData extends LiveData<UserData>
 					for (Reservation.ReservationData rd : udc.reservations) {
 						reservations.add(Reservation.fromData(rd));
 					}
+				}
+				memberships = new ArrayList<>();
+				if (udc.memberships != null) {
+					for (Map<String, String> map : udc.memberships) {
+						Membership mem = new Membership(map.get("gymID"),
+								map.get("title"),
+								null,
+								CalendarUtil.stringToCalendar(map.get("startTime")),
+								CalendarUtil.stringToCalendar(map.get("endTime")));
+						memberships.add(mem);
+					}
+				}
+				favouriteGyms = new ArrayList<>();
+				if (udc.favouriteGyms != null) {
+					favouriteGyms.addAll(udc.favouriteGyms);
 				}
 			}
 
@@ -998,6 +1052,6 @@ public class UserData extends LiveData<UserData>
 	}
 
 	public boolean isSuccessful() {
-		return isSuccessful;
+		return isSuccessful && downloadFinished;
 	}
 }

@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -267,6 +268,10 @@ public class LoginActivity extends BaseActivity
 	}
 	
 	private void intentToMain(){
+//		while (!UserData.getInstance().isSuccessful()) {
+//
+//		}
+
 		Intent intent = new Intent(mContext, MainActivity.class);
 		startActivity(intent);
 	}

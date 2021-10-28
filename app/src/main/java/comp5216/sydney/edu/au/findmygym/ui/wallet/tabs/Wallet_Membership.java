@@ -71,7 +71,7 @@ public class Wallet_Membership extends Fragment
 			Random random = new Random();
 			end.set(Calendar.DAY_OF_MONTH,end.get(Calendar.DAY_OF_MONTH)+1);
 			start.set(Calendar.HOUR_OF_DAY,random.nextInt(23 - 0 + 1) + 0);
-			memberships.add(new Membership(i,"Membership"+i,getRandomItem(bitmapList),start,end));
+			memberships.add(new Membership(String.valueOf(i),"Membership"+i,getRandomItem(bitmapList),start,end));
 		}
 		
 		

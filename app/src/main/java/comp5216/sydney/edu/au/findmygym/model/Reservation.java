@@ -17,15 +17,17 @@ public class Reservation implements Serializable {
 
     private String gymId;
     private String userId;
-
+    private double price;
     private Timeslot timeslot;
 
     @SuppressLint("DefaultLocale")
-    public Reservation(String userId, String gymId, String trainerId, Timeslot timeslot) {
+    public Reservation(String userId, String gymId, String trainerId, double price,
+                       Timeslot timeslot) {
         this.userId = userId;
         this.gymId = gymId;
         this.trainerId = trainerId;
         this.timeslot = timeslot;
+        this.price = price;
 
         this.rsvId = String.format("%s+%s+%s", userId, gymId, timeslot.toDatabaseString());
     }
@@ -33,6 +35,7 @@ public class Reservation implements Serializable {
     public static Reservation fromData(ReservationData data) {
         return new Reservation(data.userId, data.gymId,
                 data.trainerId.isEmpty() ? null : data.trainerId,
+                data.price,
                 Timeslot.fromDatabaseString(data.timeslot));
     }
 
@@ -42,7 +45,12 @@ public class Reservation implements Serializable {
         data.gymId = gymId;
         data.trainerId = trainerId == null ? "" : trainerId;
         data.timeslot = timeslot.toDatabaseString();
+        data.price = price;
         return data;
+    }
+
+    public double getPrice() {
+        return price;
     }
 
     public String getRsvId() {
@@ -80,6 +88,7 @@ public class Reservation implements Serializable {
         public String userId;
         public String gymId;
         public String trainerId;
+        public double price;
         public String timeslot;
     }
 }

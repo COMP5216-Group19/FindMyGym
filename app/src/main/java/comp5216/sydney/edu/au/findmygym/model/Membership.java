@@ -9,7 +9,7 @@ import java.util.GregorianCalendar;
 
 public class Membership
 {
-	int gymID;
+	String gymID;
 	String title;
 	Bitmap image;
 	Calendar startTime;
@@ -17,7 +17,7 @@ public class Membership
 	
 
 	
-	public Membership(int gymID, String title, Bitmap image, Calendar startTime, Calendar endTime)
+	public Membership(String gymID, String title, Bitmap image, Calendar startTime, Calendar endTime)
 	{
 		this.gymID = gymID;
 		this.title = title;
@@ -26,12 +26,12 @@ public class Membership
 		this.endTime = endTime;
 	}
 	
-	public int getGymID()
+	public String getGymID()
 	{
 		return gymID;
 	}
 	
-	public void setGymID(int gymID)
+	public void setGymID(String gymID)
 	{
 		this.gymID = gymID;
 	}

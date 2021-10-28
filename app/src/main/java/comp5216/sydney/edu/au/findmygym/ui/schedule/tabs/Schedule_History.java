@@ -76,20 +76,22 @@ public class Schedule_History extends Fragment
             //get Gym name by id
             String gymId = userData.getReservations().get(i).getGymId();
             Gym gym = userData.findGymById(gymId);
-            String gymName = gym.getGymName();
+            if (gym != null) {
+                String gymName = gym.getGymName();
 
-            //get Trainer name by id
-            String trainerId = userData.getReservations().get(i).getTrainerId();
-            PersonalTrainer tra = gym.findTrainerById(trainerId);
-            String trainerName = tra == null ? "" : tra.getName();
+                //get Trainer name by id
+                String trainerId = userData.getReservations().get(i).getTrainerId();
+                PersonalTrainer tra = gym.findTrainerById(trainerId);
+                String trainerName = tra == null ? "" : tra.getName();
 
-            // get reservation start time
-            Timeslot reservationDate = userData.getReservations().get(i).getSelectedTimeSlot();
-            Calendar reservationDateT = reservationDate.getBeginTime();
+                // get reservation start time
+                Timeslot reservationDate = userData.getReservations().get(i).getSelectedTimeSlot();
+                Calendar reservationDateT = reservationDate.getBeginTime();
 
 
-            if (now.after(reservationDateT)) {
-                scheduleLists.add(new ScheduleList(gymName,trainerName, reservationDateT, getRandomItem(bitmapList)));
+                if (now.after(reservationDateT)) {
+                    scheduleLists.add(new ScheduleList(gymName, trainerName, reservationDateT, getRandomItem(bitmapList)));
+                }
             }
         }
 
