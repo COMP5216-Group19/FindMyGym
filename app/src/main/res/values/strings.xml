@@ -49,7 +49,7 @@
     <string name="gym_personal_trainers"><b>Personal Trainers</b></string>
     <string name="gym_reviews"><b>Reviews</b></string>
     <string name="gym_write_review_hint">Leave a comment</string>
-    <string name="gym_go_first_then_comment">滚，只有去过的人才能评论</string>
+    <string name="gym_go_first_then_comment">You have to visit this gym first to leave a review</string>
     <string name="gym_post_review">Post</string>
 
     <string name="gym_info_tab">Info</string>
