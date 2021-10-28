@@ -22,6 +22,7 @@ public class GymRsvFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mViewModel = new ViewModelProvider(requireActivity()).get(GymViewModel.class);
+        mViewModel.rsvFragment = this;
 
         View view = inflater.inflate(R.layout.gym_reservation_fragment, container, false);
 
