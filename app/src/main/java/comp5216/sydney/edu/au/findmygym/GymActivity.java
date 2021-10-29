@@ -103,32 +103,27 @@ public class GymActivity extends AppCompatActivity
 		FirebaseFirestore db = FirebaseFirestore.getInstance();
 		DocumentReference ref = db.collection(userData.KEY_USERS).document(userData.getUserId());
 		ref.get()
-				.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>()
-				{
-					@Override
-					public void onComplete(@NonNull Task<DocumentSnapshot> task)
+				.addOnCompleteListener(task -> {
+					if (task.isSuccessful())
 					{
-						if (task.isSuccessful())
+
+						DocumentSnapshot doc = task.getResult();
+						ArrayList<String> favouriteList = (ArrayList) doc.get(userData.KEY_USER_favourite);
+
+						Log.d(TAG, "Checking "  + " Favourite Gyms in DB"+ favouriteList.toString());
+						if (favouriteList.contains(mViewModel.getGym().getGymId()))
 						{
-							
-							DocumentSnapshot doc = task.getResult();
-							ArrayList<String> favouriteList = (ArrayList) doc.get(userData.KEY_USER_favourite);
-							
-							Log.d(TAG, "Checking "  + " Favourite Gyms in DB"+ favouriteList.toString());
-							if (favouriteList.contains(mViewModel.getGym().getGymId()))
-							{
-								isFavourite = true;
-								optionsMenu.findItem(R.id.action_favourite).setIcon(R.drawable.outline_star_24);
-							}else {
-								isFavourite = false;
-								optionsMenu.findItem(R.id.action_favourite).setIcon(R.drawable.outline_star_border_24);
-							}
-							
+							isFavourite = true;
+							optionsMenu.findItem(R.id.action_favourite).setIcon(R.drawable.outline_star_24);
+						}else {
+							isFavourite = false;
+							optionsMenu.findItem(R.id.action_favourite).setIcon(R.drawable.outline_star_border_24);
 						}
-						else
-						{
-							Log.d(TAG, "check favourite gym failed!" );
-						}
+
+					}
+					else
+					{
+						Log.d(TAG, "check favourite gym failed!" );
 					}
 				});
 		
@@ -150,25 +145,12 @@ public class GymActivity extends AppCompatActivity
 		switch (item.getItemId())
 		{
 			case android.R.id.home:
-				DialogInterface.OnClickListener setListener = null;
 				AlertDialog.Builder optDialog = new AlertDialog.Builder(mContext);
 				optDialog.setTitle("Confirm");
 				optDialog.setMessage("Are u sure to leave?");
-				optDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener()
-				{
-					@Override
-					public void onClick(DialogInterface dialogInterface, int i)
-					{
-						finish();
-					}
-				});
-				optDialog.setNegativeButton("No", new DialogInterface.OnClickListener()
-				{
-					@Override
-					public void onClick(DialogInterface dialogInterface, int i)
-					{
-					
-					}
+				optDialog.setPositiveButton("Yes", (dialogInterface, i) -> finish());
+				optDialog.setNegativeButton("No", (dialogInterface, i) -> {
+
 				});
 				optDialog.setIcon(android.R.drawable.stat_sys_warning)
 						.show();
@@ -337,46 +319,41 @@ public class GymActivity extends AppCompatActivity
 		FirebaseFirestore db = FirebaseFirestore.getInstance();
 		DocumentReference ref = db.collection(userData.KEY_USERS).document(userData.getUserId());
 		ref.get()
-				.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>()
-				{
-					@Override
-					public void onComplete(@NonNull Task<DocumentSnapshot> task)
+				.addOnCompleteListener(task -> {
+					if (task.isSuccessful())
 					{
-						if (task.isSuccessful())
+
+						DocumentSnapshot doc = task.getResult();
+						ArrayList<String> favouriteList = (ArrayList) doc.get(userData.KEY_USER_favourite);
+
+						Log.d(TAG, "Found " + favouriteList.size() + " Favourite Gyms in DB");
+						if (!favouriteList.contains(gymID))
 						{
-							
-							DocumentSnapshot doc = task.getResult();
-							ArrayList<String> favouriteList = (ArrayList) doc.get(userData.KEY_USER_favourite);
-							
-							Log.d(TAG, "Found " + favouriteList.size() + " Favourite Gyms in DB");
-							if (!favouriteList.contains(gymID))
+							favouriteList.add(gymID);
+						}
+						ref.update(userData.KEY_USER_favourite, favouriteList).addOnSuccessListener(new OnSuccessListener<Void>()
+						{
+							@Override
+							public void onSuccess(Void unused)
 							{
-								favouriteList.add(gymID);
+								Log.d(TAG, "add favourite gym successfully!" + gymID);
+								userData.addToFavouriteGym(gymID);
+Toast.makeText(GymActivity.this, "Added to favourite!", Toast.LENGTH_SHORT).show();
 							}
-							ref.update(userData.KEY_USER_favourite, favouriteList).addOnSuccessListener(new OnSuccessListener<Void>()
-							{
-								@Override
-								public void onSuccess(Void unused)
-								{
-									Log.d(TAG, "add favourite gym successfully!" + gymID);
-									userData.addToFavouriteGym(gymID);
-                                    Toast.makeText(GymActivity.this, "Added to favourite!", Toast.LENGTH_SHORT).show();
-								}
-							}).addOnFailureListener(new OnFailureListener()
-							{
-								@Override
-								public void onFailure(@NonNull Exception e)
-								{
-									Log.d(TAG, "add favourite gym failed!" + gymID);
-									e.printStackTrace();
-								}
-							});
-							
-						}
-						else
+						}).addOnFailureListener(new OnFailureListener()
 						{
-							Log.d(TAG, "add favourite gym failed!" + gymID);
-						}
+							@Override
+							public void onFailure(@NonNull Exception e)
+							{
+								Log.d(TAG, "add favourite gym failed!" + gymID);
+								e.printStackTrace();
+							}
+						});
+
+					}
+					else
+					{
+						Log.d(TAG, "add favourite gym failed!" + gymID);
 					}
 				});
 	}
@@ -386,47 +363,42 @@ public class GymActivity extends AppCompatActivity
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference ref = db.collection(userData.KEY_USERS).document(userData.getUserId());
         ref.get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>()
-                {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task)
-                    {
-                        if (task.isSuccessful())
-                        {
-                            
-                            DocumentSnapshot doc = task.getResult();
-                            ArrayList<String> favouriteList = (ArrayList) doc.get(userData.KEY_USER_favourite);
-                            
-                            Log.d(TAG, "Found " + favouriteList.size() + " Favourite Gyms in DB");
-                            if (favouriteList.contains(gymID))
-                            {
-                                favouriteList.remove(gymID);
-                            }
-                            ref.update(userData.KEY_USER_favourite, favouriteList).addOnSuccessListener(new OnSuccessListener<Void>()
-                            {
-                                @Override
-                                public void onSuccess(Void unused)
-                                {
-                                    Log.d(TAG, "add favourite gym successfully!" + gymID);
-                                    userData.removeFromFavouriteGyms(gymID);
-                                    Toast.makeText(GymActivity.this, "Removed from favourite!", Toast.LENGTH_SHORT).show();
-                                }
-                            }).addOnFailureListener(new OnFailureListener()
-                            {
-                                @Override
-                                public void onFailure(@NonNull Exception e)
-                                {
-                                    Log.d(TAG, "add favourite gym failed!" + gymID);
-                                    e.printStackTrace();
-                                }
-                            });
-                            
-                        }
-                        else
-                        {
-                            Log.d(TAG, "add favourite gym failed!" + gymID);
-                        }
-                    }
-                });
+                .addOnCompleteListener(task -> {
+					if (task.isSuccessful())
+					{
+
+						DocumentSnapshot doc = task.getResult();
+						ArrayList<String> favouriteList = (ArrayList) doc.get(userData.KEY_USER_favourite);
+
+						Log.d(TAG, "Found " + favouriteList.size() + " Favourite Gyms in DB");
+						if (favouriteList.contains(gymID))
+						{
+							favouriteList.remove(gymID);
+						}
+						ref.update(userData.KEY_USER_favourite, favouriteList).addOnSuccessListener(new OnSuccessListener<Void>()
+						{
+							@Override
+							public void onSuccess(Void unused)
+							{
+								Log.d(TAG, "add favourite gym successfully!" + gymID);
+								userData.removeFromFavouriteGyms(gymID);
+								Toast.makeText(GymActivity.this, "Removed from favourite!", Toast.LENGTH_SHORT).show();
+							}
+						}).addOnFailureListener(new OnFailureListener()
+						{
+							@Override
+							public void onFailure(@NonNull Exception e)
+							{
+								Log.d(TAG, "add favourite gym failed!" + gymID);
+								e.printStackTrace();
+							}
+						});
+
+					}
+					else
+					{
+						Log.d(TAG, "add favourite gym failed!" + gymID);
+					}
+				});
     }
 }
