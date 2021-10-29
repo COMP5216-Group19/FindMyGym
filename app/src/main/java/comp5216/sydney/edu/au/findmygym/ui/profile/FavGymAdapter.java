@@ -61,7 +61,7 @@ public class FavGymAdapter extends RecyclerView.Adapter<FavGymAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull FavGymAdapter.ViewHolder viewHolder, int position) { ;
         String gymId = userData.getFavouriteGyms().get(position);
-        Toast.makeText(context,gymId,Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context,gymId,Toast.LENGTH_SHORT).show();
         final Gym[] gym = {null};
         UserData.getInstance().getGymByID(gymId, new ObjectQueryCallback() {
             @Override

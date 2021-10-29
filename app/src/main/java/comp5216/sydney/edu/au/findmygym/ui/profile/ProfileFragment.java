@@ -46,6 +46,7 @@ import comp5216.sydney.edu.au.findmygym.databinding.FragmentProfileBinding;
 import comp5216.sydney.edu.au.findmygym.model.PersonalTrainer;
 import comp5216.sydney.edu.au.findmygym.model.Reservation;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
+import comp5216.sydney.edu.au.findmygym.model.callbacks.ListQueryCallback;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.ObjectQueryCallback;
 
 public class ProfileFragment extends Fragment
@@ -55,13 +56,14 @@ public class ProfileFragment extends Fragment
 	private ProfileViewModel profileViewModel;
 	private FragmentProfileBinding binding;
 	private UserData userData;
-	private List<Reservation> reservations;
+	private ArrayList reservations;
 	public Map<Integer, Integer> exerciseLog = new HashMap<>();
 	public Map<String, Integer> trainerLog = new HashMap<>();
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 	String currentTime = sdf.format(Calendar.getInstance().getTime());
 	Integer currentTimeInt = Integer.parseInt(currentTime);
 	String trainerName = "";
+	String userID = "";
 
 	public View onCreateView(@NonNull LayoutInflater inflater,
 	                         ViewGroup container, Bundle savedInstanceState)
@@ -82,11 +84,20 @@ public class ProfileFragment extends Fragment
 
 		userData = UserData.getInstance();
 		userData.setContext(this.getContext());
-		reservations = userData.getReservations();
+		userData.getReservationsByUID(userID, new ListQueryCallback() {
+			@Override
+			public void onSucceed(ArrayList list) {
+				reservations = (ArrayList<Reservation>) list;
+			}
+
+			@Override
+			public void onFailed(Exception e) {
+
+			}
+		});
 		exerciseLog = getExLogFromReservations(reservations);
 		trainerLog = getTrainerLogFromReservations(reservations);
 
-		//TODO: need to change allGyms into firebase databases
 		FirebaseFirestore db = FirebaseFirestore.getInstance();
 		DocumentReference ref = db.collection(userData.KEY_USERS).document(userData.getUserId());
 		ref.get()
@@ -134,6 +145,7 @@ public class ProfileFragment extends Fragment
 
 		BarChart barChart = getView().findViewById(R.id.barchart);
 		List<BarEntry> list=new ArrayList<>();
+		if(exerciseLog == null) return;
 		int i = 0;
 		while (i<7) {
 			if (!exerciseLog.containsKey(currentTimeInt - i)) {
@@ -195,6 +207,7 @@ public class ProfileFragment extends Fragment
 		pieChart.getDescription().setEnabled(false);
 
 		List<PieEntry> strings = new ArrayList<>();
+		if (trainerLog == null) return;
 		for (Map.Entry<String, Integer> entry : trainerLog.entrySet()) {
 			strings.add(new PieEntry((entry.getValue().floatValue() /reservations.size()) * 100F, entry.getKey()));
 		}
@@ -230,6 +243,7 @@ public class ProfileFragment extends Fragment
 
 	public Map<Integer, Integer> getExLogFromReservations(List<Reservation> reservations) {
 		Map<Integer, Integer> exLog = new HashMap<>();
+		if (reservations == null) return null;
 
 		for (Reservation rev: reservations) {
 			Integer eachBeginTime = Integer.parseInt(sdf.format(rev.getSelectedTimeSlot().getBeginTime().getTime()));
@@ -247,6 +261,8 @@ public class ProfileFragment extends Fragment
 
 	public Map<String, Integer> getTrainerLogFromReservations(List<Reservation> reservations) {
 		Map<String, Integer> trainerLog = new HashMap<>();
+		if (reservations == null) return null;
+
 		for (Reservation rev: reservations) {
 			userData.getTrainerByID(rev.getTrainerId(), new ObjectQueryCallback() {
 				@Override
