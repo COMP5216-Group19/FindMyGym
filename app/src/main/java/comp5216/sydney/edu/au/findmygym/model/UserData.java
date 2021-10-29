@@ -90,6 +90,7 @@ public class UserData extends LiveData<UserData>
 	public static final String KEY_TRAINER_gymId = "TRAINER_GYM_ID";
 	
 	public final String KEY_USER_favourite = "USER_FAVOURITE";
+	public final String KEY_USER_AVATAR_URI = "USER_AVATAR_URI";
 	
 	public final String KEY_REVIEW_userId = "REVIEW_USER_ID";
 	public final String KEY_REVIEW_gymId = "REVIEW_GYM_ID";
@@ -643,7 +644,39 @@ public class UserData extends LiveData<UserData>
 					}
 				});
 	}
+	
+	
+	public void getAvatarByUid(String ID, ObjectQueryCallback<Uri> callback)
+	{
 
+		FirebaseFirestore db = FirebaseFirestore.getInstance();
+		DocumentReference gymRef = db.collection(KEY_USERS).document(ID);
+		gymRef.get()
+				.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>()
+				{
+					@Override
+					public void onComplete(@NonNull Task<DocumentSnapshot> task)
+					{
+						if (task.isSuccessful())
+						{
+							try
+							{
+								String str = (String) task.getResult().get(comp5216.sydney.edu.au.findmygym.model.UserData.getInstance().KEY_USER_AVATAR_URI);
+								Uri uri = Uri.parse(str);
+								callback.onSucceed(uri);
+							} catch (Exception e)
+							{
+								callback.onFailed(e);
+							}
+						}
+						else
+						{
+							Log.d(TAG, "getTrainerByID failed!" + ID);
+						}
+					}
+				});
+	}
+	
 	/*
 	Methods for mock database
 	 */

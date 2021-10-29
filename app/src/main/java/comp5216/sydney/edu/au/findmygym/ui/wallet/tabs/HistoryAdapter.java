@@ -91,6 +91,7 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder>
 			public void onClick(View view)
 			{
 				Toast.makeText(context, "Clicked on" + userData.getPurchaseRecords().get(position).getTitle(), Toast.LENGTH_SHORT).show();
+				
 			}
 		});
 		

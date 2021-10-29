@@ -1,7 +1,9 @@
 package comp5216.sydney.edu.au.findmygym.ui.gym;
 
-import android.content.Context;
+import android.app.Activity;
 import android.util.Log;
+import android.view.View;
+import android.view.WindowManager;
 import android.widget.RatingBar;
 import android.widget.Toast;
 
@@ -112,9 +114,12 @@ public class GymViewModel extends ViewModel {
      *
      * @param reservation the reservation to be made
      */
-    public void makeReservation(Context context,
+    public void makeReservation(Activity activity,
                                 Reservation reservation,
                                 TrainerReservation trainerReservation) {
+        rsvFragment.progressBar.setVisibility(View.VISIBLE);
+        activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         UserData userData = UserData.getInstance();
         if (reservation.getPrice() > 0) {
             PurchaseRecord pr = new PurchaseRecord(
@@ -128,12 +133,15 @@ public class GymViewModel extends ViewModel {
         userData.addReservation(reservation, new ObjectQueryCallback<Reservation>() {
             @Override
             public void onSucceed(Reservation object) {
-                Toast.makeText(context, R.string.gym_reserve_success, Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, R.string.gym_reserve_success, Toast.LENGTH_SHORT).show();
+                activity.finish();
             }
 
             @Override
             public void onFailed(Exception e) {
-
+                Toast.makeText(activity, R.string.gym_something_wrong, Toast.LENGTH_SHORT).show();
+                rsvFragment.progressBar.setVisibility(View.GONE);
+                activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             }
         });
         if (trainerReservation != null) {
@@ -149,6 +157,7 @@ public class GymViewModel extends ViewModel {
         String text = infoFragment.getReview();
         int rating = infoFragment.getRating();
         infoFragment.postReviewButton.setEnabled(false);
+        infoFragment.postReviewButton.setText(R.string.gym_review_posting);
         UserData.getInstance().addReview(
                 new Review(UserData.getInstance().getUserId(),
                         gym.getGymId(),
@@ -162,6 +171,7 @@ public class GymViewModel extends ViewModel {
                         Toast.makeText(infoFragment.getContext(),
                                 R.string.gym_review_posted,
                                 Toast.LENGTH_SHORT).show();
+                        infoFragment.postReviewButton.setText(R.string.gym_post_review);
                         infoFragment.newReviewPosted();
                         infoFragment.clearInputs();
                     }
@@ -169,8 +179,9 @@ public class GymViewModel extends ViewModel {
                     @Override
                     public void onFailed(Exception e) {
                         Toast.makeText(infoFragment.getContext(),
-                                R.string.gym_review_post_failed,
+                                R.string.gym_something_wrong,
                                 Toast.LENGTH_SHORT).show();
+                        infoFragment.postReviewButton.setText(R.string.gym_post_review);
                         infoFragment.postReviewButton.setEnabled(true);
                     }
                 }

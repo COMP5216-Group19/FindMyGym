@@ -337,6 +337,7 @@ public class LoginActivity extends BaseActivity
 					counter++;
 					userdataRef.update(userData.KEY_login_counter, counter);
 					userdataRef.update(userData.KEY_userName, userData.getUserName());
+					userdataRef.update(userData.KEY_USER_AVATAR_URI, userData.getUserAvatarUri().toString());
 				}
 				else
 				{
@@ -348,6 +349,7 @@ public class LoginActivity extends BaseActivity
 					userdataMap.put(userData.KEY_login_last_time, getTimeStamp());
 					userdataMap.put(userData.KEY_login_counter, 1);
 					userdataMap.put(userData.KEY_USER_favourite,new ArrayList<String>());
+					userdataMap.put(userData.KEY_USER_AVATAR_URI, userData.getUserAvatarUri().toString());
 					db.collection("USERS").document(uid).set(userdataMap)
 							.addOnSuccessListener(new OnSuccessListener<Void>()
 							{

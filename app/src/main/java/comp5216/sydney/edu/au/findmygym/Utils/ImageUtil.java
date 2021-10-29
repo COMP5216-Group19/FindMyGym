@@ -34,6 +34,7 @@ import java.util.Map;
 
 import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
+import comp5216.sydney.edu.au.findmygym.model.callbacks.ObjectQueryCallback;
 
 public class ImageUtil
 
@@ -275,5 +276,34 @@ public class ImageUtil
             uploadImage_Original(name,resID, context);
         }
         uploadImage_Reduced(name,resID,context);
+    }
+    
+    public static void loadImage(Uri uri, ImageView imageView, Context context){
+        try {
+            Glide.with(context)
+                    .load(uri)
+                    .placeholder(R.drawable.outline_account_circle_24)
+                    .into(imageView);
+            Log.d(TAG, "Loaded image successfully!" +uri);
+        } catch (Exception e) {
+            Log.e(TAG, "Load image failed!", e);
+        }
+    }
+    
+    public static void loadAvatarByUid(String uid, ImageView imageView, Context context){
+        UserData.getInstance().getAvatarByUid(uid, new ObjectQueryCallback<Uri>()
+        {
+            @Override
+            public void onSucceed(Uri object)
+            {
+                loadImage(object,imageView, context);
+            }
+    
+            @Override
+            public void onFailed(Exception e)
+            {
+                e.printStackTrace();
+            }
+        });
     }
 }

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,6 +17,7 @@ import comp5216.sydney.edu.au.findmygym.R;
 
 public class GymRsvFragment extends Fragment {
 
+    ProgressBar progressBar;
     private GymViewModel mViewModel;
     @Nullable
     @Override
@@ -26,6 +28,7 @@ public class GymRsvFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.gym_reservation_fragment, container, false);
 
+        progressBar = view.findViewById(R.id.gym_rsv_progress_bar);
         RecyclerView recyclerView = view.findViewById(R.id.gym_trainer_recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         if (mViewModel.trainerListAdapter == null) {
