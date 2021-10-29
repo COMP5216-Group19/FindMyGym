@@ -40,26 +40,6 @@ public class Review implements Serializable {
         this.reviewId = reviewId;
     }
 
-    //    public static Review fromData(ReviewData data, Bitmap userAvatar) {
-//        return new Review(
-//                data.userName,
-//                userAvatar,
-//                data.rating,
-//                data.comments,
-//                CalendarUtil.stringToCalendar(data.dateTime)
-//        );
-//    }
-
-    public ReviewData toData(String avatarPath) {
-        ReviewData data = new ReviewData();
-        data.avatarPath = avatarPath;
-        data.userName = userId;
-        data.rating = rating;
-        data.dateTime = CalendarUtil.calendarToString(dateTime);
-        data.comments = comments;
-        return data;
-    }
-
     public String getReviewId() {
         return reviewId;
     }
@@ -98,13 +78,5 @@ public class Review implements Serializable {
      */
     public Calendar getDateTime() {
         return dateTime;
-    }
-
-    public static class ReviewData {
-        public String userName;
-        public int rating;
-        public String comments;
-        public String dateTime;
-        public String avatarPath;
     }
 }

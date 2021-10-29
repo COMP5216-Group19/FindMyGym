@@ -123,15 +123,6 @@ public class UserData extends LiveData<UserData>
 	// All reservations of this user, updated realtime with firebase
 	private List<Reservation> reservations;
 	private Session userSession;
-	private StorageReference userStorageRef;
-	private StorageReference gymPictureRef;
-	private StorageReference trainerAvatarRef;
-	private FirebaseDatabase database;
-	private DatabaseReference dbRef;
-	private DatabaseReference gymsRef;
-	private DatabaseReference trainersRef;
-	private DatabaseReference reviewsRef;
-	private DatabaseReference userRef;
 	private Context mContext;
 	
 	private boolean isSuccessful = false;
@@ -143,8 +134,6 @@ public class UserData extends LiveData<UserData>
 	// TODO: 或者观察这个list，随list更新map
 	private List<SimpleGym> allSimpleGyms = new ArrayList<>();
 	
-	private List<PersonalTrainer> allTrainers;
-	
 	private volatile static UserData UserData;
 	
 	/**
@@ -155,14 +144,6 @@ public class UserData extends LiveData<UserData>
 		this.memberships = new ArrayList<>();
 		this.purchaseRecords = new ArrayList<>();
 		this.scheduleLists = new ArrayList<>(1);
-		database = FirebaseDatabase.getInstance();
-		dbRef = database.getReference();
-		gymsRef = dbRef.child("gyms");
-		trainersRef = dbRef.child("trainers");
-		reviewsRef = dbRef.child("reviews");
-		FirebaseStorage storage = FirebaseStorage.getInstance();
-		gymPictureRef = storage.getReference("gymPictures");
-		trainerAvatarRef = storage.getReference("trainerAvatars");
 		
 		loadAllSimpleGyms();
 	}
@@ -688,51 +669,6 @@ public class UserData extends LiveData<UserData>
 					}
 				});
 	}
-	
-	
-	private void loadAllGyms()
-	{
-		// allGyms = new ArrayList<>();
-		// allTrainers = new ArrayList<>();
-		// gymsRef.get().addOnSuccessListener(dataSnapshot -> {
-		// 	List<Gym.GymData> gymDataList = new ArrayList<>();
-		// 	for (DataSnapshot ds : dataSnapshot.getChildren()) {
-		// 		Gym.GymData gd = ds.getValue(Gym.GymData.class);
-		// 		if (gd != null) {
-		// 			gymDataList.add(gd);
-		// 		} else {
-		// 			Log.e(TAG, "null gym");
-		// 		}
-		// 	}
-		//
-		// 	for (Gym.GymData gd : gymDataList) {
-		// 		if (gd.trainerIds == null) {
-		// 			allGyms.add(Gym.fromGymData(gd, new List<>(),
-		// 					new List<>(), null));
-		// 		} else {
-		// 			// Then query trainers of this gym
-		// 			populateTrainersOfGym(gd, new GymQueryCallback() {
-		// 				@Override
-		// 				public void onSucceed(Gym gym) {
-		// 					allGyms.add(gym);
-		// 					Log.d(TAG, "Downloaded gym " + gym.getGymId());
-		// 					if (allGyms.size() == gymDataList.size()) {
-		// 						downloadFinished = true;
-		// 						Log.d(TAG, "All gyms downloaded!");
-		// 					}
-		// 				}
-		//
-		// 				@Override
-		// 				public void onFailed(Exception exception) {
-		// 					Log.e(TAG, Arrays.toString(exception.getStackTrace()));
-		// 				}
-		// 			});
-		// 		}
-		// 	}
-		// }).addOnFailureListener(e -> {
-		// 	Log.e(TAG, "Gym download error", e);
-		// });
-	}
 
 	/*
 	Methods for mock database
@@ -759,23 +695,6 @@ public class UserData extends LiveData<UserData>
 		// 	gymsRef.child(String.valueOf(gym.getGymId()))
 		// 			.setValue(gym.toData(null));
 		// }
-	}
-	
-	private void addReviewToDb(List<Review> reviews)
-	{
-		Map<String, Review.ReviewData> rds = new HashMap<>();
-		for (Review review : reviews)
-		{
-			// todo: upload user avatar
-			rds.put(review.getReviewId(), review.toData(null));
-		}
-		reviewsRef.setValue(rds).addOnSuccessListener(unused ->
-		{
-			Log.d(TAG, "Upload mock reviews succeed");
-		}).addOnFailureListener(e ->
-		{
-			Log.e(TAG, "Upload mock reviews failed", e);
-		});
 	}
 	
 	private void addTrainerToDatabase(PersonalTrainer trainer)
@@ -1131,7 +1050,7 @@ public class UserData extends LiveData<UserData>
 		//			addTrainerToDatabase(personalTrainer);
 		//		}
 		//		addReviewToDb(allReviews);
-		
+
 		//		for (Gym gym : allGyms) {
 		//			addGymToDatabase(gym);
 		//		}
@@ -1142,35 +1061,6 @@ public class UserData extends LiveData<UserData>
 		//		addReviewToDb(allReviews);
 	}
 	
-	//	private void signupUser
-	
-	//	public void addMockReservations()
-	//	{
-	//		// todo: user id
-	//		Reservation rev1 = new Reservation(
-	//				getUserId(),
-	//				"Minus Fitness Gym Chatswood",
-	//				"Otto",
-	//				new Timeslot(CalendarUtil.stringToCalendar("2021-10-23 09:00"), 60)
-	//		);
-	//		Reservation rev2 = new Reservation(
-	//				getUserId(),
-	//				"Fitness Second St Leonards",
-	//				"Tom",
-	//				new Timeslot(CalendarUtil.stringToCalendar("2021-10-20 09:00"), 60)
-	//		);
-	//		Reservation rev3 = new Reservation(
-	//				getUserId(),
-	//				"Fitness Second St Leonards",
-	//				null,
-	//				new Timeslot(CalendarUtil.stringToCalendar("2021-10-23 08:00"), 120)
-	//		);
-	//
-	//		reservations.add(rev1);
-	//		reservations.add(rev2);
-	//		reservations.add(rev3);
-	//	}
-	
 	public List<SimpleGym> getAllSimpleGyms()
 	{
 		return allSimpleGyms;
@@ -1179,58 +1069,7 @@ public class UserData extends LiveData<UserData>
 	@Deprecated
 	public List<PersonalTrainer> getAllTrainers()
 	{
-		return allTrainers;
-	}
-	
-	// public void findGymById(String gymId, GymQueryCallback callback)
-	// {
-	// 	// gymsRef.child(gymId).get().addOnCompleteListener(task ->
-	// 	// {
-	// 	// 	if (task.isSuccessful())
-	// 	// 	{
-	// 	// 		Gym.GymData gymData = task.getResult().getValue(Gym.GymData.class);
-	// 	// 		if (gymData == null)
-	// 	// 		{
-	// 	// 			callback.onFailed(new NullPointerException(
-	// 	// 					"Query result of gym " + gymId + " is null"));
-	// 	// 			return;
-	// 	// 		}
-	// 	//
-	// 	// 		// Then query trainers of this gym
-	// 	// 		populateTrainersOfGym(gymData, callback);
-	// 	// 	}
-	// 	// 	else
-	// 	// 	{
-	// 	// 		Log.e(TAG, Arrays.toString(task.getException().getStackTrace()));
-	// 	// 		callback.onFailed(task.getException());
-	// 	// 	}
-	// 	// });
-	// }
-	
-	
-	public Gym findGymById(String gymId)
-	{
-//		Log.d(TAG, "Looking for id " + gymId);
-//		Log.d(TAG, allSimpleGyms.toString());
-//		for (Gym gym : allSimpleGyms)
-//		{
-//			Log.d(TAG, "Scanning " + gym.getGymId());
-//			if (gymId.equals(gym.getGymId()))
-//			{
-//				return gym;
-//			}
-//		}
 		return null;
-	}
-	
-	public DatabaseReference getUserRef()
-	{
-		return userRef;
-	}
-	
-	public DatabaseReference getTrainersRef()
-	{
-		return trainersRef;
 	}
 	
 	/**
@@ -1293,23 +1132,6 @@ public class UserData extends LiveData<UserData>
 	public ArrayList<PurchaseRecord> getPurchaseRecords()
 	{
 		return purchaseRecords;
-	}
-	
-	
-	public void addPurchaseRecordToDatabase(PurchaseRecord purchaseRecord)
-	{
-		Map<String, String> recordItem = new HashMap<>();
-		recordItem.put("price", String.valueOf(purchaseRecord.getCost()));
-		recordItem.put("gymId", purchaseRecord.getTitle());
-		recordItem.put("time", purchaseRecord.getTimeStr());
-		userRef.child("purchaseRecord").child(String.valueOf(purchaseRecords.size() - 1))
-				.setValue(recordItem).addOnSuccessListener(unused ->
-		{
-		
-		}).addOnFailureListener(e ->
-		{
-			Log.e(TAG, "Failed to upload purchaseRecord");
-		});
 	}
 	
 	public void setPurchaseRecords(ArrayList<PurchaseRecord> purchaseRecords)
@@ -1642,7 +1464,6 @@ public class UserData extends LiveData<UserData>
 		userMail = null;
 		userAvatar = null;
 		userSession = null;
-		userStorageRef = null;
 		mContext = null;
 	}
 	

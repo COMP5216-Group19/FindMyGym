@@ -36,34 +36,6 @@ public class PersonalTrainer implements Serializable {
         this(trainerId, name, price, new ArrayList<>());
     }
 
-    public static PersonalTrainer fromData(TrainerData data, Bitmap avatar) {
-        List<Timeslot> times = new ArrayList<>();
-        if (data.availableTimes != null) {
-            for (String s : data.availableTimes) {
-                times.add(Timeslot.fromDatabaseString(s));
-            }
-        }
-
-        PersonalTrainer pt = new PersonalTrainer(
-                data.trainerId,
-                data.name,
-                data.price,
-                times
-        );
-        pt.setAvatar(avatar);
-        return pt;
-    }
-
-    public TrainerData toData(String avatarPath) {
-        TrainerData data = new TrainerData();
-        data.trainerId = String.valueOf(trainerId);
-        data.name = name;
-        data.price = price;
-        data.avatarPath = avatarPath;
-        data.availableTimes = getAvailableTimesDbStrings();
-        return data;
-    }
-
     public int getPrice() {
         return price;
     }
@@ -136,13 +108,5 @@ public class PersonalTrainer implements Serializable {
                 " price='" + price+"' "+
                 ", availableTimes=" + availableTimes +
                 '}';
-    }
-
-    public static class TrainerData {
-        public String name;
-        public String trainerId;
-        public int price;
-        public String avatarPath;
-        public List<String> availableTimes;
     }
 }

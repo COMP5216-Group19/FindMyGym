@@ -49,23 +49,6 @@ public class Reservation implements Serializable {
                 ", timeslot=" + timeslot +
                 '}';
     }
-    
-    // public static Reservation fromData(ReservationData data) {
-    //     return new Reservation(data.userId, data.gymId,
-    //             data.trainerId.isEmpty() ? null : data.trainerId,
-    //             data.price,
-    //             Timeslot.fromDatabaseString(data.timeslot));
-    // }
-
-    public ReservationData toData() {
-        ReservationData data = new ReservationData();
-        data.userId = userId;
-        data.gymId = gymId;
-        data.trainerId = trainerId == null ? "" : trainerId;
-        data.timeslot = timeslot.toDatabaseString();
-        data.price = price;
-        return data;
-    }
 
     public int getPrice() {
         return price;
@@ -83,11 +66,6 @@ public class Reservation implements Serializable {
         return userId;
     }
 
-    //    public Reservation(PersonalTrainer trainer, Timeslot selectedTimeslot) {
-//        this.trainer = trainer;
-//        this.selectedTimeslot = selectedTimeslot;
-//    }
-
     /**
      * @return the personal trainer to reserve
      */
@@ -100,13 +78,5 @@ public class Reservation implements Serializable {
      */
     public Timeslot getSelectedTimeSlot() {
         return timeslot;
-    }
-
-    public static class ReservationData {
-        public String userId;
-        public String gymId;
-        public String trainerId;
-        public int price;
-        public String timeslot;
     }
 }

@@ -93,57 +93,6 @@ public class Gym implements Serializable {
                 new ArrayList<>());
     }
 
-    public static Gym fromGymData(GymData gymData,
-                                  List<PersonalTrainer> trainers,
-                                  List<Review> reviews) {
-        List<String> equipments;
-        if (gymData.equipments == null) {
-            equipments = new ArrayList<>();
-        } else {
-            equipments = gymData.equipments;
-        }
-
-        Gym gym = new Gym(
-                gymData.gymId,
-                gymData.name,
-                trainers,
-                CalendarUtil.stringToCalendar(gymData.openTime),
-                CalendarUtil.stringToCalendar(gymData.closeTime),
-                gymData.price,
-                gymData.address,
-                gymData.contact,
-                gymData.longitude,
-                gymData.latitude,
-                equipments,
-                reviews
-        );
-        return gym;
-    }
-
-    public GymData toData(String picturePath) {
-        GymData data = new GymData();
-        data.gymId = String.valueOf(gymId);
-        data.name = gymName;
-        data.address = address;
-        data.contact = contact;
-        data.openTime = CalendarUtil.calendarToString(openTime);
-        data.closeTime = CalendarUtil.calendarToString(closeTime);
-        data.longitude = longitude;
-        data.latitude = latitude;
-        data.price = price;
-        data.picturePath = picturePath;
-        data.equipments = new ArrayList<>(equipments);
-        data.trainerIds = new ArrayList<>();
-        for (PersonalTrainer trainer : personalTrainers) {
-            data.trainerIds.add(trainer.getTrainerId());
-        }
-        data.reviewIds = new ArrayList<>();
-        for (Review review : reviews) {
-            data.reviewIds.add(review.getReviewId());
-        }
-        return data;
-    }
-
     public PersonalTrainer findTrainerById(String tid) {
         if (tid == null) return null;
         for (PersonalTrainer trainer : personalTrainers) {
@@ -260,21 +209,5 @@ public class Gym implements Serializable {
         calendar.set(Calendar.MINUTE, closeTime.get(Calendar.MINUTE));
         calendar.get(Calendar.HOUR);
         return closeTime;
-    }
-
-    public static class GymData {
-        public String gymId;
-        public String name;
-        public String address;
-        public String contact;
-        public String openTime;
-        public String closeTime;
-        public String picturePath;
-        public double longitude;
-        public double latitude;
-        public int price;
-        public List<String> trainerIds;
-        public List<String> equipments;
-        public List<String> reviewIds;
     }
 }
