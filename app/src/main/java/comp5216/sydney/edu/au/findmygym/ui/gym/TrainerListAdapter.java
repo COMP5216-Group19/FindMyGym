@@ -1,10 +1,12 @@
 package comp5216.sydney.edu.au.findmygym.ui.gym;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,10 +24,13 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import comp5216.sydney.edu.au.findmygym.R;
+import comp5216.sydney.edu.au.findmygym.Utils.ImageUtil;
 import comp5216.sydney.edu.au.findmygym.model.PersonalTrainer;
 import comp5216.sydney.edu.au.findmygym.model.Timeslot;
 
 public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.TrainerViewHolder> {
+
+    private static final String TAG = "TrainerListAdapter";
 
     private final List<PersonalTrainer> trainersList;
     private final GymViewModel mViewModel;
@@ -138,12 +143,10 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
 
     void updateSelection(TrainerReservation trainerReservation) {
         reservation = trainerReservation;
-        System.out.println("Updated " + reservation);
+        Log.d(TAG, "Updated " + reservation);
         if (reservation == null) {
-//            reserveButton.setEnabled(false);
             mViewModel.trainerPrice = 0;
         } else {
-//            reserveButton.setEnabled(true);
             mViewModel.trainerPrice = trainerReservation.trainer.getPrice();
         }
         updatePrices();
@@ -186,9 +189,7 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
     }
 
     public void refresh() {
-        System.out.println("Refreshed!");
         notifyDataSetChanged();
-//        reserveButton.setEnabled(false);
         reservation = null;
     }
 
@@ -196,6 +197,7 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
         private final Map<Integer, Timeslot> chipTimeslotMap = new TreeMap<>();
         TextView trainerNameText;
         ChipGroup trainerTimesGroup;
+        ImageView trainerAvatarView;
         private PersonalTrainer trainer;
         private TrainerListAdapter adapter;
 
@@ -206,6 +208,7 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
 
             trainerNameText = itemView.findViewById(R.id.trainer_name);
             trainerTimesGroup = itemView.findViewById(R.id.trainer_times_group);
+            trainerAvatarView = itemView.findViewById(R.id.trainer_avatar);
 
             trainerTimesGroup.setOnCheckedChangeListener((group, checkedId) -> {
                 if (checkedId != View.NO_ID) {
@@ -255,6 +258,8 @@ public class TrainerListAdapter extends RecyclerView.Adapter<TrainerListAdapter.
                     chipTimeslotMap.put(chip.getId(), timeSlot);
                 }
             }
+
+            ImageUtil.loadImage(trainer.getTrainerId(), trainerAvatarView, context);
         }
 
         @NonNull
