@@ -1,5 +1,7 @@
 package comp5216.sydney.edu.au.findmygym.ui.profile;
 
+import static android.os.SystemClock.sleep;
+
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -43,6 +45,7 @@ import java.util.Map;
 
 import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.databinding.FragmentProfileBinding;
+import comp5216.sydney.edu.au.findmygym.model.Gym;
 import comp5216.sydney.edu.au.findmygym.model.PersonalTrainer;
 import comp5216.sydney.edu.au.findmygym.model.Reservation;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
@@ -56,14 +59,12 @@ public class ProfileFragment extends Fragment
 	private ProfileViewModel profileViewModel;
 	private FragmentProfileBinding binding;
 	private UserData userData;
-	private ArrayList reservations;
+	private ArrayList<Reservation> reservations = new ArrayList<>();
 	public Map<Integer, Integer> exerciseLog = new HashMap<>();
 	public Map<String, Integer> trainerLog = new HashMap<>();
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 	String currentTime = sdf.format(Calendar.getInstance().getTime());
 	Integer currentTimeInt = Integer.parseInt(currentTime);
-	String trainerName = "";
-	String userID = "";
 
 	public View onCreateView(@NonNull LayoutInflater inflater,
 	                         ViewGroup container, Bundle savedInstanceState)
@@ -84,19 +85,6 @@ public class ProfileFragment extends Fragment
 
 		userData = UserData.getInstance();
 		userData.setContext(this.getContext());
-		userData.getReservationsByUID(userID, new ListQueryCallback() {
-			@Override
-			public void onSucceed(ArrayList list) {
-				reservations = (ArrayList<Reservation>) list;
-			}
-
-			@Override
-			public void onFailed(Exception e) {
-
-			}
-		});
-		exerciseLog = getExLogFromReservations(reservations);
-		trainerLog = getTrainerLogFromReservations(reservations);
 
 		FirebaseFirestore db = FirebaseFirestore.getInstance();
 		DocumentReference ref = db.collection(userData.KEY_USERS).document(userData.getUserId());
@@ -112,7 +100,7 @@ public class ProfileFragment extends Fragment
 							DocumentSnapshot doc = task.getResult();
 							ArrayList<String> favouriteList = (ArrayList) doc.get(userData.KEY_USER_favourite);
 							
-							Log.d(TAG, "Checking "  + " Favourite Gyms in DB"+ favouriteList.toString());
+							//Log.d(TAG, "Checking "  + " Favourite Gyms in DB"+ favouriteList.toString());
 							UserData.getInstance().setFavouriteGyms(favouriteList);
 							
 						}
@@ -143,93 +131,109 @@ public class ProfileFragment extends Fragment
 
 		});
 
-		BarChart barChart = getView().findViewById(R.id.barchart);
-		List<BarEntry> list=new ArrayList<>();
-		if(exerciseLog == null) return;
-		int i = 0;
-		while (i<7) {
-			if (!exerciseLog.containsKey(currentTimeInt - i)) {
-				list.add(new BarEntry(7 - i, 0));
-				i++;
-				continue;
+		userData.getReservationsByUID(userData.getUserId(), new ListQueryCallback() {
+			@Override
+			public void onSucceed(ArrayList list) {
+				reservations.addAll((ArrayList<Reservation>) list);
+				exerciseLog = getExLogFromReservations(reservations);
+				trainerLog = getTrainerLogFromReservations(reservations);
+
+				BarChart barChart = getView().findViewById(R.id.barchart);
+				List<BarEntry> barList=new ArrayList<>();
+				if(exerciseLog == null) return;
+				int i = 0;
+				while (i<7) {
+					if (!exerciseLog.containsKey(currentTimeInt - i)) {
+						barList.add(new BarEntry(7 - i, 0));
+						i++;
+						continue;
+					}
+
+					barList.add(new BarEntry(7 - i, exerciseLog.get(currentTimeInt - i)));
+					i++;
+				}
+
+				BarDataSet barDataSet=new BarDataSet(barList,"ExTime");
+				BarData barData=new BarData(barDataSet);
+				barChart.setData(barData);
+
+				barChart.getDescription().setEnabled(false);
+
+				Legend legend = barChart.getLegend();
+				legend.setEnabled(false);
+
+				XAxis xAxis= barChart.getXAxis();
+				xAxis.setDrawGridLines(false);
+				xAxis.setTextSize(10f);
+				xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+				//X轴自定义坐标
+				xAxis.setValueFormatter(new ValueFormatter() {   //X轴自定义坐标
+					@Override
+					public String getAxisLabel(float v, AxisBase axisBase) {
+						if (v==1){
+							return getNDaysBeforeDate(6);
+						}
+						if (v==4){
+							return getNDaysBeforeDate(3);
+						}
+						if (v==7){
+							return getNDaysBeforeDate(0);
+						}
+						return "";
+					}
+				});
+
+				YAxis AxisLeft = barChart.getAxisLeft();
+				YAxis AxisRight = barChart.getAxisRight();
+				AxisLeft.setDrawGridLines(false);
+				AxisRight.setDrawGridLines(false);
+				barChart.getAxisRight().setEnabled(false);
+				barChart.getAxisLeft().setEnabled(false);
+
+				barChart.animateY(3000); //在Y轴的动画  参数是动画执行时间 毫秒为单位
+				barChart.notifyDataSetChanged();
+				barChart.invalidate();
+
+				//Set PieChart
+				PieChart pieChart = getView().findViewById(R.id.pieChart);
+
+				Legend pieLegend = pieChart.getLegend();
+				pieLegend.setEnabled(false);
+				pieChart.getDescription().setEnabled(false);
+
+				List<PieEntry> strings = new ArrayList<>();
+				if (trainerLog == null) return;
+				for (Map.Entry<String, Integer> entry : trainerLog.entrySet()) {
+					strings.add(new PieEntry((entry.getValue().floatValue() /reservations.size()) * 100F, entry.getKey()));
+				}
+				//(entry.getValue()/reservations.size()) * 100F
+
+				PieDataSet pieDataSet = new PieDataSet(strings,"Label");
+
+				ArrayList<Integer> colors = new ArrayList<Integer>();
+				colors.add(Color.parseColor("#6BE61A"));
+				colors.add(Color.parseColor("#4474BB"));
+				colors.add(Color.parseColor("#AA7755"));
+				colors.add(Color.parseColor("#BB5C44"));
+				colors.add(Color.parseColor("#E61A1A"));
+				pieDataSet.setColors(colors);
+
+				PieData pieData = new PieData(pieDataSet);
+				pieData.setDrawValues(true);
+
+				pieChart.spin( 3000,0,-360f, Easing.EaseInOutQuad);
+
+				pieChart.setData(pieData);
+				pieChart.invalidate();
 			}
 
-			list.add(new BarEntry(7 - i, exerciseLog.get(currentTimeInt - i)));
-			i++;
-		}
-
-		BarDataSet barDataSet=new BarDataSet(list,"ExTime");   //list是你这条线的数据  "语文" 是你对这条线的描述
-		BarData barData=new BarData(barDataSet);
-		barChart.setData(barData);
-
-		barChart.getDescription().setEnabled(false);
-
-		Legend legend = barChart.getLegend();
-		legend.setEnabled(false);
-
-		XAxis xAxis= barChart.getXAxis();
-		xAxis.setDrawGridLines(false);
-		xAxis.setTextSize(10f);
-		xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-		//X轴自定义坐标
-		xAxis.setValueFormatter(new ValueFormatter() {   //X轴自定义坐标
 			@Override
-			public String getAxisLabel(float v, AxisBase axisBase) {
-				if (v==1){
-					return getNDaysBeforeDate(6);
-				}
-				if (v==4){
-					return getNDaysBeforeDate(3);
-				}
-				if (v==7){
-					return getNDaysBeforeDate(0);
-				}
-				return "";//注意这里需要改成 ""
+			public void onFailed(Exception e) {
+
 			}
 		});
 
-		YAxis AxisLeft = barChart.getAxisLeft();
-		YAxis AxisRight = barChart.getAxisRight();
-		AxisLeft.setDrawGridLines(false);
-		AxisRight.setDrawGridLines(false);
-		barChart.getAxisRight().setEnabled(false);
-		barChart.getAxisLeft().setEnabled(false);
 
-		barChart.animateY(3000); //在Y轴的动画  参数是动画执行时间 毫秒为单位
-		barChart.notifyDataSetChanged();
-		barChart.invalidate();
-
-		//Set PieChart
-		PieChart pieChart = getView().findViewById(R.id.pieChart);
-
-		Legend pieLegend = pieChart.getLegend();
-		pieLegend.setEnabled(false);
-		pieChart.getDescription().setEnabled(false);
-
-		List<PieEntry> strings = new ArrayList<>();
-		if (trainerLog == null) return;
-		for (Map.Entry<String, Integer> entry : trainerLog.entrySet()) {
-			strings.add(new PieEntry((entry.getValue().floatValue() /reservations.size()) * 100F, entry.getKey()));
-		}
-		//(entry.getValue()/reservations.size()) * 100F
-
-		PieDataSet pieDataSet = new PieDataSet(strings,"Label");
-
-		ArrayList<Integer> colors = new ArrayList<Integer>();
-		colors.add(Color.parseColor("#6BE61A"));
-		colors.add(Color.parseColor("#4474BB"));
-		colors.add(Color.parseColor("#AA7755"));
-		colors.add(Color.parseColor("#BB5C44"));
-		colors.add(Color.parseColor("#E61A1A"));
-		pieDataSet.setColors(colors);
-
-		PieData pieData = new PieData(pieDataSet);
-		pieData.setDrawValues(true);
-
-		pieChart.spin( 3000,0,-360f, Easing.EaseInOutQuad);
-
-		pieChart.setData(pieData);
-		pieChart.invalidate();
 
 	}
 
@@ -261,14 +265,15 @@ public class ProfileFragment extends Fragment
 
 	public Map<String, Integer> getTrainerLogFromReservations(List<Reservation> reservations) {
 		Map<String, Integer> trainerLog = new HashMap<>();
+		final String[] trainerName = {null};
 		if (reservations == null) return null;
 
 		for (Reservation rev: reservations) {
 			userData.getTrainerByID(rev.getTrainerId(), new ObjectQueryCallback() {
+
 				@Override
 				public void onSucceed(Object object) {
-					PersonalTrainer trainer = (PersonalTrainer) object;
-					trainerName = trainer.getName();
+					trainerName[0] = ((PersonalTrainer) object).getName();
 				}
 
 				@Override
@@ -276,10 +281,10 @@ public class ProfileFragment extends Fragment
 
 				}
 			});
-			if (trainerLog.containsKey(trainerName)) {
-				trainerLog.put(trainerName, trainerLog.get(trainerName) + 1);
+			if (trainerLog.containsKey(trainerName[0])) {
+				trainerLog.put(trainerName[0], trainerLog.get(trainerName[0]) + 1);
 			} else {
-				trainerLog.put(trainerName, 1);
+				trainerLog.put(trainerName[0], 1);
 			}
 		}
 
