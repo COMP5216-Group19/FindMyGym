@@ -51,8 +51,9 @@
     <string name="gym_write_review_hint">Leave a comment</string>
     <string name="gym_go_first_then_comment">You have to visit this gym first…</string>
     <string name="gym_post_review">Post</string>
+    <string name="gym_review_posting">Posting…</string>
     <string name="gym_review_posted">Review posted!</string>
-    <string name="gym_review_post_failed">Oops! Something went wrong.</string>
+    <string name="gym_something_wrong">Oops! Something went wrong…</string>
 
     <string name="gym_info_tab">Info</string>
     <string name="gym_reservation_tab">Reservation</string>
