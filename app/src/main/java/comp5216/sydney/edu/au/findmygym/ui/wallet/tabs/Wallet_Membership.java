@@ -79,10 +79,10 @@ public class Wallet_Membership extends Fragment
 		DiscreteScrollView scrollView = getView().findViewById(R.id.wallet_membership_discreteScrollView);
 		UserData userData = UserData.getInstance();
 		
-		userData.getMembershipsByUID(userData.getUserId(), new ListQueryCallback()
+		userData.getMembershipsByUID(userData.getUserId(), new ListQueryCallback<Membership>()
 		{
 			@Override
-			public void onSucceed(ArrayList list)
+			public void onSucceed(List<Membership> list)
 			{
 				Log.d(TAG, "getMembershipsByUID successfully!"+list.toString());
 			}
