@@ -112,7 +112,7 @@ public class ProfileFragment extends Fragment
 							DocumentSnapshot doc = task.getResult();
 							ArrayList<String> favouriteList = (ArrayList) doc.get(userData.KEY_USER_favourite);
 							
-							Log.d(TAG, "Checking "  + " Favourite Gyms in DB"+ favouriteList.toString());
+							//Log.d(TAG, "Checking "  + " Favourite Gyms in DB"+ favouriteList.toString());
 							UserData.getInstance().setFavouriteGyms(favouriteList);
 							
 						}
