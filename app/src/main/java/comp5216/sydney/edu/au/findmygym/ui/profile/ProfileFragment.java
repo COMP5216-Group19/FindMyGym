@@ -122,7 +122,7 @@ public class ProfileFragment extends Fragment {
 
         userData.getReservationsByUID(userData.getUserId(), new ListQueryCallback<Reservation>() {
             @Override
-            public void onSucceed(ArrayList<Reservation> list) {
+            public void onSucceed(List<Reservation> list) {
                 Calendar now = Calendar.getInstance();
                 for (Reservation rsv : list) {
                     if (rsv.getSelectedTimeSlot().getBeginTime().before(now)) {

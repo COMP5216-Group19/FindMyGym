@@ -42,7 +42,7 @@ public class Wallet_History extends Fragment implements SwipeRefreshLayout.OnRef
 	ArrayList<PurchaseRecord> historyList = new ArrayList<>();
 	UserData userData;
 	SwipeRefreshLayout swipeRefreshLayout;
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,  Bundle savedInstanceState)
 	{
@@ -50,7 +50,7 @@ public class Wallet_History extends Fragment implements SwipeRefreshLayout.OnRef
 		Log.e(TAG, "onCreateView: TEST=================");
 		return inflater.inflate(R.layout.fragment_wallet_history, container, false);
 	}
-	
+
 	@Override
 	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState)
 	{
@@ -59,17 +59,17 @@ public class Wallet_History extends Fragment implements SwipeRefreshLayout.OnRef
 		userData = UserData.getInstance();
 		swipeRefreshLayout = view.findViewById(R.id.wallet_history_refreshLayout);
 		swipeRefreshLayout.setOnRefreshListener(this);
-		
+
 		// userData.setPurchaseRecords(new ArrayList<>());
-		userData.getPurchaseRecordsByUID(userData.getUserId(), new ListQueryCallback()
+		userData.getPurchaseRecordsByUID(userData.getUserId(), new ListQueryCallback<PurchaseRecord>()
 		{
 			@Override
-			public void onSucceed(ArrayList list)
+			public void onSucceed(List<PurchaseRecord> list)
 			{
 				Log.d(TAG, "getPurchaseRecordsByUID successfully!"+list.size()+list.toString());
 				// userData.setPurchaseRecords(list);
 			}
-			
+
 			@Override
 			public void onFailed(Exception e)
 			{
@@ -77,7 +77,7 @@ public class Wallet_History extends Fragment implements SwipeRefreshLayout.OnRef
 				e.printStackTrace();
 			}
 		});
-		
+
 		// Bitmap bitmap1 = BitmapFactory.decodeResource(context.getResources(), R.drawable.diana);
 		// Bitmap bitmap2 = BitmapFactory.decodeResource(context.getResources(), R.drawable.ybb);
 		// Bitmap bitmap3 = BitmapFactory.decodeResource(context.getResources(), R.drawable.azi);
@@ -95,15 +95,15 @@ public class Wallet_History extends Fragment implements SwipeRefreshLayout.OnRef
 		// }
 		//
 		// userData.setPurchaseRecords(historyList);
-		
+
 		recyclerView = getView().findViewById(R.id.history_recyclerview);
 		recyclerView.setLayoutManager(new LinearLayoutManager(context));
 		historyAdapter = new HistoryAdapter(context);
 		recyclerView.setAdapter(historyAdapter);
-		
+
 		TextView textView = getView().findViewById(R.id.history_textview_title);
 		textView.setText(TAG);
-		
+
 		TextView backgroundText = getView().findViewById(R.id.history_textview_title);
 		userData.observe(getViewLifecycleOwner(), new Observer<UserData>()
 		{
@@ -111,11 +111,11 @@ public class Wallet_History extends Fragment implements SwipeRefreshLayout.OnRef
 			public void onChanged(UserData userData)
 			{
 				historyAdapter.notifyDataSetChanged();
-				
+
 				int size = historyAdapter.getItemCount();
 				if (size == 0)
 				{
-					
+
 					backgroundText.setVisibility(View.VISIBLE);
 					backgroundText.setText("Ops, there's no record here!");
 				}
@@ -125,10 +125,10 @@ public class Wallet_History extends Fragment implements SwipeRefreshLayout.OnRef
 				}
 			}
 		});
-		
+
 	}
-	
-	
+
+
 	@Override
 	public void onRefresh()
 	{
@@ -139,10 +139,10 @@ public class Wallet_History extends Fragment implements SwipeRefreshLayout.OnRef
 				swipeRefreshLayout.setRefreshing(false);
 			}
 		},2000);
-		
-		
+
+
 	}
-	
+
 	private <T> T getRandomItem(List<T> list){
 		return  list.get(new Random().nextInt(list.size()));
 	}

@@ -12,6 +12,7 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.Utils.ImageUtil;
@@ -22,7 +23,7 @@ import pl.droidsonroids.gif.GifImageView;
 class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.ViewHolder> {
     private final String TAG = "[BookingAdapter]";
     Context mContext;
-    ArrayList<ScheduleList> scheduleLists;
+    List<ScheduleList> scheduleLists;
     private UserData userData;
 
     public ReservationAdapter(Context mContext, ArrayList<ScheduleList> historyArrayList) {
