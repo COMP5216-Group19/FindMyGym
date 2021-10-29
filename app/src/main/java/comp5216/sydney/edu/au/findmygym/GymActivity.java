@@ -1,5 +1,6 @@
 package comp5216.sydney.edu.au.findmygym;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,12 +14,17 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 import com.wdullaer.materialdatetimepicker.time.Timepoint;
@@ -26,6 +32,7 @@ import com.wdullaer.materialdatetimepicker.time.Timepoint;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import comp5216.sydney.edu.au.findmygym.model.CreditCard;
 import comp5216.sydney.edu.au.findmygym.model.Gym;
 import comp5216.sydney.edu.au.findmygym.model.Reservation;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
@@ -246,27 +253,54 @@ public class GymActivity extends AppCompatActivity {
      */
     public void onConfirmReservationClicked(View view) {
         TrainerReservation trainerRsv = mViewModel.getReservation();
-
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this)
-                .setTitle(R.string.gym_confirm_rsv)
-                .setMessage(R.string.gym_confirm_rsv)
-                .setPositiveButton(R.string.confirm, (dialog, which) ->
-                {
-                    Reservation reservation = new Reservation(
-                            null,
-                            UserData.getInstance().getUserId(),
-                            mViewModel.getGym().getGymId(),
-                            trainerRsv == null ? null : trainerRsv.trainer.getTrainerId(),
-                            mViewModel.getTotalPrice(),
-                            mViewModel.getSelectedGymTimeslot());
-                    mViewModel.makeReservation(this, reservation, trainerRsv);
-                    finish();
-                })
-                .setNegativeButton(R.string.cancel, (dialog, which) ->
-                {
-                    // Nothing happens
-                });
-        builder.create().show();
+        UserData userdata = UserData.getInstance();
+        ProgressDialog progressDialog = new ProgressDialog(mContext);
+        progressDialog.setTitle("Checking out...");
+        progressDialog.show();
+        UserData.getInstance().setCreditCards(new ArrayList<>());
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference cardsRef = db.collection("CARDS");
+        cardsRef.whereEqualTo("UID", userdata.getUserId())
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>()
+        {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task)
+            {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "Found " + task.getResult().getDocuments().size()+ " Cards in DB");
+                    String last4digit = "";
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        String number = document.getData().get(UserData.getInstance().KEY_CARD_number).toString();
+                         last4digit = number.substring(number.length()-5,number.length()-1);
+                        break;
+                    }
+                    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(mContext)
+                            .setTitle(R.string.gym_confirm_rsv)
+                            .setMessage("You will be changed $"+ mViewModel.getTotalPrice()/100+" from card end with "+ last4digit + ", continue?")
+                            .setPositiveButton(R.string.confirm, (dialog, which) ->
+                            {
+                                Reservation reservation = new Reservation(
+                                        null,
+                                        UserData.getInstance().getUserId(),
+                                        mViewModel.getGym().getGymId(),
+                                        trainerRsv == null ? null : trainerRsv.trainer.getTrainerId(),
+                                        mViewModel.getTotalPrice(),
+                                        mViewModel.getSelectedGymTimeslot());
+                                mViewModel.makeReservation(GymActivity.this, reservation, trainerRsv);
+                                finish();
+                            })
+                            .setNegativeButton(R.string.cancel, (dialog, which) ->
+                            {
+                                // Nothing happens
+                            });
+                    builder.create().show();
+                    progressDialog.dismiss();
+                } else {
+                    progressDialog.dismiss();
+                    Log.d(TAG, "Failed to getting Cards from remote DataBase", task.getException());
+                }
+            }
+        } );
     }
 
     public void onPostReviewClicked(View view) {

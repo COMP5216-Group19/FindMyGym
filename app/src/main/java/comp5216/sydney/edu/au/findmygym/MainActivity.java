@@ -1,5 +1,7 @@
 package comp5216.sydney.edu.au.findmygym;
 
+import static comp5216.sydney.edu.au.findmygym.model.UserData.KEY_TRAINER_times;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -26,6 +28,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 
 import androidx.annotation.NonNull;
@@ -49,13 +55,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Random;
 
 import comp5216.sydney.edu.au.findmygym.Utils.ImageUtil;
 import comp5216.sydney.edu.au.findmygym.databinding.ActivityMainBinding;
 import comp5216.sydney.edu.au.findmygym.model.Membership;
 import comp5216.sydney.edu.au.findmygym.model.Gym;
+import comp5216.sydney.edu.au.findmygym.model.PersonalTrainer;
 import comp5216.sydney.edu.au.findmygym.model.PurchaseRecord;
 import comp5216.sydney.edu.au.findmygym.model.Reservation;
+import comp5216.sydney.edu.au.findmygym.model.Timeslot;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.ListQueryCallback;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.ObjectQueryCallback;
@@ -91,7 +100,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		binding = ActivityMainBinding.inflate(getLayoutInflater());
 		setContentView(binding.getRoot());
 		fragmentManager = getSupportFragmentManager();
-
+		
 		Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		
@@ -194,7 +203,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		// 	}
 		// });
 		
-
+		
 		//
 		// userData.getPurchaseRecordsByUID(userData.getUserId(), new ListQueryCallback()
 		// {
@@ -213,7 +222,47 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		// });
 		// initPurchaseRecords();
 		// uploadingGymImg();
+		// uploadingTrainerImg();
 	}
+	
+	private <T> T getRandomItem(List<T> list)
+	{
+		return list.get(new Random().nextInt(list.size()));
+	}
+	
+	public void uploadingTrainerImg()
+	{
+		List<Integer> resIDlist = Arrays.asList(R.drawable.diana, R.drawable.ai, R.drawable.azi, R.drawable.azi2, R.drawable.cat, R.drawable.dog, R.drawable.mea,
+				R.drawable.shark1, R.drawable.shark2, R.drawable.onion, R.drawable.ybb, R.drawable.ybb2, R.drawable.fox, R.drawable.matsuri, R.drawable.la);
+		Context context = this.getApplicationContext();
+		
+		FirebaseFirestore db = FirebaseFirestore.getInstance();
+		CollectionReference ref = db.collection(userData.KEY_TRAINERS);
+		ref.get().addOnCompleteListener(task ->
+		{
+			if (task.isSuccessful())
+			{
+				try
+				{
+					List<DocumentSnapshot> docList = task.getResult().getDocuments();
+					for (DocumentSnapshot doc : docList)
+					{
+						ImageUtil.uploadImage(doc.getId(), getRandomItem(resIDlist), context);
+					}
+					
+				} catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+			else
+			{
+				Log.d(TAG, "upload Trainers Image failed!");
+			}
+		});
+	
+	}
+	
 	public void uploadingGymImg()
 	{
 		Context context = this.getApplicationContext();
@@ -229,18 +278,17 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		ImageUtil.uploadImage("efa3VHgYwiwaoyX0Hz6h", R.drawable.gym10, context);
 	}
 	
-	public void initPurchaseRecords(){
+	public void initPurchaseRecords()
+	{
 		String gym_id_1 = "8Pp4nlV5Fc3XW06BXkhV";
 		String gym_id_2 = "AVRANcg0CBCAUBos8t0G";
 		String gym_id_3 = "PANGsw8b7ufa9ANPq6bx";
 		String gym_id_4 = "Q0JiYLebVbR4RrXVUJXi";
-		userData.addPurchaseRecord(new PurchaseRecord(null,3000,userData.getUserId(),gym_id_1,Calendar.getInstance()));
-		userData.addPurchaseRecord(new PurchaseRecord(null,2400,userData.getUserId(),gym_id_2,Calendar.getInstance()));
-		userData.addPurchaseRecord(new PurchaseRecord(null,2100,userData.getUserId(),gym_id_3,Calendar.getInstance()));
-		userData.addPurchaseRecord(new PurchaseRecord(null,6200,userData.getUserId(),gym_id_4,Calendar.getInstance()));
+		userData.addPurchaseRecord(new PurchaseRecord(null, 3000, userData.getUserId(), gym_id_1, Calendar.getInstance()));
+		userData.addPurchaseRecord(new PurchaseRecord(null, 2400, userData.getUserId(), gym_id_2, Calendar.getInstance()));
+		userData.addPurchaseRecord(new PurchaseRecord(null, 2100, userData.getUserId(), gym_id_3, Calendar.getInstance()));
+		userData.addPurchaseRecord(new PurchaseRecord(null, 6200, userData.getUserId(), gym_id_4, Calendar.getInstance()));
 	}
-	
-	
 	
 	
 	public void initMembership()
