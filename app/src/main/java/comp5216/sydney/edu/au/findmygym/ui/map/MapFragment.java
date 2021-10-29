@@ -70,7 +70,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 	private FusedLocationProviderClient mFusedLocationProviderClient;
 	private UserData userData = UserData.getInstance();
 	public List<Double> distancelist = new ArrayList<Double>();
-	public List<Marker> markers;
+	public List<Marker> markers = new ArrayList<>();
 
 	// The geographical location where the device is currently located. That is, the last-known location retrieved by the Fused Location Provider.
 	private Location mLastKnownLocation = new Location("");
@@ -186,13 +186,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 		if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) !=
 				PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(),
 				Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-			// TODO: Consider calling
-			//    ActivityCompat#requestPermissions
-			// here to request the missing permissions, and then overriding
-			//   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-			//                                          int[] grantResults)
-			// to handle the case where the user grants the permission. See the documentation
-			// for ActivityCompat#requestPermissions for more details.
+
 			ActivityCompat.requestPermissions(getActivity(),
 					new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
 					PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
