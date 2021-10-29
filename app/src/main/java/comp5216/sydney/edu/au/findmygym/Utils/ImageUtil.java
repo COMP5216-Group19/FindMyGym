@@ -1,6 +1,7 @@
 package comp5216.sydney.edu.au.findmygym.Utils;
 
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
@@ -12,6 +13,7 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -24,6 +26,9 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
@@ -40,6 +45,7 @@ public class ImageUtil
 
 {
     private static final String TAG = "[ImageUtils]";
+    
     public static void loadImage(String imageName, ImageView imageView, Context context){
         Log.d(TAG,"Loading Image to ImageView..." + imageName);
         UserData userData = UserData.getInstance();
@@ -60,6 +66,7 @@ public class ImageUtil
                 try {
                     Glide.with(context)
                             .load(uri)
+                            .diskCacheStrategy(DiskCacheStrategy.DATA)
                             .placeholder(R.drawable.ic_launcher_background)
                             .into(imageView);
                     Log.d(TAG, "Loaded image successfully!" + picRef.toString());
@@ -76,7 +83,6 @@ public class ImageUtil
             }
         });
     }
-    
     
     public static void uploadImage_Original(String name, int resID, Context context)
     {
@@ -282,6 +288,7 @@ public class ImageUtil
         try {
             Glide.with(context)
                     .load(uri)
+                    .diskCacheStrategy(DiskCacheStrategy.DATA)
                     .placeholder(R.drawable.outline_account_circle_24)
                     .into(imageView);
             Log.d(TAG, "Loaded image successfully!" +uri);
