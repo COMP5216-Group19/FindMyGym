@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import comp5216.sydney.edu.au.findmygym.model.Gym;
 import comp5216.sydney.edu.au.findmygym.model.PersonalTrainer;
@@ -30,9 +31,9 @@ public abstract class ScheduleFragment extends Fragment {
 
     protected void loadData() {
         Calendar now = Calendar.getInstance();
-        userData.getReservationsByUID(userData.getUserId(), new ListQueryCallback() {
+        userData.getReservationsOfThisUser(new ListQueryCallback<Reservation>() {
             @Override
-            public void onSucceed(ArrayList list) {
+            public void onSucceed(List<Reservation> list) {
                 for (Object obj : list) {
                     Reservation rsv = (Reservation) obj;
                     showReservation(rsv, now);

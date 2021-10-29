@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import comp5216.sydney.edu.au.findmygym.R;
+import comp5216.sydney.edu.au.findmygym.Utils.CalendarUtil;
 
 /**
  * This class represents a segment of time.

@@ -2,21 +2,21 @@ package comp5216.sydney.edu.au.findmygym.ui.gym;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.RatingBar;
 import android.widget.Toast;
 
 import androidx.lifecycle.ViewModel;
 
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.wdullaer.materialdatetimepicker.time.Timepoint;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import comp5216.sydney.edu.au.findmygym.R;
-import comp5216.sydney.edu.au.findmygym.model.CalendarUtil;
 import comp5216.sydney.edu.au.findmygym.model.Gym;
 import comp5216.sydney.edu.au.findmygym.model.PersonalTrainer;
 import comp5216.sydney.edu.au.findmygym.model.PurchaseRecord;
@@ -24,6 +24,7 @@ import comp5216.sydney.edu.au.findmygym.model.Reservation;
 import comp5216.sydney.edu.au.findmygym.model.Review;
 import comp5216.sydney.edu.au.findmygym.model.Timeslot;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
+import comp5216.sydney.edu.au.findmygym.model.callbacks.ListQueryCallback;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.ObjectQueryCallback;
 
 public class GymViewModel extends ViewModel {
@@ -41,10 +42,6 @@ public class GymViewModel extends ViewModel {
     int gymPrice;
     int trainerPrice;
     List<PersonalTrainer> allPersonalTrainers;
-    /**
-     * Whether the current user has came to this gym.
-     */
-    boolean visitedByThisUser;
     private Calendar now = Calendar.getInstance();
     private final Calendar today = beginOfADay(now);
     private Gym gym;
@@ -128,9 +125,9 @@ public class GymViewModel extends ViewModel {
                     reservation.getSelectedTimeSlot().getBeginTime());
             userData.addPurchaseRecord(pr);
         }
-        userData.addReservation(reservation, new ObjectQueryCallback() {
+        userData.addReservation(reservation, new ObjectQueryCallback<Reservation>() {
             @Override
-            public void onSucceed(Object object) {
+            public void onSucceed(Reservation object) {
                 Toast.makeText(context, R.string.gym_reserve_success, Toast.LENGTH_SHORT).show();
             }
 
@@ -151,18 +148,37 @@ public class GymViewModel extends ViewModel {
     public void postReview() {
         String text = infoFragment.getReview();
         int rating = infoFragment.getRating();
+        infoFragment.postReviewButton.setEnabled(false);
         UserData.getInstance().addReview(
                 new Review(UserData.getInstance().getUserId(),
                         gym.getGymId(),
                         rating,
                         text,
-                        Calendar.getInstance())
+                        Calendar.getInstance()),
+                new ObjectQueryCallback<Review>() {
+                    @Override
+                    public void onSucceed(Review object) {
+                        gym.getReviews().add(object);
+                        Toast.makeText(infoFragment.getContext(),
+                                R.string.gym_review_posted,
+                                Toast.LENGTH_SHORT).show();
+                        infoFragment.newReviewPosted();
+                        infoFragment.clearInputs();
+                    }
+
+                    @Override
+                    public void onFailed(Exception e) {
+                        Toast.makeText(infoFragment.getContext(),
+                                R.string.gym_review_post_failed,
+                                Toast.LENGTH_SHORT).show();
+                        infoFragment.postReviewButton.setEnabled(true);
+                    }
+                }
         );
     }
 
     private void generateValuesByGym() {
         gymPrice = gym.getPrice();
-        visitedByThisUser = UserData.getInstance().hasBeenToGym(gym.getGymId());
 
         if (now.after(gym.getTodayCloseTime())) {
             Log.d(TAG, "Closed!");
@@ -203,71 +219,71 @@ public class GymViewModel extends ViewModel {
                 gym.getCloseTime().get(Calendar.MINUTE));
     }
 
-    private void addTestGym() {
-        allPersonalTrainers = new ArrayList<>();
-        gym = new Gym("Gym A",
-                "Gym A",
-                CalendarUtil.stringToCalendarNoDate("09:00"),
-                CalendarUtil.stringToCalendarNoDate("18:00"),
-                20,
-                "Blah Ave. Blah Unit",
-                "12345678",
-                123.45,
-                -27.5);
-        gym.getEquipments().add("Barbell");
-        gym.getEquipments().add("Bicycle");
-        gym.getEquipments().add("Climbing");
-        gym.getEquipments().add("Dumbbell");
-        gym.getEquipments().add("Rowing");
-        gym.getEquipments().add("Swimming");
-        gym.getEquipments().add("Treadmill");
-
-        Calendar yesterday = Calendar.getInstance();
-        yesterday.add(Calendar.DATE, -1);
-        gym.getReviews().add(
-                new Review("Steven", null, 2,
-                        "What a terrible place!", yesterday));
-
-        Calendar someDaysAgo = Calendar.getInstance();
-        yesterday.add(Calendar.DATE, -8);
-        gym.getReviews().add(
-                new Review("Elisabeth", null, 5,
-                        "Recommended! Various kind of equipments, enough space, " +
-                                "a swimming pool inside. Will come again and advise to " +
-                                "my friends.",
-                        someDaysAgo));
-
-        try {
-            addMockTrainersInThisWeek("Mark", "Mark", 3000);
-            addMockTrainersInThisWeek("Ada", "Ada", 4000);
-        } catch (ParseException e) {
-            Log.d(TAG, "Calendar parse error", e);
-        }
-    }
-
-    private void addMockTrainersInThisWeek(String trainerId, String trainerName, int price)
-            throws ParseException {
-        Calendar cal = (Calendar) today.clone();
-        Calendar openTime = gym.getOpenTime();
-        cal.set(Calendar.HOUR_OF_DAY, openTime.get(Calendar.HOUR_OF_DAY));
-        cal.set(Calendar.MINUTE, openTime.get(Calendar.MINUTE));
-        double openHours = (double) (gym.getCloseTime().getTimeInMillis() -
-                openTime.getTimeInMillis()) / 3_600_000;
-        int segments = (int) Math.floor(openHours);
-
-        PersonalTrainer trainer = new PersonalTrainer(trainerId, trainerName, price);
-
-        for (int day = 0; day < 7; day++) {
-            Calendar calInDay = (Calendar) cal.clone();
-            calInDay.add(Calendar.DAY_OF_MONTH, day);
-            for (int hour = 0; hour < segments; hour++) {
-                trainer.addTimeSlot(new Timeslot((Calendar) calInDay.clone(), 60));
-                calInDay.add(Calendar.HOUR_OF_DAY, 1);
-            }
-        }
-        allPersonalTrainers.add(trainer);
-        gym.getPersonalTrainers().add(trainer);
-    }
+//    private void addTestGym() {
+//        allPersonalTrainers = new ArrayList<>();
+//        gym = new Gym("Gym A",
+//                "Gym A",
+//                CalendarUtil.stringToCalendarNoDate("09:00"),
+//                CalendarUtil.stringToCalendarNoDate("18:00"),
+//                20,
+//                "Blah Ave. Blah Unit",
+//                "12345678",
+//                123.45,
+//                -27.5);
+//        gym.getEquipments().add("Barbell");
+//        gym.getEquipments().add("Bicycle");
+//        gym.getEquipments().add("Climbing");
+//        gym.getEquipments().add("Dumbbell");
+//        gym.getEquipments().add("Rowing");
+//        gym.getEquipments().add("Swimming");
+//        gym.getEquipments().add("Treadmill");
+//
+//        Calendar yesterday = Calendar.getInstance();
+//        yesterday.add(Calendar.DATE, -1);
+//        gym.getReviews().add(
+//                new Review("Steven", null, 2,
+//                        "What a terrible place!", yesterday));
+//
+//        Calendar someDaysAgo = Calendar.getInstance();
+//        yesterday.add(Calendar.DATE, -8);
+//        gym.getReviews().add(
+//                new Review("Elisabeth", null, 5,
+//                        "Recommended! Various kind of equipments, enough space, " +
+//                                "a swimming pool inside. Will come again and advise to " +
+//                                "my friends.",
+//                        someDaysAgo));
+//
+//        try {
+//            addMockTrainersInThisWeek("Mark", "Mark", 3000);
+//            addMockTrainersInThisWeek("Ada", "Ada", 4000);
+//        } catch (ParseException e) {
+//            Log.d(TAG, "Calendar parse error", e);
+//        }
+//    }
+//
+//    private void addMockTrainersInThisWeek(String trainerId, String trainerName, int price)
+//            throws ParseException {
+//        Calendar cal = (Calendar) today.clone();
+//        Calendar openTime = gym.getOpenTime();
+//        cal.set(Calendar.HOUR_OF_DAY, openTime.get(Calendar.HOUR_OF_DAY));
+//        cal.set(Calendar.MINUTE, openTime.get(Calendar.MINUTE));
+//        double openHours = (double) (gym.getCloseTime().getTimeInMillis() -
+//                openTime.getTimeInMillis()) / 3_600_000;
+//        int segments = (int) Math.floor(openHours);
+//
+//        PersonalTrainer trainer = new PersonalTrainer(trainerId, trainerName, price);
+//
+//        for (int day = 0; day < 7; day++) {
+//            Calendar calInDay = (Calendar) cal.clone();
+//            calInDay.add(Calendar.DAY_OF_MONTH, day);
+//            for (int hour = 0; hour < segments; hour++) {
+//                trainer.addTimeSlot(new Timeslot((Calendar) calInDay.clone(), 60));
+//                calInDay.add(Calendar.HOUR_OF_DAY, 1);
+//            }
+//        }
+//        allPersonalTrainers.add(trainer);
+//        gym.getPersonalTrainers().add(trainer);
+//    }
 
     public Calendar getSelectedDate() {
         return selectedDate;
@@ -347,6 +363,33 @@ public class GymViewModel extends ViewModel {
 
     void setInfoFragment(GymInfoFragment infoFragment) {
         this.infoFragment = infoFragment;
+    }
+
+    void enableCommentIfVisited(TextInputLayout inputLayout, TextInputEditText editText,
+                                RatingBar reviewRatingBar) {
+        inputLayout.setHint(R.string.gym_go_first_then_comment);
+        inputLayout.setEnabled(false);
+        editText.setEnabled(false);
+        reviewRatingBar.setEnabled(false);
+
+        UserData.getInstance().getReservationsOfThisUser(new ListQueryCallback<Reservation>() {
+            @Override
+            public void onSucceed(List<Reservation> list) {
+                for (Reservation rsv : list) {
+                    if (gym.getGymId().equals(rsv.getGymId())) {
+                        inputLayout.setEnabled(true);
+                        editText.setEnabled(true);
+                        inputLayout.setHint(R.string.gym_write_review_hint);
+                        reviewRatingBar.setEnabled(true);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailed(Exception e) {
+
+            }
+        });
     }
 
     @NotNull

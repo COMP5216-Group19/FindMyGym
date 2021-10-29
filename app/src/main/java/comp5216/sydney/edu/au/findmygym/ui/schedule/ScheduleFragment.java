@@ -23,10 +23,12 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.databinding.FragmentScheduleBinding;
 import comp5216.sydney.edu.au.findmygym.databinding.FragmentWalletBinding;
+import comp5216.sydney.edu.au.findmygym.model.Reservation;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.ListQueryCallback;
 import comp5216.sydney.edu.au.findmygym.ui.wallet.FragmentAdapter;
@@ -99,10 +101,10 @@ public class ScheduleFragment extends Fragment
 	
 		
 		
-		userData.getReservationsByUID(userData.getUserId(), new ListQueryCallback()
+		userData.getReservationsOfThisUser(new ListQueryCallback<Reservation>()
 		{
 			@Override
-			public void onSucceed(ArrayList list)
+			public void onSucceed(List<Reservation> list)
 			{
 				Log.d(TAG, "getPurchaseRecordsByUID successfully!"+list.size()+list.toString());
 				// userData.setPurchaseRecords(list);

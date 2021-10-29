@@ -70,7 +70,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 	private FusedLocationProviderClient mFusedLocationProviderClient;
 	private UserData userData = UserData.getInstance();
 	public List<Double> distancelist = new ArrayList<Double>();
-	public List<Marker> markers = new ArrayList<>();
+	public List<Marker> markers;
 
 	// The geographical location where the device is currently located. That is, the last-known location retrieved by the Fused Location Provider.
 	private Location mLastKnownLocation = new Location("");
@@ -86,8 +86,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 	// Keys for storing activity state.
 	private static final String KEY_CAMERA_POSITION = "camera_position";
 	private static final String KEY_LOCATION = "location";
-
-	public ArrayList<String> list = new ArrayList<String>();
+	
 	RadioButton closest, favourite;
 
 
@@ -109,14 +108,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 		return root;
 	}
 
-	public ArrayList<String> marker_list(){
-		for (int i = 0; i < userData.getAllSimpleGyms().size(); i++){
-			list.add(userData.getAllSimpleGyms().get(i).getGymId());
-		}
-
-		return list;
-	}
-
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
@@ -135,23 +126,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 		locationTextView = getView().findViewById(R.id.text_map);
 
 		mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
-
-//		userData.observe(getViewLifecycleOwner(), new Observer<UserData>() {
-//
-//			@Override
-//			public void onChanged(UserData userData) {
-//				marker_list();
-//				for(int i = 0; i<userData.getAllSimpleGyms().size(); i++){
-////					markers.add(mMap.addMarker(new MarkerOptions()
-////							.position(new LatLng(findGymlat(list.get(i)), findGymlong(list.get(i))))
-////							.title(findGymName(list.get(i)))
-////							.snippet(findGymAddress(list.get(i)))));
-//					Log.d(TAG, "title is" + (findGymName(list.get(i))));
-//
-//				}
-//			}
-//
-//		});
 
 		SearchView mSearchView = getView().findViewById(R.id.idSearchView);
 		mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -189,52 +163,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 			}
 		});
 		mMapFragment.getMapAsync(this);
+		
+
 	}
-
-	public String findGymName(String id) {
-		String name = "";
-		if (userData.getAllSimpleGyms() == null) {
-			return name;
-		}
-		for (int i = 0; i < userData.getAllSimpleGyms().size(); i++) {
-			if (userData.getAllSimpleGyms().get(i).getGymId().equals(id)) {
-				name = userData.getAllSimpleGyms().get(i).getGymName();
-			}
-		}
-		return name;
-	}
-
-	public String findGymAddress(String id) {
-		String address = "";
-		for (int i = 0; i < userData.getAllSimpleGyms().size(); i++) {
-			if (userData.getAllSimpleGyms().get(i).getGymId().equals(id)) {
-				address = userData.getAllSimpleGyms().get(i).getAddress();
-			}
-		}
-		return address;
-	}
-
-	public double findGymlat(String id) {
-		double latitude = 0;
-		for (int i = 0; i < userData.getAllSimpleGyms().size(); i++) {
-			if (userData.getAllSimpleGyms().get(i).getGymId().equals(id)) {
-				latitude = userData.getAllSimpleGyms().get(i).getLatitude();
-			}
-		}
-		return latitude;
-	}
-
-	public double findGymlong(String id) {
-		double longitude = 0;
-		for (int i = 0; i < userData.getAllSimpleGyms().size(); i++) {
-			if (userData.getAllSimpleGyms().get(i).getGymId().equals(id)) {
-				longitude = userData.getAllSimpleGyms().get(i).getLongitude();
-			}
-		}
-		return longitude;
-	}
-
-
 
 
 	@Override
@@ -243,10 +174,25 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 		getLocationPermission();
 		updateLocationUI();
 		getDeviceLocation();
+		userData.observe(getViewLifecycleOwner(), new Observer<UserData>()
+		{
+			@Override
+			public void onChanged(UserData userData)
+			{
+				Log.d(TAG, "observe onChanged:" +userData.getAllSimpleGyms().toString());
+				updateMarkers();
+			}
+		});
 		if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) !=
 				PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(),
 				Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
+			// TODO: Consider calling
+			//    ActivityCompat#requestPermissions
+			// here to request the missing permissions, and then overriding
+			//   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+			//                                          int[] grantResults)
+			// to handle the case where the user grants the permission. See the documentation
+			// for ActivityCompat#requestPermissions for more details.
 			ActivityCompat.requestPermissions(getActivity(),
 					new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
 					PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
@@ -256,31 +202,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 			mMap.setMyLocationEnabled(true);
 		}
 
-//		mMap.setMyLocationEnabled(true);
+
 		mMap.setOnInfoWindowLongClickListener(this);
-
-//		if (userData.getAllSimpleGyms() == null) return;
-//		for (int i = 0; i < userData.getAllSimpleGyms().size(); i++){
-//			list.add(userData.getAllSimpleGyms().get(i).getGymId());
-//		}
-//
-//
-//		for(int i = 0; i<userData.getAllSimpleGyms().size(); i++){
-//			markers.add(mMap.addMarker(new MarkerOptions()
-//					.position(new LatLng(findGymlat(list.get(i)), findGymlong(list.get(i))))
-//					.title(findGymName(list.get(i)))
-//					.snippet(findGymAddress(list.get(i)))));
-//
-//		};
-
-		marker_list();
-		for(int i = 0; i<userData.getAllSimpleGyms().size(); i++){
-			markers.add(mMap.addMarker(new MarkerOptions()
-					.position(new LatLng(findGymlat(list.get(i)), findGymlong(list.get(i))))
-					.title(findGymName(list.get(i)))
-					.snippet(findGymAddress(list.get(i)))));
-
-		}
 
 		Button filterButton = getView().findViewById(R.id.filter_button);
 
@@ -321,7 +244,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 							for (Marker marker : markers){
 								String title = marker.getTitle();
 								marker.setVisible(false);
-								if (title.equals(findGymName(list.get(closestdistance())))){
+								if (title.equals(userData.getAllSimpleGyms().get(closestdistance()).getGymName())){
 									marker.setVisible(true);
 									DEFAULT_ZOOM=14;
 									mMap.animateCamera(CameraUpdateFactory
@@ -341,9 +264,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 		});
 
 
-
+//		calculatedistance();
 	}
-
+	
+	private void updateMarkers()
+	{
+		mMap.clear();
+		markers = new ArrayList<>();
+		for(SimpleGym gym : userData.getAllSimpleGyms()){
+			MarkerOptions markerOptions = new MarkerOptions()
+					.position(new LatLng(gym.getLatitude(), gym.getLongitude()))
+					.title(gym.getGymName())
+					.snippet(gym.getAddress());
+			markers.add(mMap.addMarker(markerOptions));
+		};
+	}
+	
 	public List<Marker> getList() {
 		return markers;
 	}
@@ -471,7 +407,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 	public void onInfoWindowLongClick(Marker marker) {
 		String title = marker.getTitle();
 		Log.d(TAG, title);
-		Log.d(TAG, list.toString());
+		Log.d(TAG, userData.getAllSimpleGyms().toString());
 		String gymId = null;
 		for (SimpleGym simpleGym : userData.getAllSimpleGyms()) {
 			if (simpleGym.getGymName().equals(title)) {
@@ -500,14 +436,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 		}
 	}
 
-	public Integer closestdistance() {
+	public int closestdistance() {
 		getDeviceLocation();
 
 		for(int i = 0; i<userData.getAllSimpleGyms().size(); i++){
 
 			Location markerLocation = new Location("");
-			markerLocation.setLatitude(findGymlat(list.get(i)));
-			markerLocation.setLongitude(findGymlong(list.get(i)));
+			markerLocation.setLatitude(userData.getAllSimpleGyms().get(i).getLatitude());
+			markerLocation.setLongitude(userData.getAllSimpleGyms().get(i).getLongitude());
 			double distance = mLastKnownLocation.distanceTo(markerLocation);
 			distancelist.add(distance);
 
@@ -516,6 +452,47 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 		return distancelist.indexOf(Collections.min(distancelist));
 	}
 
-
+//	AlertDialog dialog;
+//	RadioButton closest, member;
+//
+//	public void filterTheMarkers(View view) {
+//		if (dialog == null) {
+//			AlertDialog.Builder builder;
+//			builder = new AlertDialog.Builder(this);
+//			LayoutInflater inflater = this.getLayoutInflater();
+//			View checkBoxView = inflater.inflate(R.layout.marker_select, null);
+//			builder.setView(checkBoxView);
+//			closest = (RadioButton) findViewById(R.id.radioButton1);
+//			member = (RadioButton) findViewById(R.id.radioButton2);
+//			//Button okButton = (Button) checkBoxView.findViewById(R.id.okButton);
+//			//Button cancelButton = (Button) checkBoxView.findViewById(R.id.cancelButton);
+//			dialog = builder.create();
+//		}
+//		dialog.show();
+//	}
+//
+////	public void displaySelectedMarkers(View view) {
+////
+////		dialog.dismiss();
+////		Log.i("TAG", "member Status " + member.isChecked() + " closet Status  " + closest.isChecked());
+////		//according these check boxes status execute your code to show/hide markers
+//////		if (member.isChecked() && !closest.isChecked()) {
+//////			//show member and hide other markers
+//////			//if (view.getId() == R.id.checkBox1){
+//////			for (Marker marker : memberlist){
+//////				marker.setVisible(false);
+//////			}
+//////			//}
+////		if (closest.isChecked()) {
+////			//hide others and show closet markers
+////			//if (view.getId() == R.id.checkBox2){
+////			for (Marker marker : markers){
+////				marker.setVisible(false);
+////
+////		}
+////	}
+//
+//	public void doNothing(View view)
+//	{ dialog.dismiss(); }
 
 }
