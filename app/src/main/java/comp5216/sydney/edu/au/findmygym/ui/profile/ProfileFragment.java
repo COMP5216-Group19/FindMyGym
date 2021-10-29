@@ -1,13 +1,12 @@
 package comp5216.sydney.edu.au.findmygym.ui.profile;
 
-import static android.os.SystemClock.sleep;
-
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -45,256 +44,258 @@ import java.util.Map;
 
 import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.databinding.FragmentProfileBinding;
-import comp5216.sydney.edu.au.findmygym.model.Gym;
 import comp5216.sydney.edu.au.findmygym.model.PersonalTrainer;
 import comp5216.sydney.edu.au.findmygym.model.Reservation;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.ListQueryCallback;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.ObjectQueryCallback;
 
-public class ProfileFragment extends Fragment
-{
-	private final String TAG = "[ProfileFragment]";
+public class ProfileFragment extends Fragment {
+    public final Map<String, Integer> trainerLog = new HashMap<>();
+    private final String TAG = "[ProfileFragment]";
+    public Map<Integer, Integer> exerciseLog = new HashMap<>();
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+    String currentTime = sdf.format(Calendar.getInstance().getTime());
+    Integer currentTimeInt = Integer.parseInt(currentTime);
+    private ProfileViewModel profileViewModel;
+    private FragmentProfileBinding binding;
+    private UserData userData;
+    private ArrayList<Reservation> reservations = new ArrayList<>();
 
-	private ProfileViewModel profileViewModel;
-	private FragmentProfileBinding binding;
-	private UserData userData;
-	private ArrayList<Reservation> reservations = new ArrayList<>();
-	public Map<Integer, Integer> exerciseLog = new HashMap<>();
-	public Map<String, Integer> trainerLog = new HashMap<>();
-	SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-	String currentTime = sdf.format(Calendar.getInstance().getTime());
-	Integer currentTimeInt = Integer.parseInt(currentTime);
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             ViewGroup container, Bundle savedInstanceState) {
+        profileViewModel =
+                new ViewModelProvider(this).get(ProfileViewModel.class);
 
-	public View onCreateView(@NonNull LayoutInflater inflater,
-	                         ViewGroup container, Bundle savedInstanceState)
-	{
-		profileViewModel =
-				new ViewModelProvider(this).get(ProfileViewModel.class);
+        binding = FragmentProfileBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
 
-		binding = FragmentProfileBinding.inflate(inflater, container, false);
-		View root = binding.getRoot();
+        return root;
+    }
 
-		return root;
-	}
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-	@Override
-	public void onViewCreated(View view, @Nullable Bundle savedInstanceState)
-	{
-		super.onViewCreated(view, savedInstanceState);
+        userData = UserData.getInstance();
+        userData.setContext(this.getContext());
 
-		userData = UserData.getInstance();
-		userData.setContext(this.getContext());
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference ref = db.collection(userData.KEY_USERS).document(userData.getUserId());
+        ref.get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
 
-		FirebaseFirestore db = FirebaseFirestore.getInstance();
-		DocumentReference ref = db.collection(userData.KEY_USERS).document(userData.getUserId());
-		ref.get()
-				.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>()
-				{
-					@Override
-					public void onComplete(@NonNull Task<DocumentSnapshot> task)
-					{
-						if (task.isSuccessful())
-						{
-							
-							DocumentSnapshot doc = task.getResult();
-							ArrayList<String> favouriteList = (ArrayList) doc.get(userData.KEY_USER_favourite);
-							
-							//Log.d(TAG, "Checking "  + " Favourite Gyms in DB"+ favouriteList.toString());
-							UserData.getInstance().setFavouriteGyms(favouriteList);
-							
-						}
-						else
-						{
-							Log.d(TAG, "check favourite gym failed!" );
-						}
-					}
-				});
-		
-		FavGymAdapter favGymAdapter = new FavGymAdapter(this.getContext());
-		Glide.with(this.getContext())
-				.load(userData.getUserAvatarUri())
-				.placeholder(R.drawable.ic_launcher_background)
-				.into(binding.avatarImage);
-		binding.nameText.setText(userData.getUserName());
-		binding.emailText.setText(userData.getUserMail());
+                            DocumentSnapshot doc = task.getResult();
+                            ArrayList<String> favouriteList = (ArrayList) doc.get(userData.KEY_USER_favourite);
 
-		binding.favGymRecycler.setAdapter(favGymAdapter);
-		binding.favGymRecycler.setLayoutManager(new LinearLayoutManager(this.getContext()));
+                            //Log.d(TAG, "Checking "  + " Favourite Gyms in DB"+ favouriteList.toString());
+                            UserData.getInstance().setFavouriteGyms(favouriteList);
 
-		userData.observe(getViewLifecycleOwner(), new Observer<UserData>() {
+                        } else {
+                            Log.d(TAG, "check favourite gym failed!");
+                        }
+                    }
+                });
 
-			@Override
-			public void onChanged(UserData userData) {
-				favGymAdapter.notifyDataSetChanged();
-			}
+        FavGymAdapter favGymAdapter = new FavGymAdapter(this.getContext());
+        Glide.with(this.getContext())
+                .load(userData.getUserAvatarUri())
+                .placeholder(R.drawable.ic_launcher_background)
+                .into(binding.avatarImage);
+        binding.nameText.setText(userData.getUserName());
+        binding.emailText.setText(userData.getUserMail());
 
-		});
+        binding.favGymRecycler.setAdapter(favGymAdapter);
+        binding.favGymRecycler.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
-		userData.getReservationsByUID(userData.getUserId(), new ListQueryCallback() {
-			@Override
-			public void onSucceed(ArrayList list) {
-				reservations.addAll((ArrayList<Reservation>) list);
-				exerciseLog = getExLogFromReservations(reservations);
-				trainerLog = getTrainerLogFromReservations(reservations);
+        userData.observe(getViewLifecycleOwner(), new Observer<UserData>() {
 
-				BarChart barChart = getView().findViewById(R.id.barchart);
-				List<BarEntry> barList=new ArrayList<>();
-				if(exerciseLog == null) return;
-				int i = 0;
-				while (i<7) {
-					if (!exerciseLog.containsKey(currentTimeInt - i)) {
-						barList.add(new BarEntry(7 - i, 0));
-						i++;
-						continue;
-					}
+            @Override
+            public void onChanged(UserData userData) {
+                favGymAdapter.notifyDataSetChanged();
+            }
 
-					barList.add(new BarEntry(7 - i, exerciseLog.get(currentTimeInt - i)));
-					i++;
-				}
+        });
 
-				BarDataSet barDataSet=new BarDataSet(barList,"ExTime");
-				BarData barData=new BarData(barDataSet);
-				barChart.setData(barData);
+        userData.getReservationsByUID(userData.getUserId(), new ListQueryCallback<Reservation>() {
+            @Override
+            public void onSucceed(ArrayList<Reservation> list) {
+                Calendar now = Calendar.getInstance();
+                for (Reservation rsv : list) {
+                    if (rsv.getSelectedTimeSlot().getBeginTime().before(now)) {
+                        reservations.add(rsv);
+                    }
+                }
+                Log.d(TAG, "reservations size after query" + reservations.size());
+                exerciseLog = getExLogFromReservations(reservations);
+                getTrainerLogFromReservations(reservations);
+            }
 
-				barChart.getDescription().setEnabled(false);
+            @Override
+            public void onFailed(Exception e) {
 
-				Legend legend = barChart.getLegend();
-				legend.setEnabled(false);
+            }
+        });
+    }
 
-				XAxis xAxis= barChart.getXAxis();
-				xAxis.setDrawGridLines(false);
-				xAxis.setTextSize(10f);
-				xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-				//X轴自定义坐标
-				xAxis.setValueFormatter(new ValueFormatter() {   //X轴自定义坐标
-					@Override
-					public String getAxisLabel(float v, AxisBase axisBase) {
-						if (v==1){
-							return getNDaysBeforeDate(6);
-						}
-						if (v==4){
-							return getNDaysBeforeDate(3);
-						}
-						if (v==7){
-							return getNDaysBeforeDate(0);
-						}
-						return "";
-					}
-				});
+    private void setCharts() {
+        BarChart barChart = getView().findViewById(R.id.barchart);
+        List<BarEntry> barList = new ArrayList<>();
+        if (exerciseLog == null) return;
+        int i = 0;
+        while (i < 7) {
+            if (!exerciseLog.containsKey(currentTimeInt - i)) {
+                barList.add(new BarEntry(7 - i, 0));
+                i++;
+                continue;
+            }
 
-				YAxis AxisLeft = barChart.getAxisLeft();
-				YAxis AxisRight = barChart.getAxisRight();
-				AxisLeft.setDrawGridLines(false);
-				AxisRight.setDrawGridLines(false);
-				barChart.getAxisRight().setEnabled(false);
-				barChart.getAxisLeft().setEnabled(false);
+            barList.add(new BarEntry(7 - i, exerciseLog.get(currentTimeInt - i)));
+            i++;
+        }
 
-				barChart.animateY(3000); //在Y轴的动画  参数是动画执行时间 毫秒为单位
-				barChart.notifyDataSetChanged();
-				barChart.invalidate();
+        BarDataSet barDataSet = new BarDataSet(barList, "ExTime");
+        BarData barData = new BarData(barDataSet);
+        barChart.setData(barData);
 
-				//Set PieChart
-				PieChart pieChart = getView().findViewById(R.id.pieChart);
+        barChart.getDescription().setEnabled(false);
 
-				Legend pieLegend = pieChart.getLegend();
-				pieLegend.setEnabled(false);
-				pieChart.getDescription().setEnabled(false);
+        Legend legend = barChart.getLegend();
+        legend.setEnabled(false);
 
-				List<PieEntry> strings = new ArrayList<>();
-				if (trainerLog == null) return;
-				for (Map.Entry<String, Integer> entry : trainerLog.entrySet()) {
-					strings.add(new PieEntry((entry.getValue().floatValue() /reservations.size()) * 100F, entry.getKey()));
-				}
-				//(entry.getValue()/reservations.size()) * 100F
+        XAxis xAxis = barChart.getXAxis();
+        xAxis.setDrawGridLines(false);
+        xAxis.setTextSize(10f);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        //X轴自定义坐标
+        xAxis.setValueFormatter(new ValueFormatter() {   //X轴自定义坐标
+            @Override
+            public String getAxisLabel(float v, AxisBase axisBase) {
+                if (v == 1) {
+                    return getNDaysBeforeDate(6);
+                }
+                if (v == 4) {
+                    return getNDaysBeforeDate(3);
+                }
+                if (v == 7) {
+                    return getNDaysBeforeDate(0);
+                }
+                return "";
+            }
+        });
 
-				PieDataSet pieDataSet = new PieDataSet(strings,"Label");
+        YAxis AxisLeft = barChart.getAxisLeft();
+        YAxis AxisRight = barChart.getAxisRight();
+        AxisLeft.setDrawGridLines(false);
+        AxisRight.setDrawGridLines(false);
+        barChart.getAxisRight().setEnabled(false);
+        barChart.getAxisLeft().setEnabled(false);
 
-				ArrayList<Integer> colors = new ArrayList<Integer>();
-				colors.add(Color.parseColor("#6BE61A"));
-				colors.add(Color.parseColor("#4474BB"));
-				colors.add(Color.parseColor("#AA7755"));
-				colors.add(Color.parseColor("#BB5C44"));
-				colors.add(Color.parseColor("#E61A1A"));
-				pieDataSet.setColors(colors);
+        barChart.animateY(3000); //在Y轴的动画  参数是动画执行时间 毫秒为单位
+        barChart.notifyDataSetChanged();
+        barChart.invalidate();
 
-				PieData pieData = new PieData(pieDataSet);
-				pieData.setDrawValues(true);
+        //Set PieChart
+        PieChart pieChart = getView().findViewById(R.id.pieChart);
 
-				pieChart.spin( 3000,0,-360f, Easing.EaseInOutQuad);
+        Legend pieLegend = pieChart.getLegend();
+        pieLegend.setEnabled(false);
+        pieChart.getDescription().setEnabled(false);
 
-				pieChart.setData(pieData);
-				pieChart.invalidate();
-			}
+        List<PieEntry> strings = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : trainerLog.entrySet()) {
+            strings.add(new PieEntry((entry.getValue().floatValue() /
+					reservations.size()) * 100F, entry.getKey()));
+        }
+        //(entry.getValue()/reservations.size()) * 100F
 
-			@Override
-			public void onFailed(Exception e) {
+        PieDataSet pieDataSet = new PieDataSet(strings, "Label");
 
-			}
-		});
+        ArrayList<Integer> colors = new ArrayList<Integer>();
+        colors.add(Color.parseColor("#6BE61A"));
+        colors.add(Color.parseColor("#4474BB"));
+        colors.add(Color.parseColor("#AA7755"));
+        colors.add(Color.parseColor("#BB5C44"));
+        colors.add(Color.parseColor("#E61A1A"));
+        pieDataSet.setColors(colors);
 
+        PieData pieData = new PieData(pieDataSet);
+        pieData.setDrawValues(true);
 
+        pieChart.spin(3000, 0, -360f, Easing.EaseInOutQuad);
 
-	}
+        pieChart.setData(pieData);
+        pieChart.invalidate();
+    }
 
-	public String getNDaysBeforeDate(Integer N) {
-		SimpleDateFormat sdf2 = new SimpleDateFormat("MM-dd");
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.DATE, -N);
+    public String getNDaysBeforeDate(Integer N) {
+        SimpleDateFormat sdf2 = new SimpleDateFormat("MM-dd");
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, -N);
 
-		return sdf2.format(calendar.getTime());
-	}
+        return sdf2.format(calendar.getTime());
+    }
 
-	public Map<Integer, Integer> getExLogFromReservations(List<Reservation> reservations) {
-		Map<Integer, Integer> exLog = new HashMap<>();
-		if (reservations == null) return null;
+    public Map<Integer, Integer> getExLogFromReservations(List<Reservation> reservations) {
+        Map<Integer, Integer> exLog = new HashMap<>();
+        if (reservations == null) return null;
 
-		for (Reservation rev: reservations) {
-			Integer eachBeginTime = Integer.parseInt(sdf.format(rev.getSelectedTimeSlot().getBeginTime().getTime()));
-			Integer eachLength = rev.getSelectedTimeSlot().getLengthMinutes();
-			if (eachLength <= 0) eachLength = 0;
-			if (exLog.containsKey(eachBeginTime)) {
-				exLog.put(eachBeginTime, exLog.get(eachBeginTime) + eachLength);
-			} else {
-				exLog.put(eachBeginTime, eachLength);
-			}
-		}
+        for (Reservation rev : reservations) {
+            Integer eachBeginTime = Integer.parseInt(sdf.format(rev.getSelectedTimeSlot().getBeginTime().getTime()));
+            Integer eachLength = rev.getSelectedTimeSlot().getLengthMinutes();
+            if (eachLength <= 0) eachLength = 0;
+            if (exLog.containsKey(eachBeginTime)) {
+                exLog.put(eachBeginTime, exLog.get(eachBeginTime) + eachLength);
+            } else {
+                exLog.put(eachBeginTime, eachLength);
+            }
+        }
 
-		return exLog;
-	}
+        return exLog;
+    }
 
-	public Map<String, Integer> getTrainerLogFromReservations(List<Reservation> reservations) {
-		Map<String, Integer> trainerLog = new HashMap<>();
-		final String[] trainerName = {null};
-		if (reservations == null) return null;
+    public void getTrainerLogFromReservations(List<Reservation> reservations) {
+        if (reservations == null) return;
 
-		for (Reservation rev: reservations) {
-			userData.getTrainerByID(rev.getTrainerId(), new ObjectQueryCallback() {
+        List<String> trainerIds = new ArrayList<>();
+        for (Reservation rev : reservations) {
+            if (rev.getTrainerId() != null) {
+                trainerIds.add(rev.getTrainerId());
+            }
+        }
 
-				@Override
-				public void onSucceed(Object object) {
-					trainerName[0] = ((PersonalTrainer) object).getName();
-				}
+        for (int i = 0; i < trainerIds.size(); i++) {
+            String trainerId = trainerIds.get(i);
+            final int curIndex = i;
+            userData.getTrainerByID(trainerId, new ObjectQueryCallback<PersonalTrainer>() {
 
-				@Override
-				public void onFailed(Exception e) {
+                @Override
+                public void onSucceed(PersonalTrainer object) {
+                    String trainerName = object.getName();
+                    if (trainerLog.containsKey(trainerName)) {
+                        trainerLog.put(trainerName, trainerLog.get(trainerName) + 1);
+                    } else {
+                        trainerLog.put(trainerName, 1);
+                    }
+                    if (curIndex == trainerIds.size() - 1) {
+                        // last trainer added
+                        setCharts();
+                    }
+                }
 
-				}
-			});
-			if (trainerLog.containsKey(trainerName[0])) {
-				trainerLog.put(trainerName[0], trainerLog.get(trainerName[0]) + 1);
-			} else {
-				trainerLog.put(trainerName[0], 1);
-			}
-		}
+                @Override
+                public void onFailed(Exception e) {
+                }
+            });
+        }
+    }
 
-		return trainerLog;
-	}
-
-	@Override
-	public void onDestroyView()
-	{
-		super.onDestroyView();
-		binding = null;
-	}
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
 }
