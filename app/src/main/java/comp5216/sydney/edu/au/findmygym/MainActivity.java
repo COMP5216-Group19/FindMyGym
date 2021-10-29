@@ -439,30 +439,30 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 			@Override
 			public void onClick(View view)
 			{
-				// Snackbar.make(view, "Replace with your own fab action", Snackbar.LENGTH_LONG)
-				// 		.setAction("Action", null).show();
-				//
+				// Snackbar.make(view, "Replace with your own fab action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
 				
 				// int permission = ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO);
 				// if (permission != PackageManager.PERMISSION_GRANTED) {
 				// 	ActivityCompat.requestPermissions(getApplicationContext(), PERMISSION_AUDIO, GET_RECODE_AUDIO);
 				// }
-				if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED)
-				{
-					ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.RECORD_AUDIO}, 1);
-				}
-				else
-				{
-					VoiceInputDialogFragment voiceInputDialogFragment = new VoiceInputDialogFragment();
-					voiceInputDialogFragment.setSuggestions(
-							"find the closest gym",
-							"schedule",
-							"direction"
-					);
-					voiceInputDialogFragment.show(getSupportFragmentManager(), "DIALOG_INPUT");
-					voiceInputDialogFragment.setAutoStart(true);
-				}
 				
+				// if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED)
+				// {
+				// 	ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.RECORD_AUDIO}, 1);
+				// }
+				// else
+				// {
+				// 	VoiceInputDialogFragment voiceInputDialogFragment = new VoiceInputDialogFragment();
+				// 	voiceInputDialogFragment.setSuggestions(
+				// 			"find the closest gym",
+				// 			"schedule",
+				// 			"direction"
+				// 	);
+				// 	voiceInputDialogFragment.show(getSupportFragmentManager(), "DIALOG_INPUT");
+				// 	voiceInputDialogFragment.setAutoStart(true);
+				// }
+				
+				userData.loadAllSimpleGyms();
 			}
 		});
 	}
