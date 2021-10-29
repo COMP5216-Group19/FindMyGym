@@ -56,14 +56,13 @@ public class ProfileFragment extends Fragment
 	private ProfileViewModel profileViewModel;
 	private FragmentProfileBinding binding;
 	private UserData userData;
-	private ArrayList reservations;
+	private ArrayList<Reservation> reservations;
 	public Map<Integer, Integer> exerciseLog = new HashMap<>();
 	public Map<String, Integer> trainerLog = new HashMap<>();
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 	String currentTime = sdf.format(Calendar.getInstance().getTime());
 	Integer currentTimeInt = Integer.parseInt(currentTime);
 	String trainerName = "";
-	String userID = "";
 
 	public View onCreateView(@NonNull LayoutInflater inflater,
 	                         ViewGroup container, Bundle savedInstanceState)
@@ -84,10 +83,10 @@ public class ProfileFragment extends Fragment
 
 		userData = UserData.getInstance();
 		userData.setContext(this.getContext());
-		userData.getReservationsByUID(userID, new ListQueryCallback() {
+		userData.getReservationsByUID(userData.getUserId(), new ListQueryCallback() {
 			@Override
 			public void onSucceed(ArrayList list) {
-				reservations = (ArrayList<Reservation>) list;
+				reservations.addAll((ArrayList<Reservation>) list);
 			}
 
 			@Override
@@ -95,6 +94,7 @@ public class ProfileFragment extends Fragment
 
 			}
 		});
+
 		exerciseLog = getExLogFromReservations(reservations);
 		trainerLog = getTrainerLogFromReservations(reservations);
 
