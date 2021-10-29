@@ -43,8 +43,10 @@ import java.util.Map;
 
 import comp5216.sydney.edu.au.findmygym.R;
 import comp5216.sydney.edu.au.findmygym.databinding.FragmentProfileBinding;
+import comp5216.sydney.edu.au.findmygym.model.PersonalTrainer;
 import comp5216.sydney.edu.au.findmygym.model.Reservation;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
+import comp5216.sydney.edu.au.findmygym.model.callbacks.ObjectQueryCallback;
 
 public class ProfileFragment extends Fragment
 {
@@ -59,6 +61,7 @@ public class ProfileFragment extends Fragment
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 	String currentTime = sdf.format(Calendar.getInstance().getTime());
 	Integer currentTimeInt = Integer.parseInt(currentTime);
+	String trainerName = "";
 
 	public View onCreateView(@NonNull LayoutInflater inflater,
 	                         ViewGroup container, Bundle savedInstanceState)
@@ -245,7 +248,18 @@ public class ProfileFragment extends Fragment
 	public Map<String, Integer> getTrainerLogFromReservations(List<Reservation> reservations) {
 		Map<String, Integer> trainerLog = new HashMap<>();
 		for (Reservation rev: reservations) {
-			String trainerName = findTrainerNameById(rev.getTrainerId());
+			userData.getTrainerByID(rev.getTrainerId(), new ObjectQueryCallback() {
+				@Override
+				public void onSucceed(Object object) {
+					PersonalTrainer trainer = (PersonalTrainer) object;
+					trainerName = trainer.getName();
+				}
+
+				@Override
+				public void onFailed(Exception e) {
+
+				}
+			});
 			if (trainerLog.containsKey(trainerName)) {
 				trainerLog.put(trainerName, trainerLog.get(trainerName) + 1);
 			} else {
@@ -254,17 +268,6 @@ public class ProfileFragment extends Fragment
 		}
 
 		return trainerLog;
-	}
-
-	public String findTrainerNameById(String id) {
-		String name = "";
-		if(userData.getAllSimpleGyms() == null) { return name; }
-		for (int i = 0; i < userData.getAllTrainers().size(); i++) {
-			if (userData.getAllTrainers().get(i).getTrainerId().equals(id)) {
-				name = userData.getAllTrainers().get(i).getName();
-			}
-		}
-		return name;
 	}
 
 	@Override
