@@ -67,12 +67,11 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder>
 		holder.tv_description.setText(userData.getPurchaseRecords().get(position).getTimeStr());
 		holder.tv_cost.setText(userData.getPurchaseRecords().get(position).getCostStr());
 		
-		UserData.getInstance().getGymByID(gymID, new ObjectQueryCallback()
+		UserData.getInstance().getGymByID(gymID, new ObjectQueryCallback<Gym>()
 		{
 			@Override
-			public void onSucceed(Object object)
+			public void onSucceed(Gym gym)
 			{
-				Gym gym = (Gym) object;
 				ImageUtil.loadImage(gymID, holder.giv_image, context);
 				holder.tv_title.setText(gym.getGymName());
 			}

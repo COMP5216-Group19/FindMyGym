@@ -91,13 +91,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		binding = ActivityMainBinding.inflate(getLayoutInflater());
 		setContentView(binding.getRoot());
 		fragmentManager = getSupportFragmentManager();
-		
-		//YOU need to use API key to init the google map
-		// SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-		// 		.findFragmentById(R.id.map);
-		// mapFragment.getMapAsync(this);
-		
-		
+
 		Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		
@@ -532,12 +526,11 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		//			startActivity(intent);
 		//		}
 		
-		UserData.getInstance().getGymByID("8Pp4nlV5Fc3XW06BXkhV", new ObjectQueryCallback()
+		UserData.getInstance().getGymByID("8Pp4nlV5Fc3XW06BXkhV", new ObjectQueryCallback<Gym>()
 		{
 			@Override
-			public void onSucceed(Object object)
+			public void onSucceed(Gym gym)
 			{
-				Gym gym = (Gym) object;
 				Intent intent = new Intent(mContext, GymActivity.class);
 				intent.putExtra("gym", gym);
 				startActivity(intent);

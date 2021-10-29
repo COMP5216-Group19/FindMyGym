@@ -73,10 +73,4 @@ public class ScheduleHistory extends ScheduleFragment
         });
 
     }
-
-
-
-    private <T> T getRandomItem(List<T> list){
-        return  list.get(new Random().nextInt(list.size()));
-    }
 }

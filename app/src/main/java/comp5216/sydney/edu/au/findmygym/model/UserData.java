@@ -524,76 +524,73 @@ public class UserData extends LiveData<UserData>
 	{
 		FirebaseFirestore db = FirebaseFirestore.getInstance();
 		DocumentReference gymRef = db.collection(KEY_GYMS).document(ID);
-		gymRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>()
-		{
-			@Override
-			public void onComplete(@NonNull Task<DocumentSnapshot> task)
+		gymRef.get().addOnCompleteListener(task -> {
+			if (task.isSuccessful())
 			{
-				if (task.isSuccessful())
+				String name = task.getResult().get(KEY_GYM_name, String.class);
+				String contact = task.getResult().get(KEY_GYM_contact, String.class);
+				String address = task.getResult().get(KEY_GYM_address, String.class);
+				int price = Math.toIntExact(task.getResult().get(KEY_GYM_price, Long.class));
+				String openTime = task.getResult().get(KEY_GYM_openTime, String.class);
+				String closeTime = task.getResult().get(KEY_GYM_closeTime, String.class);
+				List<String> equipments = (List<String>) task.getResult().get(KEY_GYM_equipments);
+				Double latitude = task.getResult().get(KEY_GYM_latitude, Double.class);
+				Double longitude = task.getResult().get(KEY_GYM_longitude, Double.class);
+
+				Log.d(TAG, ID + " name: " + name);
+				Log.d(TAG, ID + " contact: " + contact);
+				Log.d(TAG, ID + " latitude: " + latitude);
+				Log.d(TAG, ID + " longitude: " + longitude);
+				Log.d(TAG, ID + " equipments: " + equipments);
+
+				getTrainersByGymId(ID, new ListQueryCallback<PersonalTrainer>()
 				{
-					String name = task.getResult().get(KEY_GYM_name, String.class);
-					String contact = task.getResult().get(KEY_GYM_contact, String.class);
-					String address = task.getResult().get(KEY_GYM_address, String.class);
-					int price = Math.toIntExact(task.getResult().get(KEY_GYM_price, Long.class));
-					String openTime = task.getResult().get(KEY_GYM_openTime, String.class);
-					String closeTime = task.getResult().get(KEY_GYM_closeTime, String.class);
-					List<String> equipments = (List<String>) task.getResult().get(KEY_GYM_equipments);
-					Double latitude = task.getResult().get(KEY_GYM_latitude, Double.class);
-					Double longitude = task.getResult().get(KEY_GYM_longitude, Double.class);
-					
-					Log.d(TAG, ID + " name: " + name);
-					Log.d(TAG, ID + " contact: " + contact);
-					Log.d(TAG, ID + " latitude: " + latitude);
-					Log.d(TAG, ID + " longitude: " + longitude);
-					Log.d(TAG, ID + " equipments: " + equipments);
-//					Log.d(TAG, ID + " reviews: " + reviews);
-					//					Log.d(TAG, ID + " trainers: " + trainers);
-					
-					getTrainersByGymId(ID, new ListQueryCallback<PersonalTrainer>()
+					@Override
+					public void onSucceed(List<PersonalTrainer> list)
 					{
-						@Override
-						public void onSucceed(List<PersonalTrainer> list)
+						Log.d(TAG, " successfully get trainers of gym " + ID);
+						final List<PersonalTrainer> trainerList = list;
+						getReviewsByGymId(ID, new ListQueryCallback<Review>()
 						{
-							Log.d(TAG, " successfully get trainers of gym " + ID);
-							final List<PersonalTrainer> trainerList = list;
-							getReviewsByGymId(ID, new ListQueryCallback<Review>()
+							@Override
+							public void onSucceed(List<Review> list)
 							{
-								@Override
-								public void onSucceed(List<Review> list)
-								{
-									Log.d(TAG, " successfully get reviews of gym " + ID);
-									Gym gym = new Gym(
-											ID,
-											name,
-											trainerList,
-											comp5216.sydney.edu.au.findmygym.Utils.CalendarUtil.stringToCalendar(openTime),
-											comp5216.sydney.edu.au.findmygym.Utils.CalendarUtil.stringToCalendar(closeTime),
-											price,
-											address,
-											contact,
-											longitude,
-											latitude,
-											equipments,
-											list
-									);
-									callback.onSucceed(gym);
-								}
-								
-								@Override
-								public void onFailed(Exception e)
-								{
-									Log.d(TAG, " failed to get reviews of gym " + ID, e);
-								}
-							});
-						}
-						
-						@Override
-						public void onFailed(Exception e)
-						{
-							Log.d(TAG, " failed to get trainers of gym " + ID, e);
-						}
-					});
-				}
+								Log.d(TAG, " successfully get reviews of gym " + ID);
+								Gym gym = new Gym(
+										ID,
+										name,
+										trainerList,
+										CalendarUtil.stringToCalendar(openTime),
+										CalendarUtil.stringToCalendar(closeTime),
+										price,
+										address,
+										contact,
+										longitude,
+										latitude,
+										equipments,
+										list
+								);
+								callback.onSucceed(gym);
+							}
+
+							@Override
+							public void onFailed(Exception e)
+							{
+								Log.d(TAG, " failed to get reviews of gym " + ID, e);
+								callback.onFailed(e);
+							}
+						});
+					}
+
+					@Override
+					public void onFailed(Exception e)
+					{
+						Log.d(TAG, " failed to get trainers of gym " + ID, e);
+						callback.onFailed(e);
+					}
+				});
+			} else {
+				callback.onFailed(task.getException());
 			}
 		});
 	}
