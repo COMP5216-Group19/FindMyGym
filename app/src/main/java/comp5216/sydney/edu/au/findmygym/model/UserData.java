@@ -37,11 +37,8 @@ import java.util.List;
 import java.util.Map;
 
 import comp5216.sydney.edu.au.findmygym.R;
-import comp5216.sydney.edu.au.findmygym.Utils.ImageUtil;
-import comp5216.sydney.edu.au.findmygym.model.callbacks.GymQueryCallback;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.ListQueryCallback;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.ObjectQueryCallback;
-import comp5216.sydney.edu.au.findmygym.model.callbacks.TrainerQueryCallback;
 import comp5216.sydney.edu.au.findmygym.ui.gym.GymViewModel;
 
 public class UserData extends LiveData<UserData>
@@ -1210,49 +1207,6 @@ public class UserData extends LiveData<UserData>
 	// 	// });
 	// }
 	
-	private void populateTrainersOfGym(Gym.GymData gymData, GymQueryCallback callback)
-	{
-		// List<PersonalTrainer> trainers = new ArrayList<>();
-		// List<Review> reviews = new ArrayList<>();
-		// for (String tid : gymData.trainerIds)
-		// {
-		// 	findTrainerById(tid, new TrainerQueryCallback()
-		// 	{
-		// 		@Override
-		// 		public void onSucceed(PersonalTrainer trainer)
-		// 		{
-		// 			trainers.add(trainer);
-		// 			allTrainers.add(trainer);
-		// 			if (trainers.size() == gymData.trainerIds.size())
-		// 			{
-		// 				// Last trainer has been added, ready to open
-		// 				if (gymData.reviewIds != null)
-		// 				{
-		// 					for (String rid : gymData.reviewIds)
-		// 					{
-		// 						// todo
-		// 					}
-		// 				}
-		// 				if (gymData.picturePath == null)
-		// 				{
-		// 					Gym gym = Gym.fromGymData(gymData, trainers, reviews, null);
-		// 					callback.onSucceed(gym);
-		// 				}
-		// 				else
-		// 				{
-		// 					// todo
-		// 				}
-		// 			}
-		// 		}
-		//
-		// 		@Override
-		// 		public void onFailed(Exception exception)
-		// 		{
-		// 			Log.e(TAG, Arrays.toString(exception.getStackTrace()));
-		// 		}
-		// 	});
-		// }
-	}
 	
 	public Gym findGymById(String gymId)
 	{
@@ -1267,30 +1221,6 @@ public class UserData extends LiveData<UserData>
 //			}
 //		}
 		return null;
-	}
-	
-	public void findTrainerById(String trainerId, TrainerQueryCallback callback)
-	{
-		trainersRef.child(String.valueOf(trainerId)).get().addOnSuccessListener(dataSnapshot ->
-		{
-			PersonalTrainer.TrainerData td =
-					dataSnapshot.getValue(PersonalTrainer.TrainerData.class);
-			if (td == null)
-			{
-				callback.onFailed(new NullPointerException(
-						"Query result of trainer " + trainerId + " is null"));
-				return;
-			}
-			if (td.avatarPath == null)
-			{
-				PersonalTrainer trainer = PersonalTrainer.fromData(td, null);
-				callback.onSucceed(trainer);
-			}
-			else
-			{
-				// todo
-			}
-		}).addOnFailureListener(callback :: onFailed);
 	}
 	
 	public DatabaseReference getUserRef()

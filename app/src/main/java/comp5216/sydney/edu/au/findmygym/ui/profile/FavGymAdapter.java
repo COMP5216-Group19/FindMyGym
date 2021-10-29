@@ -59,64 +59,34 @@ public class FavGymAdapter extends RecyclerView.Adapter<FavGymAdapter.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(@NonNull FavGymAdapter.ViewHolder viewHolder, int position) {
-        viewHolder.getFavGymItem().setText(findGymById(userData.getFavouriteGyms(), position));
-        viewHolder.getFavGymAddress().setText(findGymAddressById(userData.getFavouriteGyms(), position));
+    public void onBindViewHolder(@NonNull FavGymAdapter.ViewHolder viewHolder, int position) { ;
+        String gymId = userData.getFavouriteGyms().get(position);
+        Toast.makeText(context,gymId,Toast.LENGTH_SHORT).show();
+        final Gym[] gym = {null};
+        UserData.getInstance().getGymByID(gymId, new ObjectQueryCallback() {
+            @Override
+            public void onSucceed(Object object) {
+                gym[0] = (Gym) object;
+                viewHolder.getFavGymItem().setText(gym[0].getGymName());
+                viewHolder.getFavGymAddress().setText(gym[0].getAddress());
+            }
+        
+            @Override
+            public void onFailed(Exception e) {
+                Log.d("[PROFILE]", "failed to intent gym", e);
+            }
+        });
+        
         viewHolder.constraintLayout.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                String gymId = userData.getFavouriteGyms().get(position);
-                Toast.makeText(context,gymId,Toast.LENGTH_SHORT).show();
-                UserData.getInstance().getGymByID(gymId, new ObjectQueryCallback() {
-                    @Override
-                    public void onSucceed(Object object) {
-                        Gym gym = (Gym) object;
-                        Intent intent = new Intent(context, GymActivity.class);
-                        intent.putExtra("gym", gym);
-                        context.startActivity(intent);
-                    }
-        
-                    @Override
-                    public void onFailed(Exception e) {
-                        Log.d("[PROFILE]", "failed to intent gym", e);
-                    }
-                });
+                Intent intent = new Intent(context, GymActivity.class);
+                intent.putExtra("gym", gym[0]);
+                context.startActivity(intent);
             }
         });
-    }
-
-    public String findGymById(List<String> favGymList, int position) {
-        String id = favGymList.get(position);
-        String name = "";
-
-        if (userData.getAllSimpleGyms() == null) {
-            return name;
-        }
-
-        for (int i = 0; i < userData.getAllSimpleGyms().size(); i++) {
-            if (userData.getAllSimpleGyms().get(i).getGymId().equals(id)) {
-                name = userData.getAllSimpleGyms().get(i).getGymName();
-            }
-        }
-        return name;
-    }
-
-    public String findGymAddressById(List<String> favGymList, int position) {
-        String id = favGymList.get(position);
-        String address = "";
-
-        if (userData.getAllSimpleGyms() == null) {
-            return address;
-        }
-
-        for (int i = 0; i < userData.getAllSimpleGyms().size(); i++) {
-            if (userData.getAllSimpleGyms().get(i).getGymId().equals(id)) {
-                address = userData.getAllSimpleGyms().get(i).getAddress();
-            }
-        }
-        return address;
     }
 
     @Override
