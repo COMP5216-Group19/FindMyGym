@@ -66,6 +66,8 @@ public class FavGymAdapter extends RecyclerView.Adapter<FavGymAdapter.ViewHolder
         UserData.getInstance().getGymByID(gymId, new ObjectQueryCallback() {
             @Override
             public void onSucceed(Object object) {
+                if (object == null)
+                    return;
                 gym[0] = (Gym) object;
                 viewHolder.getFavGymItem().setText(gym[0].getGymName());
                 viewHolder.getFavGymAddress().setText(gym[0].getAddress());
