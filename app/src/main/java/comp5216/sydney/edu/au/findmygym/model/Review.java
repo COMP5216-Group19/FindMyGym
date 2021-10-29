@@ -1,22 +1,17 @@
 package comp5216.sydney.edu.au.findmygym.model;
 
-import android.graphics.Bitmap;
-
 import java.io.Serializable;
 import java.util.Calendar;
-
-import javax.annotation.Nullable;
 
 /**
  * A class that represents a review item.
  */
 public class Review implements Serializable {
 
+    public int rating;
     private String reviewId;
     private String gymId;
-    public int rating;
     private String userId;
-    private Bitmap userAvatar;
     private String comments;
     private Calendar dateTime;
 
@@ -36,20 +31,12 @@ public class Review implements Serializable {
         return gymId;
     }
 
-    public void setReviewId(String reviewId) {
-        this.reviewId = reviewId;
-    }
-
     public String getReviewId() {
         return reviewId;
     }
 
-    /**
-     * @return the avatar of the user who wrote this review, nullable
-     */
-    @Nullable
-    public Bitmap getUserAvatar() {
-        return userAvatar;
+    public void setReviewId(String reviewId) {
+        this.reviewId = reviewId;
     }
 
     /**

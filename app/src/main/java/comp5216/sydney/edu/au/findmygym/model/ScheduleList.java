@@ -1,7 +1,6 @@
 package comp5216.sydney.edu.au.findmygym.model;
 
 import android.annotation.SuppressLint;
-import android.graphics.Bitmap;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -10,24 +9,24 @@ import java.util.GregorianCalendar;
 public class ScheduleList {
 
     //private int cost;
-    private String title;
+    private String gymName;
     private String trainer;
     private Calendar time;
     private String gymId;
 
-    public ScheduleList(String title, String trainer, Calendar time, String gymId) {
-        this.title = title;
+    public ScheduleList(String gymName, String trainer, Calendar time, String gymId) {
+        this.gymName = gymName;
         this.trainer = trainer;
         this.time = time;
         this.gymId = gymId;
     }
 
-    public String getTitle() {
-        return title;
+    public String getGymName() {
+        return gymName;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setGymName(String gymName) {
+        this.gymName = gymName;
     }
 
     public String getTrainer() {

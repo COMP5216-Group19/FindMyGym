@@ -39,9 +39,7 @@ public class ScheduleFragment extends Fragment
 	private final String TAG = "[ScheduleFragment]";
 
 	private static final String ARG_COUNT = "param1";
-	private Integer counter;
 
-	private FragmentTabHost mTabHost;
 	private WalletViewModel walletViewModel;
 	private FragmentWalletBinding binding;
 	TabLayout tabLayout;
@@ -65,7 +63,7 @@ public class ScheduleFragment extends Fragment
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if (getArguments() != null) {
-			counter = getArguments().getInt(ARG_COUNT);
+			Integer counter = getArguments().getInt(ARG_COUNT);
 		}
 
 	}
