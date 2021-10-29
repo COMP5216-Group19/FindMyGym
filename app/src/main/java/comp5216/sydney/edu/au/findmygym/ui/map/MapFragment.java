@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -58,7 +59,7 @@ import comp5216.sydney.edu.au.findmygym.model.UserData;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.ObjectQueryCallback;
 
 
-public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnInfoWindowLongClickListener {
+public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
 	private final String TAG = "[MapFragment]";
 	private GoogleMap mMap;
 	private MapViewModel mapViewModel;
@@ -71,6 +72,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 	private UserData userData = UserData.getInstance();
 	public List<Double> distancelist = new ArrayList<Double>();
 	public List<Marker> markers;
+
+	private boolean isQueryingGym = false;
 
 	// The geographical location where the device is currently located. That is, the last-known location retrieved by the Fused Location Provider.
 	private Location mLastKnownLocation = new Location("");
@@ -203,7 +206,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 		}
 
 
-		mMap.setOnInfoWindowLongClickListener(this);
+		mMap.setOnInfoWindowClickListener(this);
 
 		Button filterButton = getView().findViewById(R.id.filter_button);
 
@@ -404,7 +407,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
 
 	@Override
-	public void onInfoWindowLongClick(Marker marker) {
+	public void onInfoWindowClick(Marker marker) {
+		if (isQueryingGym) {
+			Toast.makeText(getContext(), R.string.map_querying_gym, Toast.LENGTH_SHORT).show();
+			return;
+		}
 		String title = marker.getTitle();
 		Log.d(TAG, title);
 		Log.d(TAG, userData.getAllSimpleGyms().toString());
@@ -417,10 +424,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 		}
 
 		if (gymId != null) {
-			UserData.getInstance().getGymByID(gymId, new ObjectQueryCallback() {
+			isQueryingGym = true;
+			UserData.getInstance().getGymByID(gymId, new ObjectQueryCallback<Gym>() {
 				@Override
-				public void onSucceed(Object object) {
-					Gym gym = (Gym) object;
+				public void onSucceed(Gym gym) {
+					isQueryingGym = false;
 					Intent intent = new Intent(getContext(), GymActivity.class);
 					intent.putExtra("gym", gym);
 					startActivity(intent);
@@ -428,6 +436,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
 				@Override
 				public void onFailed(Exception e) {
+					isQueryingGym = false;
+					Toast.makeText(getContext(), R.string.gym_something_wrong, Toast.LENGTH_SHORT).show();
 					Log.d(TAG, "failed to get gym", e);
 				}
 			});

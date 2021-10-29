@@ -48,11 +48,9 @@ public abstract class ScheduleFragment extends Fragment {
     }
 
     protected void showReservation(Reservation rsv, Calendar now) {
-        userData.getGymByID(rsv.getGymId(), new ObjectQueryCallback() {
+        userData.getGymByID(rsv.getGymId(), new ObjectQueryCallback<Gym>() {
             @Override
-            public void onSucceed(Object object) {
-                Gym gym = (Gym) object;
-
+            public void onSucceed(Gym gym) {
                 //get Trainer name by id
                 String trainerId = rsv.getTrainerId();
                 PersonalTrainer tra = gym.findTrainerById(trainerId);

@@ -53,12 +53,11 @@ public class MembershipAdapter extends RecyclerView.Adapter<MembershipAdapter.Vi
 		// 		.into(holder.image);
 		String gymID = userData.getMemberships().get(position).getGymID();
 		holder.title.setText(gymID);
-		UserData.getInstance().getGymByID(gymID, new ObjectQueryCallback()
+		UserData.getInstance().getGymByID(gymID, new ObjectQueryCallback<Gym>()
 		{
 			@Override
-			public void onSucceed(Object object)
+			public void onSucceed(Gym gym)
 			{
-				Gym gym = (Gym) object;
 				ImageUtil.loadImage(gymID, holder.image, context);
 				holder.title.setText(gym.getGymName());
 			}
