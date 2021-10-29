@@ -120,14 +120,16 @@ public class UserData extends LiveData<UserData>
 	private String userMail;
 	private Bitmap userAvatar;
 	private List<String> favouriteGyms;
-	
-	// All reservations of this user, updated realtime with firebase
-	private List<Reservation> reservations;
+
 	private Session userSession;
 	private Context mContext;
 	
 	private boolean isSuccessful = false;
 	private boolean downloadFinished = false;
+
+	// Reservations of this user
+	private List<Reservation> reservations = new ArrayList<>();
+	private boolean reservationsUpToDate = false;
 	
 	// This list will load when launching this app
 	// Displays these gyms on map
@@ -435,10 +437,22 @@ public class UserData extends LiveData<UserData>
 					}
 				});
 	}
-	
+
+	public void getReservationsOfThisUser(ListQueryCallback<Reservation> callback) {
+		if (reservationsUpToDate) {
+			Log.d(TAG, "Reservations already downloaded!");
+			callback.onSucceed(reservations);
+			return;
+		}
+		Log.d(TAG, "Reservations not downloaded, downloading from database!");
+		getReservationsByUID(getUserId(), callback);
+	}
 	
 	public void getReservationsByUID(String UID, ListQueryCallback<Reservation> callback)
 	{
+		if (UID.equals(getUserId())) {
+			reservationsUpToDate = false;
+		}
 		FirebaseFirestore db = FirebaseFirestore.getInstance();
 		CollectionReference ref = db.collection(getInstance().KEY_RESERVATION);
 		ref.whereEqualTo(KEY_RES_ID_user, getUserId()).get()
@@ -464,7 +478,10 @@ public class UserData extends LiveData<UserData>
 									reservationList.add(reservation);
 								}
 								Log.d(TAG, "getReservationByUID successfully!" + UID);
-								reservations = reservationList;
+								if (UID.equals(getUserId())) {
+									reservations = reservationList;
+									reservationsUpToDate = true;
+								}
 								post();
 								callback.onSucceed(reservationList);
 							} catch (Exception e)
@@ -909,36 +926,30 @@ public class UserData extends LiveData<UserData>
 		this.mContext = mContext;
 	}
 	
-	public List<Reservation> getReservations()
-	{
-		if (reservations == null)
-		{
-			reservations = new ArrayList<>();
-		}
-		return reservations;
-	}
-	
-	/**
-	 * Return whether this user has been to the given gym at least once.
-	 *
-	 * @param gymId id of the given gym
-	 * @return whether this user has been to the given gym at least once
-	 */
-	public boolean hasBeenToGym(String gymId)
-	{
-		List<Reservation> rsvList = getReservations();
-		Calendar now = Calendar.getInstance();
-		for (Reservation rsv : rsvList)
-		{
-			if (rsv.getGymId().equals(gymId) &&
-					now.after(rsv.getSelectedTimeSlot().getBeginTime()))
-			{
-				// Only past reservation counts
-				return true;
-			}
-		}
-		return false;
-	}
+//	public void getReservations()
+//	{
+//		if (reservations == null)
+//		{
+//			reservations = new ArrayList<>();
+//		}
+//		return reservations;
+//	}
+//
+//	public boolean visitedGym(String gymId, ListQueryCallback<Reservation> callback)
+//	{
+//		List<Reservation> rsvList = getReservations();
+//		Calendar now = Calendar.getInstance();
+//		for (Reservation rsv : rsvList)
+//		{
+//			if (rsv.getGymId().equals(gymId) &&
+//					now.after(rsv.getSelectedTimeSlot().getBeginTime()))
+//			{
+//				// Only past reservation counts
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
 	
 	@Override
 	protected void onActive()
@@ -993,6 +1004,10 @@ public class UserData extends LiveData<UserData>
 	}
 
 	public void getUsernameByUID(String UID, ObjectQueryCallback<String> callback) {
+		if (UID.equals(getUserId())) {
+			callback.onSucceed(getUserName());
+			return;
+		}
 		FirebaseFirestore db = FirebaseFirestore.getInstance();
 		db.collection(KEY_USERS).document(UID).get().addOnCompleteListener(task -> {
 			if (task.isSuccessful()) {
@@ -1090,7 +1105,7 @@ public class UserData extends LiveData<UserData>
 				});
 	}
 	
-	public void addReview(Review review)
+	public void addReview(Review review, ObjectQueryCallback<Review> callback)
 	{
 		Map<String, Object> map = new HashMap<>();
 		map.put(KEY_REVIEW_gymId, review.getGymId());
@@ -1105,11 +1120,12 @@ public class UserData extends LiveData<UserData>
 				.addOnSuccessListener(documentReference ->
 				{
 					Log.d(TAG, "Add review successfully: " + documentReference.getId());
+					callback.onSucceed(review);
 				})
 				.addOnFailureListener(e ->
 				{
-					Log.d(TAG, "Add review Failed: " + e.toString());
-					e.printStackTrace();
+					Log.d(TAG, "Add review Failed: " + e);
+					callback.onFailed(e);
 				});
 	}
 }

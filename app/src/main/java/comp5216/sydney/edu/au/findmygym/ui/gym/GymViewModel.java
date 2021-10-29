@@ -2,21 +2,21 @@ package comp5216.sydney.edu.au.findmygym.ui.gym;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.RatingBar;
 import android.widget.Toast;
 
 import androidx.lifecycle.ViewModel;
 
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.wdullaer.materialdatetimepicker.time.Timepoint;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import comp5216.sydney.edu.au.findmygym.R;
-import comp5216.sydney.edu.au.findmygym.Utils.CalendarUtil;
 import comp5216.sydney.edu.au.findmygym.model.Gym;
 import comp5216.sydney.edu.au.findmygym.model.PersonalTrainer;
 import comp5216.sydney.edu.au.findmygym.model.PurchaseRecord;
@@ -24,6 +24,7 @@ import comp5216.sydney.edu.au.findmygym.model.Reservation;
 import comp5216.sydney.edu.au.findmygym.model.Review;
 import comp5216.sydney.edu.au.findmygym.model.Timeslot;
 import comp5216.sydney.edu.au.findmygym.model.UserData;
+import comp5216.sydney.edu.au.findmygym.model.callbacks.ListQueryCallback;
 import comp5216.sydney.edu.au.findmygym.model.callbacks.ObjectQueryCallback;
 
 public class GymViewModel extends ViewModel {
@@ -41,10 +42,6 @@ public class GymViewModel extends ViewModel {
     int gymPrice;
     int trainerPrice;
     List<PersonalTrainer> allPersonalTrainers;
-    /**
-     * Whether the current user has came to this gym.
-     */
-    boolean visitedByThisUser;
     private Calendar now = Calendar.getInstance();
     private final Calendar today = beginOfADay(now);
     private Gym gym;
@@ -151,18 +148,37 @@ public class GymViewModel extends ViewModel {
     public void postReview() {
         String text = infoFragment.getReview();
         int rating = infoFragment.getRating();
+        infoFragment.postReviewButton.setEnabled(false);
         UserData.getInstance().addReview(
                 new Review(UserData.getInstance().getUserId(),
                         gym.getGymId(),
                         rating,
                         text,
-                        Calendar.getInstance())
+                        Calendar.getInstance()),
+                new ObjectQueryCallback<Review>() {
+                    @Override
+                    public void onSucceed(Review object) {
+                        gym.getReviews().add(object);
+                        Toast.makeText(infoFragment.getContext(),
+                                R.string.gym_review_posted,
+                                Toast.LENGTH_SHORT).show();
+                        infoFragment.newReviewPosted();
+                        infoFragment.clearInputs();
+                    }
+
+                    @Override
+                    public void onFailed(Exception e) {
+                        Toast.makeText(infoFragment.getContext(),
+                                R.string.gym_review_post_failed,
+                                Toast.LENGTH_SHORT).show();
+                        infoFragment.postReviewButton.setEnabled(true);
+                    }
+                }
         );
     }
 
     private void generateValuesByGym() {
         gymPrice = gym.getPrice();
-        visitedByThisUser = UserData.getInstance().hasBeenToGym(gym.getGymId());
 
         if (now.after(gym.getTodayCloseTime())) {
             Log.d(TAG, "Closed!");
@@ -347,6 +363,33 @@ public class GymViewModel extends ViewModel {
 
     void setInfoFragment(GymInfoFragment infoFragment) {
         this.infoFragment = infoFragment;
+    }
+
+    void enableCommentIfVisited(TextInputLayout inputLayout, TextInputEditText editText,
+                                RatingBar reviewRatingBar) {
+        inputLayout.setHint(R.string.gym_go_first_then_comment);
+        inputLayout.setEnabled(false);
+        editText.setEnabled(false);
+        reviewRatingBar.setEnabled(false);
+
+        UserData.getInstance().getReservationsOfThisUser(new ListQueryCallback<Reservation>() {
+            @Override
+            public void onSucceed(List<Reservation> list) {
+                for (Reservation rsv : list) {
+                    if (gym.getGymId().equals(rsv.getGymId())) {
+                        inputLayout.setEnabled(true);
+                        editText.setEnabled(true);
+                        inputLayout.setHint(R.string.gym_write_review_hint);
+                        reviewRatingBar.setEnabled(true);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailed(Exception e) {
+
+            }
+        });
     }
 
     @NotNull

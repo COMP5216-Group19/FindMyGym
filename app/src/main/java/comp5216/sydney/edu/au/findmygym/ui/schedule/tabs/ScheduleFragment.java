@@ -31,7 +31,7 @@ public abstract class ScheduleFragment extends Fragment {
 
     protected void loadData() {
         Calendar now = Calendar.getInstance();
-        userData.getReservationsByUID(userData.getUserId(), new ListQueryCallback<Reservation>() {
+        userData.getReservationsOfThisUser(new ListQueryCallback<Reservation>() {
             @Override
             public void onSucceed(List<Reservation> list) {
                 for (Object obj : list) {

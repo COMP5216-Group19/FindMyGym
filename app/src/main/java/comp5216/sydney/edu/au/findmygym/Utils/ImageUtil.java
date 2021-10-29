@@ -56,11 +56,15 @@ public class ImageUtil
             @Override
             public void onSuccess(Uri uri)
             {
-                Glide.with(context)
-                        .load(uri)
-                        .placeholder(R.drawable.ic_launcher_background)
-                        .into(imageView);
-                Log.d(TAG,"Loaded image successfully!" + picRef.toString());
+                try {
+                    Glide.with(context)
+                            .load(uri)
+                            .placeholder(R.drawable.ic_launcher_background)
+                            .into(imageView);
+                    Log.d(TAG, "Loaded image successfully!" + picRef.toString());
+                } catch (Exception e) {
+                    Log.e(TAG, "Load image failed!", e);
+                }
             }
         }).addOnFailureListener(new OnFailureListener()
         {

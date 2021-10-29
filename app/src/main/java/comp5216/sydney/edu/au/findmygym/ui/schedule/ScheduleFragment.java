@@ -101,7 +101,7 @@ public class ScheduleFragment extends Fragment
 	
 		
 		
-		userData.getReservationsByUID(userData.getUserId(), new ListQueryCallback<Reservation>()
+		userData.getReservationsOfThisUser(new ListQueryCallback<Reservation>()
 		{
 			@Override
 			public void onSucceed(List<Reservation> list)
