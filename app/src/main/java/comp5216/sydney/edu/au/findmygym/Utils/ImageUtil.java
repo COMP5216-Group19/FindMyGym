@@ -282,7 +282,7 @@ public class ImageUtil
         try {
             Glide.with(context)
                     .load(uri)
-                    .placeholder(R.drawable.ic_launcher_background)
+                    .placeholder(R.drawable.outline_account_circle_24)
                     .into(imageView);
             Log.d(TAG, "Loaded image successfully!" +uri);
         } catch (Exception e) {
