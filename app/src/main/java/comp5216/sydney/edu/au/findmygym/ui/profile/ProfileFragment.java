@@ -135,96 +135,7 @@ public class ProfileFragment extends Fragment
 			@Override
 			public void onSucceed(ArrayList list) {
 				reservations.addAll((ArrayList<Reservation>) list);
-				exerciseLog = getExLogFromReservations(reservations);
-				trainerLog = getTrainerLogFromReservations(reservations);
-
-				BarChart barChart = getView().findViewById(R.id.barchart);
-				List<BarEntry> barList=new ArrayList<>();
-				if(exerciseLog == null) return;
-				int i = 0;
-				while (i<7) {
-					if (!exerciseLog.containsKey(currentTimeInt - i)) {
-						barList.add(new BarEntry(7 - i, 0));
-						i++;
-						continue;
-					}
-
-					barList.add(new BarEntry(7 - i, exerciseLog.get(currentTimeInt - i)));
-					i++;
-				}
-
-				BarDataSet barDataSet=new BarDataSet(barList,"ExTime");
-				BarData barData=new BarData(barDataSet);
-				barChart.setData(barData);
-
-				barChart.getDescription().setEnabled(false);
-
-				Legend legend = barChart.getLegend();
-				legend.setEnabled(false);
-
-				XAxis xAxis= barChart.getXAxis();
-				xAxis.setDrawGridLines(false);
-				xAxis.setTextSize(10f);
-				xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-				//X轴自定义坐标
-				xAxis.setValueFormatter(new ValueFormatter() {   //X轴自定义坐标
-					@Override
-					public String getAxisLabel(float v, AxisBase axisBase) {
-						if (v==1){
-							return getNDaysBeforeDate(6);
-						}
-						if (v==4){
-							return getNDaysBeforeDate(3);
-						}
-						if (v==7){
-							return getNDaysBeforeDate(0);
-						}
-						return "";
-					}
-				});
-
-				YAxis AxisLeft = barChart.getAxisLeft();
-				YAxis AxisRight = barChart.getAxisRight();
-				AxisLeft.setDrawGridLines(false);
-				AxisRight.setDrawGridLines(false);
-				barChart.getAxisRight().setEnabled(false);
-				barChart.getAxisLeft().setEnabled(false);
-
-				barChart.animateY(3000); //在Y轴的动画  参数是动画执行时间 毫秒为单位
-				barChart.notifyDataSetChanged();
-				barChart.invalidate();
-
-				//Set PieChart
-				PieChart pieChart = getView().findViewById(R.id.pieChart);
-
-				Legend pieLegend = pieChart.getLegend();
-				pieLegend.setEnabled(false);
-				pieChart.getDescription().setEnabled(false);
-
-				List<PieEntry> strings = new ArrayList<>();
-				if (trainerLog == null) return;
-				for (Map.Entry<String, Integer> entry : trainerLog.entrySet()) {
-					strings.add(new PieEntry((entry.getValue().floatValue() /reservations.size()) * 100F, entry.getKey()));
-				}
-				//(entry.getValue()/reservations.size()) * 100F
-
-				PieDataSet pieDataSet = new PieDataSet(strings,"Label");
-
-				ArrayList<Integer> colors = new ArrayList<Integer>();
-				colors.add(Color.parseColor("#6BE61A"));
-				colors.add(Color.parseColor("#4474BB"));
-				colors.add(Color.parseColor("#AA7755"));
-				colors.add(Color.parseColor("#BB5C44"));
-				colors.add(Color.parseColor("#E61A1A"));
-				pieDataSet.setColors(colors);
-
-				PieData pieData = new PieData(pieDataSet);
-				pieData.setDrawValues(true);
-
-				pieChart.spin( 3000,0,-360f, Easing.EaseInOutQuad);
-
-				pieChart.setData(pieData);
-				pieChart.invalidate();
+				Log.d(TAG, "reservations size when query" + reservations.size());
 			}
 
 			@Override
@@ -233,6 +144,97 @@ public class ProfileFragment extends Fragment
 			}
 		});
 
+		Log.d(TAG, "reservations size after query" + reservations.size());
+		exerciseLog = getExLogFromReservations(reservations);
+		trainerLog = getTrainerLogFromReservations(reservations);
+
+		BarChart barChart = getView().findViewById(R.id.barchart);
+		List<BarEntry> barList=new ArrayList<>();
+		if(exerciseLog == null) return;
+		int i = 0;
+		while (i<7) {
+			if (!exerciseLog.containsKey(currentTimeInt - i)) {
+				barList.add(new BarEntry(7 - i, 0));
+				i++;
+				continue;
+			}
+
+			barList.add(new BarEntry(7 - i, exerciseLog.get(currentTimeInt - i)));
+			i++;
+		}
+
+		BarDataSet barDataSet=new BarDataSet(barList,"ExTime");
+		BarData barData=new BarData(barDataSet);
+		barChart.setData(barData);
+
+		barChart.getDescription().setEnabled(false);
+
+		Legend legend = barChart.getLegend();
+		legend.setEnabled(false);
+
+		XAxis xAxis= barChart.getXAxis();
+		xAxis.setDrawGridLines(false);
+		xAxis.setTextSize(10f);
+		xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+		//X轴自定义坐标
+		xAxis.setValueFormatter(new ValueFormatter() {   //X轴自定义坐标
+			@Override
+			public String getAxisLabel(float v, AxisBase axisBase) {
+				if (v==1){
+					return getNDaysBeforeDate(6);
+				}
+				if (v==4){
+					return getNDaysBeforeDate(3);
+				}
+				if (v==7){
+					return getNDaysBeforeDate(0);
+				}
+				return "";
+			}
+		});
+
+		YAxis AxisLeft = barChart.getAxisLeft();
+		YAxis AxisRight = barChart.getAxisRight();
+		AxisLeft.setDrawGridLines(false);
+		AxisRight.setDrawGridLines(false);
+		barChart.getAxisRight().setEnabled(false);
+		barChart.getAxisLeft().setEnabled(false);
+
+		barChart.animateY(3000); //在Y轴的动画  参数是动画执行时间 毫秒为单位
+		barChart.notifyDataSetChanged();
+		barChart.invalidate();
+
+		//Set PieChart
+		PieChart pieChart = getView().findViewById(R.id.pieChart);
+
+		Legend pieLegend = pieChart.getLegend();
+		pieLegend.setEnabled(false);
+		pieChart.getDescription().setEnabled(false);
+
+		List<PieEntry> strings = new ArrayList<>();
+		if (trainerLog == null) return;
+		for (Map.Entry<String, Integer> entry : trainerLog.entrySet()) {
+			strings.add(new PieEntry((entry.getValue().floatValue() /reservations.size()) * 100F, entry.getKey()));
+		}
+		//(entry.getValue()/reservations.size()) * 100F
+
+		PieDataSet pieDataSet = new PieDataSet(strings,"Label");
+
+		ArrayList<Integer> colors = new ArrayList<Integer>();
+		colors.add(Color.parseColor("#6BE61A"));
+		colors.add(Color.parseColor("#4474BB"));
+		colors.add(Color.parseColor("#AA7755"));
+		colors.add(Color.parseColor("#BB5C44"));
+		colors.add(Color.parseColor("#E61A1A"));
+		pieDataSet.setColors(colors);
+
+		PieData pieData = new PieData(pieDataSet);
+		pieData.setDrawValues(true);
+
+		pieChart.spin( 3000,0,-360f, Easing.EaseInOutQuad);
+
+		pieChart.setData(pieData);
+		pieChart.invalidate();
 
 
 	}
