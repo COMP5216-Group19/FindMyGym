@@ -54,10 +54,6 @@ class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.ViewHol
         return scheduleLists.size();
     }
 
-    public interface OnItemLongClickListener {
-        public boolean onItemLongClicked(int position);
-    }
-
     public class ViewHolder extends RecyclerView.ViewHolder {
         CardView cardView;
         GifImageView giv_image;
