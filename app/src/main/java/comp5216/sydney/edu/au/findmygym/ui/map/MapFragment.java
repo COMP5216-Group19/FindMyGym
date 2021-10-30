@@ -260,8 +260,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 					@Override
 					public void onClick(View v) {
 						if (closest.isChecked()) {
-							//hide others and show closet markers
-							//if (view.getId() == R.id.checkBox2){
+							//hide others and show closet marker
+
 							for (Marker marker : markers){
 								String title = marker.getTitle();
 								marker.setVisible(false);
@@ -299,13 +299,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
 								}
 
-//								if (title.equals(userData.getAllSimpleGyms().get(closestdistance()).getGymName())){
-//									marker.setVisible(true);
-//									DEFAULT_ZOOM=13;
-//									mMap.animateCamera(CameraUpdateFactory
-//											.newLatLngZoom(marker.getPosition(), DEFAULT_ZOOM));
-//									Log.d(TAG, "favourite gyms are"+favList);
-//								}
 							}
 
 							finalDialog1.dismiss();
@@ -524,47 +517,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 		return distancelist.indexOf(Collections.min(distancelist));
 	}
 
-//	AlertDialog dialog;
-//	RadioButton closest, member;
-//
-//	public void filterTheMarkers(View view) {
-//		if (dialog == null) {
-//			AlertDialog.Builder builder;
-//			builder = new AlertDialog.Builder(this);
-//			LayoutInflater inflater = this.getLayoutInflater();
-//			View checkBoxView = inflater.inflate(R.layout.marker_select, null);
-//			builder.setView(checkBoxView);
-//			closest = (RadioButton) findViewById(R.id.radioButton1);
-//			member = (RadioButton) findViewById(R.id.radioButton2);
-//			//Button okButton = (Button) checkBoxView.findViewById(R.id.okButton);
-//			//Button cancelButton = (Button) checkBoxView.findViewById(R.id.cancelButton);
-//			dialog = builder.create();
-//		}
-//		dialog.show();
-//	}
-//
-////	public void displaySelectedMarkers(View view) {
-////
-////		dialog.dismiss();
-////		Log.i("TAG", "member Status " + member.isChecked() + " closet Status  " + closest.isChecked());
-////		//according these check boxes status execute your code to show/hide markers
-//////		if (member.isChecked() && !closest.isChecked()) {
-//////			//show member and hide other markers
-//////			//if (view.getId() == R.id.checkBox1){
-//////			for (Marker marker : memberlist){
-//////				marker.setVisible(false);
-//////			}
-//////			//}
-////		if (closest.isChecked()) {
-////			//hide others and show closet markers
-////			//if (view.getId() == R.id.checkBox2){
-////			for (Marker marker : markers){
-////				marker.setVisible(false);
-////
-////		}
-////	}
-//
-//	public void doNothing(View view)
-//	{ dialog.dismiss(); }
+
 
 }
