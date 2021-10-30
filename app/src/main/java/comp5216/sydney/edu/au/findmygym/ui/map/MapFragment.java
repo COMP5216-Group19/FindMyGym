@@ -294,10 +294,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 										}
 
 										@Override
-										public void onFailed(Exception e)
-										{
-
-										}
+										public void onFailed(Exception e) { }
 									});
 
 								}
