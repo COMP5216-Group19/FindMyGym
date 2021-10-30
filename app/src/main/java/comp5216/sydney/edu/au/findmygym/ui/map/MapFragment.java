@@ -324,6 +324,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 			@Override
 			public void onClick(View v) {
 				updateMarkers();
+				resetButton.setVisibility(View.INVISIBLE);
 			}
 		});
 
