@@ -45,6 +45,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -72,6 +75,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 	private UserData userData = UserData.getInstance();
 	public List<Double> distancelist = new ArrayList<Double>();
 	public List<Marker> markers = new ArrayList<>();
+	ArrayList<String> favList = new ArrayList<String>();
 
 	private boolean isQueryingGym = false;
 
@@ -129,6 +133,25 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 		locationTextView = getView().findViewById(R.id.text_map);
 
 		mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
+
+		FirebaseFirestore db = FirebaseFirestore.getInstance();
+		DocumentReference ref = db.collection(userData.KEY_USERS).document(userData.getUserId());
+		ref.get()
+				.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+					@Override
+					public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+						if (task.isSuccessful()) {
+
+							DocumentSnapshot doc = task.getResult();
+							favList = (ArrayList) doc.get(userData.KEY_USER_favourite);
+
+							Log.d(TAG, "favourite gyms are"+favList);
+
+						} else {
+							Log.d(TAG, "check favourite gym failed!");
+						}
+					}
+				});
 
 		SearchView mSearchView = getView().findViewById(R.id.idSearchView);
 		mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -203,9 +226,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 		mMap.setOnInfoWindowClickListener(this);
 
 		Button filterButton = getView().findViewById(R.id.filter_button);
-
+		Button resetButton = getView().findViewById(R.id.reset_button);
 		filterButton.setOnClickListener(new View.OnClickListener() {
-
 
 			@Override
 			public void onClick(View v) {
@@ -223,6 +245,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 				favourite = view.findViewById(R.id.radioButton2);
 				Button okButton = view.findViewById(R.id.okButton);
 				Button cancelButton = view.findViewById(R.id.cancelButton);
+				List<String> favouriteGyms = UserData.getInstance().getFavouriteGyms();
+
+
 				AlertDialog finalDialog = dialog;
 				cancelButton.setOnClickListener(new View.OnClickListener() {
 					@Override
@@ -237,7 +262,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 						if (closest.isChecked()) {
 							//hide others and show closet markers
 							//if (view.getId() == R.id.checkBox2){
-
 							for (Marker marker : markers){
 								String title = marker.getTitle();
 								marker.setVisible(false);
@@ -249,7 +273,46 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 								}
 							}
 							finalDialog1.dismiss();
+							resetButton.setVisibility(View.VISIBLE);
+						}
+						if(favourite.isChecked()){
+							for (Marker marker : markers){
+								String title = marker.getTitle();
+								marker.setVisible(false);
+								for (String id : favList){
+									UserData.getInstance().getGymByID(id, new ObjectQueryCallback<Gym>()
+									{
+										@Override
+										public void onSucceed(Gym gym)
+										{
+											if (gym.getGymName().equals(title)){
+											marker.setVisible(true);
+											DEFAULT_ZOOM=13;
+											mMap.animateCamera(CameraUpdateFactory
+													.newLatLngZoom(marker.getPosition(), DEFAULT_ZOOM));
+										}
+										}
 
+										@Override
+										public void onFailed(Exception e)
+										{
+
+										}
+									});
+
+								}
+
+//								if (title.equals(userData.getAllSimpleGyms().get(closestdistance()).getGymName())){
+//									marker.setVisible(true);
+//									DEFAULT_ZOOM=13;
+//									mMap.animateCamera(CameraUpdateFactory
+//											.newLatLngZoom(marker.getPosition(), DEFAULT_ZOOM));
+//									Log.d(TAG, "favourite gyms are"+favList);
+//								}
+							}
+
+							finalDialog1.dismiss();
+							resetButton.setVisibility(View.VISIBLE);
 
 						}
 
@@ -257,6 +320,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 				});
 
 
+			}
+		});
+		resetButton.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				updateMarkers();
 			}
 		});
 

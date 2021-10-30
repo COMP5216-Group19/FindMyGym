@@ -84,7 +84,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:padding="5dp"
-            android:text="Favourate Gym"
+            android:text="Favourite Gym"
             android:textColor="#363636"
             android:textSize="20sp"
             app:layout_constraintStart_toStartOf="parent"

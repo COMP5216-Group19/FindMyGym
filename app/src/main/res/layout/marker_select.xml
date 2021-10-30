@@ -7,7 +7,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Filtering the gyms"
+
         android:textSize="25sp"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="10dp"
@@ -16,25 +16,31 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
-    <RadioButton
-        android:id="@+id/radioButton1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/title_hour_selection"
-        android:layout_marginLeft="30dp"
-        android:layout_marginStart="30dp"
-        android:text="Closest Gym"
-        android:checked="true"/>
 
-    <RadioButton
-        android:id="@+id/radioButton2"
+    <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/radioGroup1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="30dp"
-        android:layout_marginStart="30dp"
-        android:text="Favourite"
-        android:layout_below="@+id/radioButton1"/>
+        android:orientation="vertical">
 
+        <RadioButton
+            android:id="@+id/radioButton1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/title_hour_selection"
+            android:layout_marginStart="30dp"
+            android:layout_marginLeft="30dp"
+            android:text="Closest Gym" />
+
+        <RadioButton
+            android:id="@+id/radioButton2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/radioButton1"
+            android:layout_marginStart="30dp"
+            android:layout_marginLeft="30dp"
+            android:text="Favourite" />
+    </RadioGroup>
 
     <Button
         android:layout_width="wrap_content"
@@ -43,7 +49,7 @@
         android:layout_marginLeft="30dp"
         android:layout_marginStart="30dp"
         android:layout_marginBottom="30dp"
-        android:layout_below="@+id/radioButton2"
+        android:layout_below="@+id/radioGroup1"
         android:id="@+id/okButton"
         android:onClick="displayresults"/>
 
@@ -52,9 +58,9 @@
         android:layout_height="wrap_content"
         android:text="Cancel"
         android:id="@+id/cancelButton"
-        android:layout_below="@+id/radioButton2"
-        android:layout_alignRight="@+id/radioButton2"
-        android:layout_alignEnd="@+id/radioButton2"
+        android:layout_below="@+id/radioGroup1"
+        android:layout_alignRight="@+id/radioGroup1"
+        android:layout_alignEnd="@+id/radioGroup1"
         android:layout_marginRight="30dp"
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="30dp"
