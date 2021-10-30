@@ -3,23 +3,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     tools:context=".ui.schedule.tabs.ScheduleHistory">
 
+    <ProgressBar
+        android:id="@+id/s_history_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:layout_gravity="center" />
+
     <TextView
+        android:id="@+id/SHistory_textview_title"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/SHistory_textview_title"
-        android:text="book_fragment2"
         android:gravity="center"
-        android:textSize="40dp"
-        />
+        android:text="book_fragment2"
+        android:textSize="40dp" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:id="@+id/SHistory_recyclerview"
-        />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 
 </FrameLayout>

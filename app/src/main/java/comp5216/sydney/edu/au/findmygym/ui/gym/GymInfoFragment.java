@@ -189,10 +189,8 @@ public class GymInfoFragment extends Fragment {
         TextView timeText = itemView.findViewById(R.id.review_date);
         TextView commentText = itemView.findViewById(R.id.review_content);
 
-        Bitmap avatar = review.getUserAvatar();
-        if (avatar != null) {
-            avatarView.setImageBitmap(avatar);
-        }
+        ImageUtil.loadAvatarByUid(review.getUserId(), avatarView, getContext());
+
         userNameText.setText(review.getUserId());
         ratingBar.setRating(review.getRating());
         timeText.setText(dateFormat.format(review.getDateTime().getTime()));

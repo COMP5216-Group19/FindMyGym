@@ -220,8 +220,13 @@ public class GymViewModel extends ViewModel {
     void updateDefaultTimePeriod() {
         now = Calendar.getInstance();
         if (isSameDate(selectedDate, now)) {
-            beginTime = new Timepoint(now.get(Calendar.HOUR_OF_DAY),
-                    now.get(Calendar.MINUTE));
+            if (now.before(gym.getTodayOpenTime())) {
+                beginTime = new Timepoint(gym.getOpenTime().get(Calendar.HOUR_OF_DAY),
+                        gym.getOpenTime().get(Calendar.MINUTE));
+            } else {
+                beginTime = new Timepoint(now.get(Calendar.HOUR_OF_DAY),
+                        now.get(Calendar.MINUTE));
+            }
         } else {
             beginTime = new Timepoint(gym.getOpenTime().get(Calendar.HOUR_OF_DAY),
                     gym.getOpenTime().get(Calendar.MINUTE));

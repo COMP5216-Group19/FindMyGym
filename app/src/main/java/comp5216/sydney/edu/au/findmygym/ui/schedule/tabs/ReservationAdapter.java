@@ -43,7 +43,7 @@ class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.ViewHol
     public void onBindViewHolder(@NonNull ReservationAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
 
 //        holder.giv_image.setImageBitmap(scheduleLists.get(position).getImage());
-        holder.tv_title.setText(scheduleLists.get(position).getTitle());
+        holder.tv_title.setText(scheduleLists.get(position).getGymName());
         holder.tv_trainer.setText(scheduleLists.get(position).getTrainer());
         holder.tv_time.setText(scheduleLists.get(position).getTimeStr());
 
