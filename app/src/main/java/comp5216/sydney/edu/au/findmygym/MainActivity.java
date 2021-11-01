@@ -223,6 +223,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		// initPurchaseRecords();
 		// uploadingGymImg();
 		// uploadingTrainerImg();
+		initMembership();
 	}
 	
 	private <T> T getRandomItem(List<T> list)
@@ -305,10 +306,10 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Na
 		cal3.set(Calendar.MONTH, cal3.get(Calendar.MONTH) + 6);
 		Calendar cal4 = Calendar.getInstance();
 		cal4.set(Calendar.MONTH, cal4.get(Calendar.MONTH) + 12);
-		userData.addMembership(new Membership(userData.getUserId(), gym_id_1, "Monthly Plan", Calendar.getInstance(), cal1));
-		userData.addMembership(new Membership(userData.getUserId(), gym_id_2, "Seasonal Plan", Calendar.getInstance(), cal2));
-		userData.addMembership(new Membership(userData.getUserId(), gym_id_3, "Half-year Plan", Calendar.getInstance(), cal3));
-		userData.addMembership(new Membership(userData.getUserId(), gym_id_4, "Yearly Plan", Calendar.getInstance(), cal4));
+		userData.addMembership(new Membership("HVlJ5L9BYdfQeCYdG9QvHV7YsLz2", gym_id_1, "Monthly Plan", Calendar.getInstance(), cal1));
+		userData.addMembership(new Membership("HVlJ5L9BYdfQeCYdG9QvHV7YsLz2", gym_id_2, "Seasonal Plan", Calendar.getInstance(), cal2));
+		userData.addMembership(new Membership("HVlJ5L9BYdfQeCYdG9QvHV7YsLz2", gym_id_3, "Half-year Plan", Calendar.getInstance(), cal3));
+		userData.addMembership(new Membership("HVlJ5L9BYdfQeCYdG9QvHV7YsLz2", gym_id_4, "Yearly Plan", Calendar.getInstance(), cal4));
 	}
 	
 	
